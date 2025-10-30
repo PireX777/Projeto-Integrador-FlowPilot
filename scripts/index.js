@@ -140,4 +140,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // Modal Functionality
     const loginBtn = document.getElementById('loginBtn');
     const signupBtn = document.getElementById('signupBtn');
-    const loginModal = document.getElementById
+    
+    // Adiciona redirecionamento para as páginas de login e cadastro
+    if (loginBtn) {
+        loginBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            // Ajuste o caminho abaixo conforme a localização real do arquivo
+            window.location.href = 'login.html';
+        });
+    }
+    
+    if (signupBtn) {
+        signupBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            // Ajuste o caminho abaixo conforme a localização real do arquivo
+            window.location.href = 'register.html';
+        });
+    }
+});
