@@ -1,0 +1,156 @@
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .dashboard-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .section-title h2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .nav-links {
+        margin-top: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .nav-links li {
+        margin-left: 15px;
+        margin-right: 15px;
+        margin-bottom: 10px;
+    }
+    
+    .auth-buttons {
+        margin-top: 10px;
+    }
+    
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+    
+    .hero p {
+        font-size: 1.1rem;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .dashboard-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .dashboard-tabs {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .tab {
+        flex: 1;
+        text-align: center;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .mobile-menu {
+        display: block;
+        position: absolute;
+        right: 20px;
+        top: 15px;
+    }
+    
+    .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .nav-links.active {
+        display: flex;
+    }
+    
+    .nav-links li {
+        margin: 10px 0;
+    }
+    
+    .auth-buttons {
+        display: none;
+        width: 100%;
+        justify-content: center;
+        margin-top: 15px;
+    }
+    
+    .auth-buttons.active {
+        display: flex;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero {
+        padding: 60px 0;
+    }
+    
+    .section {
+        padding: 60px 0;
+    }
+    
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+    
+    .section-title h2 {
+        font-size: 1.8rem;
+    }
+    
+    .cta h2 {
+        font-size: 1.8rem;
+    }
+    
+    .dashboard-content {
+        padding: 20px;
+    }
+    
+    .task-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .task-checkbox {
+        margin-right: 0;
+    }
+    
+    .task-priority {
+        align-self: flex-end;
+    }
+    
+    .modal-content {
+        margin: 20% auto;
+        width: 95%;
+        padding: 20px;
+    }
+}

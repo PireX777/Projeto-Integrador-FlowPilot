@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowPilot - Gestão de Processos Simplificada</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-stream"></i>
+                    FlowPilot
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home">Início</a></li>
+                    <li><a href="#features">Funcionalidades</a></li>
+                    <li><a href="#dashboard">Dashboard</a></li>
+                    <li><a href="#pricing">Preços</a></li>
+                    <li><a href="#contact">Contato</a></li>
+                </ul>
+                <div class="auth-buttons">
+                    <button> <a href="login.html" class="btn btn-outline" id="loginBtn">Entrar</a></button>
+                    <button class="btn btn-primary" id="signupBtn">Experimente Grátis</button>
+                </div>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>Gestão de Processos Simplificada</h1>
+            <p>FlowPilot oferece uma plataforma digital que permite criar fluxos de trabalho personalizados, acompanhar tarefas em tempo real e engajar colaboradores através de gamificação.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-light" id="ctaPrimary">Começar Agora</button>
+                <button class="btn btn-outline btn-hero" id="ctaSecondary">Saiba Mais</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Como a FlowPilot Transforma sua Gestão</h2>
+                <p>Nossa plataforma foi desenvolvida para atender pequenas e médias empresas que desejam organizar e digitalizar seus processos internos.</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h3>Fluxos Personalizados</h3>
+                    <p>Crie fluxos de trabalho adaptados às necessidades específicas da sua empresa, com etapas claras e responsáveis definidos.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Acompanhamento em Tempo Real</h3>
+                    <p>Monitore o andamento de todas as tarefas e processos com atualizações instantâneas e visuais intuitivos.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Gamificação</h3>
+                    <p>Motive sua equipe com sistema de pontos, conquistas e rankings que transformam o trabalho em uma experiência engajadora.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Relatórios Automáticos</h3>
+                    <p>Receba relatórios de desempenho automáticos que ajudam a identificar oportunidades de melhoria nos processos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Preview -->
+    <section class="section" id="dashboard">
+        <div class="container">
+            <div class="section-title">
+                <h2>Dashboard Interativo</h2>
+                <p>Experimente uma prévia do nosso painel de controle intuitivo e visual.</p>
+            </div>
+            
+            <div class="dashboard-preview">
+                <div class="dashboard-header">
+                    <h3>Dashboard - Visão Geral</h3>
+                    <div class="dashboard-tabs">
+                        <div class="tab active" data-tab="tasks">Minhas Tarefas</div>
+                        <div class="tab" data-tab="team">Equipe</div>
+                        <div class="tab" data-tab="reports">Relatórios</div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-content">
+                    <div class="tasks-list tab-content active" id="tasks-tab">
+                        <h3>Tarefas do Dia</h3>
+                        <div class="task-item">
+                            <div class="task-checkbox">
+                                <input type="checkbox">
+                            </div>
+                            <div class="task-info">
+                                <div class="task-title">Revisar relatório mensal</div>
+                                <div class="task-desc">Analisar dados de desempenho do último mês</div>
+                            </div>
+                            <div class="task-priority priority-high">Alta</div>
+                        </div>
+                        
+                        <div class="task-item">
+                            <div class="task-checkbox">
+                                <input type="checkbox">
+                            </div>
+                            <div class="task-info">
+                                <div class="task-title">Preparar apresentação para reunião</div>
+                                <div class="task-desc">Slides para reunião com a diretoria</div>
+                            </div>
+                            <div class="task-priority priority-medium">Média</div>
+                        </div>
+                        
+                        <div class="task-item">
+                            <div class="task-checkbox">
+                                <input type="checkbox">
+                            </div>
+                            <div class="task-info">
+                                <div class="task-title">Atualizar documentação de processos</div>
+                                <div class="task-desc">Revisar e atualizar fluxogramas</div>
+                            </div>
+                            <div class="task-priority priority-low">Baixa</div>
+                        </div>
+
+                        <div class="task-item">
+                            <div class="task-checkbox">
+                                <input type="checkbox">
+                            </div>
+                            <div class="task-info">
+                                <div class="task-title">Reunião com equipe de desenvolvimento</div>
+                                <div class="task-desc">Discutir novas funcionalidades</div>
+                            </div>
+                            <div class="task-priority priority-medium">Média</div>
+                        </div>
+                    </div>
+                    
+                    <div class="gamification-panel">
+                        <div class="user-stats">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <div>Seus pontos</div>
+                                <div class="user-points">1,250</div>
+                            </div>
+                        </div>
+                        
+                        <div class="achievements">
+                            <h3>Conquistas</h3>
+                            <div class="badges">
+                                <div class="badge" data-tooltip="Primeira Tarefa">
+                                    <i class="fas fa-medal"></i>
+                                </div>
+                                <div class="badge" data-tooltip="Produtividade">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="badge" data-tooltip="Velocidade">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div class="badge" data-tooltip="Inovação">
+                                    <i class="fas fa-rocket"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ranking">
+                            <h3>Ranking da Equipe</h3>
+                            <ul class="ranking-list">
+                                <li class="ranking-item">
+                                    <div class="rank">1</div>
+                                    <div class="ranking-name">Maria Silva</div>
+                                    <div class="ranking-points">2,450</div>
+                                </li>
+                                <li class="ranking-item">
+                                    <div class="rank">2</div>
+                                    <div class="ranking-name">João Santos</div>
+                                    <div class="ranking-points">1,980</div>
+                                </li>
+                                <li class="ranking-item">
+                                    <div class="rank">3</div>
+                                    <div class="ranking-name">Você</div>
+                                    <div class="ranking-points">1,250</div>
+                                </li>
+                                <li class="ranking-item">
+                                    <div class="rank">4</div>
+                                    <div class="ranking-name">Ana Costa</div>
+                                    <div class="ranking-points">1,100</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta" id="cta">
+        <div class="container">
+            <h2>Experimente a FlowPilot Gratuitamente</h2>
+            <p>Junte-se a centenas de pequenas e médias empresas que já transformaram sua gestão de processos com nossa plataforma.</p>
+            <button class="btn btn-light" id="finalCta">Começar Agora - Grátis por 30 dias</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>FlowPilot</h3>
+                    <p>Transformando a gestão de processos em uma experiência simples, visual e motivadora.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Produto</h3>
+                    <ul class="footer-links">
+                        <li><a href="#features">Funcionalidades</a></li>
+                        <li><a href="#pricing">Preços</a></li>
+                        <li><a href="#dashboard">Dashboard</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Empresa</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Sobre Nós</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Carreiras</a></li>
+                        <li><a href="#">Contato</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Suporte</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Central de Ajuda</a></li>
+                        <li><a href="#">Documentação</a></li>
+                        <li><a href="#">Status do Sistema</a></li>
+                        <li><a href="#">Fale Conosco</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2023 FlowPilot. Todos os direitos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal de Login -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Entrar na FlowPilot</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Entrar</button>
+            </form>
+            <p class="modal-footer">Não tem uma conta? <a href="#" id="switchToSignup">Cadastre-se</a></p>
+        </div>
+    </div>
+
+    <!-- Modal de Cadastro -->
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Criar Conta</h2>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="name">Nome Completo</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="company">Empresa</label>
+                    <input type="text" id="company" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">E-mail</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Senha</label>
+                    <input type="password" id="signupPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Criar Conta</button>
+            </form>
+            <p class="modal-footer">Já tem uma conta? <a href="#" id="switchToLogin">Faça login</a></p>
+        </div>
+    </div>
+
+    <script src="scripts/index.js"></script>
+</body>
+</html>
