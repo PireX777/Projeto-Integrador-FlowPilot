@@ -1,4 +1,17 @@
-document.addEventListener('DOMContentLoaded', function() {
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Menu Toggle
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const navLinks = document.querySelector('.nav-links');
+            const authButtons = document.querySelector('.auth-buttons');
+            
+            if (mobileMenu) {
+                mobileMenu.addEventListener('click', function() {
+                    navLinks.classList.toggle('active');
+                    authButtons.classList.toggle('active');
+                });
+            }
+
             // Elements
             const loginForm = document.getElementById('loginForm');
             const emailInput = document.getElementById('email');
@@ -74,9 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Signup link
             signupLink.addEventListener('click', function(e) {
                 e.preventDefault();
-                showNotification('Redirecionando para cadastro...', 'info');
-                setTimeout(() => {
-                    window.location.href = 'register.html'}, 1000);
+                window.location.href = 'register.html';
             });
 
             // Social login buttons
@@ -146,8 +157,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         localStorage.setItem('rememberedEmail', email);
                     }
                     
-                    // In a real app, you would redirect here
-                    // window.location.href = '/dashboard';
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
                 }, 2000);
             }
 
@@ -222,3 +235,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 rememberCheckbox.classList.add('checked');
             }
         });
+    // Smooth Scrolling for Navigation Links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Close mobile menu if open
+                        if (navLinks.classList.contains('active')) {
+                            navLinks.classList.remove('active');
+                            authButtons.classList.remove('active');
+                        }
+                    }
+                });
+            });

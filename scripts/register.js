@@ -1,4 +1,17 @@
-document.addEventListener('DOMContentLoaded', function() {
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Menu Toggle
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const navLinks = document.querySelector('.nav-links');
+            const authButtons = document.querySelector('.auth-buttons');
+            
+            if (mobileMenu) {
+                mobileMenu.addEventListener('click', function() {
+                    navLinks.classList.toggle('active');
+                    authButtons.classList.toggle('active');
+                });
+            }
+
             // Elements
             const signupForm = document.getElementById('signupForm');
             const firstNameInput = document.getElementById('firstName');
@@ -54,14 +67,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
+            // Login link
             loginLink.addEventListener('click', function(e) {
-    e.preventDefault();
-    showNotification('Redirecionando para login...', 'info');
-    // Adicione um pequeno delay para mostrar a notificação antes de redirecionar
-    setTimeout(() => {
-        window.location.href = 'login.html';
-    }, 1000);
-});
+                e.preventDefault();
+                window.location.href = 'login.html';
+            });
 
             // Social signup buttons
             document.querySelectorAll('.social-button').forEach(button => {
@@ -184,11 +194,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     signupButton.classList.remove('loading');
                     showNotification('Conta criada com sucesso! Redirecionando...', 'success');
                     
-                    // In a real app, you would redirect here
+                    // Redirect to dashboard
                     setTimeout(() => {
-                        // window.location.href = '/dashboard';
-                        console.log('Redirecting to dashboard...');
-                    }, 2000);
+                        window.location.href = 'index.html';
+                    }, 1000);
                 }, 2000);
             }
 
@@ -246,3 +255,26 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             document.head.appendChild(style);
         });
+    // Smooth Scrolling for Navigation Links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Close mobile menu if open
+                        if (navLinks.classList.contains('active')) {
+                            navLinks.classList.remove('active');
+                            authButtons.classList.remove('active');
+                        }
+                    }
+                });
+            });

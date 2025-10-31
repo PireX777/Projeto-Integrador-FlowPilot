@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planos e Preços - FlowPilot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/pricing.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="../index.html" class="logo">
+                    <i class="fas fa-stream"></i>
+                    FlowPilot
+                </a>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Início</a></li>
+                    <li><a href="../index.html#features">Funcionalidades</a></li>
+                    <li><a href="../index.html#how-it-works">Como Funciona</a></li>
+                    <li><a href="../pages/pricing.html#assinature-anchor">Planos</a></li>
+                    <li><a href="../index.html#faq">FAQ</a></li>
+                </ul>
+                <div class="auth-buttons">
+                    <a href="login.html" class="btn btn-outline">Entrar</a>
+                    <a href="register.html" class="btn btn-primary">Experimente Grátis</a>
+                </div>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <!-- Pricing Section -->
+    <section id="pricing" class="section section-light">
+        <div class="container">
+            
+            <div class="hero" style="max-width:1100px; margin:0 auto;">
+                <h2>Planos e Preços</h2>
+                <section id="assinature-anchor"></section>
+                <p>Escolha o plano ideal para o tamanho e necessidades da sua empresa.</p>
+            </div>
+            <!-- Billing Toggle -->
+            <div class="billing-toggle">
+                <span class="toggle-label">Faturamento:</span>
+                <span class="billing-option active" id="monthly-option">Mensal</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="billing-toggle">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="billing-option" id="annual-option">Anual <span class="discount-badge">Economize 20%</span></span>
+            </div>
+            <section>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Básico</h3>
+                        <div class="pricing-price">
+                            <span class="price-currency">R$</span>
+                            <span class="price-value" data-monthly="49" data-annual="39">49</span>
+                        </div>
+                        <div class="pricing-period">por mês</div>
+                        <div class="total-price" id="basic-total">Total: R$ 588/ano</div>
+                        <div class="annual-saving" style="display: none;">Economize R$ 120 por ano</div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Até 5 usuários</li>
+                        <li><i class="fas fa-check"></i> 3 fluxos de trabalho</li>
+                        <li><i class="fas fa-check"></i> Dashboard básico</li>
+                        <li><i class="fas fa-check"></i> Suporte por email</li>
+                        <li><i class="fas fa-times"></i> Gamificação</li>
+                        <li><i class="fas fa-times"></i> Relatórios avançados</li>
+                    </ul>
+                    <a href="register.html" class="btn btn-outline">Começar Agora</a>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Profissional</h3>
+                        <div class="pricing-price">
+                            <span class="price-currency">R$</span>
+                            <span class="price-value" data-monthly="99" data-annual="79">99</span>
+                        </div>
+                        <div class="pricing-period">por mês</div>
+                        <div class="total-price" id="pro-total">Total: R$ 1.188/ano</div>
+                        <div class="annual-saving" style="display: none;">Economize R$ 240 por ano</div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Até 20 usuários</li>
+                        <li><i class="fas fa-check"></i> Fluxos ilimitados</li>
+                        <li><i class="fas fa-check"></i> Dashboard completo</li>
+                        <li><i class="fas fa-check"></i> Sistema de gamificação</li>
+                        <li><i class="fas fa-check"></i> Relatórios detalhados</li>
+                        <li><i class="fas fa-check"></i> Suporte prioritário</li>
+                    </ul>
+                    <a href="register.html" class="btn btn-primary">Experimente Grátis</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Empresarial</h3>
+                        <div class="pricing-price">
+                            <span class="price-currency">R$</span>
+                            <span class="price-value" data-monthly="199" data-annual="159">199</span>
+                        </div>
+                        <div class="pricing-period">por mês</div>
+                        <div class="total-price" id="enterprise-total">Total: R$ 2.388/ano</div>
+                        <div class="annual-saving" style="display: none;">Economize R$ 480 por ano</div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Usuários ilimitados</li>
+                        <li><i class="fas fa-check"></i> Todos os recursos Pro</li>
+                        <li><i class="fas fa-check"></i> API personalizada</li>
+                        <li><i class="fas fa-check"></i> Treinamento dedicado</li>
+                        <li><i class="fas fa-check"></i> SLA 99.9%</li>
+                        <li><i class="fas fa-check"></i> Gerente de conta</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-outline">Fale Conosco</a>
+                </div>
+            </div>
+            
+            <!-- Plan Comparison Table - VERSÃO ANTIGA -->
+            <div class="comparison-section">
+                <div class="section-title">
+                    <h2>Comparação de Planos</h2>
+                    <p>Compare todos os recursos para tomar a melhor decisão</p>
+                </div>
+                
+                <div class="comparison-container">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Recursos</th>
+                                <th>Básico</th>
+                                <th>Profissional</th>
+                                <th>Empresarial</th>
+                            </tr>
+                        </thead>
+                        <tbody class="body-table">
+                            <tr>
+                                <td>Número de usuários</td>
+                                <td>Até 5</td>
+                                <td>Até 20</td>
+                                <td>Ilimitado</td>
+                            </tr>
+                            <tr>
+                                <td>Acesso mobile</td>
+                                <td><i class="fas fa-check"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Número de fluxos</td>
+                                <td>3</td>
+                                <td>Ilimitado</td>
+                                <td>Ilimitado</td>
+                            </tr>
+                            <tr>
+                                <td>Modelos personalizados</td>
+                                <td><i class="fas fa-times"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Dashboard básico</td>
+                                <td><i class="fas fa-check"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Relatórios avançados</td>
+                                <td><i class="fas fa-times"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Exportação de dados</td>
+                                <td><i class="fas fa-times"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Sistema de pontos</td>
+                                <td><i class="fas fa-times"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Rankings e conquistas</td>
+                                <td><i class="fas fa-times"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Suporte por email</td>
+                                <td><i class="fas fa-check"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Suporte prioritário</td>
+                                <td><i class="fas fa-times"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Gerente dedicado</td>
+                                <td><i class="fas fa-times"></i></td>
+                                <td><i class="fas fa-times"></i></td>
+                                <td><i class="fas fa-check"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section section-gray">
+        <div class="container">
+            <div class="section-title">
+                <h2>O que Nossos Clientes Dizem</h2>
+                <p>Empresas que já transformaram sua gestão com o FlowPilot</p>
+            </div>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"O FlowPilot trouxe clareza total ao nosso fluxo de tarefas. Conseguimos eliminar gargalos e aumentar a produtividade do time em tempo recorde. A interface é simples e muito agradável de usar."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RC</div>
+                        <div class="author-info">
+                            <h4>Laura Mendes</h4>
+                            <p>Coord. de Processos, DataWave Solutions</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Em poucas semanas percebemos uma transformação real. O sistema de pontos engajou a equipe e os relatórios automáticos facilitaram o acompanhamento de desempenho. Uma solução completa e eficiente."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AS</div>
+                        <div class="author-info">
+                            <h4>Bruno Almeida</h4>
+                            <p>Head de Operações, NextLevel Group</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Antes do FlowPilot, era difícil ter visibilidade sobre o andamento das tarefas. Agora, tudo é centralizado e transparente. A equipe está mais alinhada e nossos resultados melhoraram significativamente."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">LS</div>
+                        <div class="author-info">
+                            <h4>Camila Rocha</h4>
+                            <p>CEO, BrightMind Tech</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq-planos" class="section section-light">
+    <div class="container">
+        <div class="section-title">
+            <h2>Planos e Assinaturas</h2>
+            <p>Saiba mais sobre nossos planos e como escolher o melhor para sua empresa</p>
+        </div>
+        
+        <div class="faq-container">
+            <!-- FAQ 1 -->
+            <div class="faq-item">
+                <button class="faq-question">
+                    Quais planos o FlowPilot oferece?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>O FlowPilot oferece três planos principais: <strong>Gratuito</strong>, <strong>Profissional</strong> e <strong>Enterprise</strong>. Cada plano é projetado para atender diferentes necessidades e escalas de uso.</p>
+                    <ul>
+                        <li><strong>Plano Gratuito</strong>: Funcionalidades limitadas, ideal para pequenas equipes ou testes.</li>
+                        <li><strong>Plano Profissional</strong>: Funcionalidades avançadas para equipes médias, com suporte prioritário e mais recursos.</li>
+                        <li><strong>Plano Enterprise</strong>: Personalização total, suporte dedicado e integrações avançadas para grandes empresas.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- FAQ 2 -->
+            <div class="faq-item">
+                <button class="faq-question">
+                    Como faço para mudar de plano?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Você pode mudar de plano a qualquer momento através do painel de configurações da sua conta. Basta acessar a seção "Plano e Pagamento" e escolher o plano desejado. O processo é rápido e sem interrupções.</p>
+                </div>
+            </div>
+
+            <!-- FAQ 3 -->
+            <div class="faq-item">
+                <button class="faq-question">
+                    Como posso cancelar minha assinatura?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Para cancelar sua assinatura, vá até "Configurações" > "Plano e Pagamento" e clique em "Cancelar Assinatura". Você continuará a ter acesso ao plano até o final do seu período de cobrança.</p>
+                </div>
+            </div>
+
+            <!-- FAQ 4 -->
+            <div class="faq-item">
+                <button class="faq-question">
+                    O que acontece se eu não renovar minha assinatura?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Se a sua assinatura não for renovada, você perderá acesso às funcionalidades do plano pago e será automaticamente transferido para o plano gratuito, com funcionalidades limitadas.</p>
+                </div>
+            </div>
+
+            <!-- FAQ 5 -->
+            <div class="faq-item">
+                <button class="faq-question">
+                    Posso testar os planos pagos antes de contratar?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Sim! O FlowPilot oferece um <strong>período de teste gratuito de 7 dias</strong> nos planos profissionais e enterprise, para que você possa experimentar todas as funcionalidades sem compromisso.</p>
+                </div>
+            </div>
+
+            <!-- FAQ 6 -->
+            <div class="faq-item">
+                <button class="faq-question">
+                    O que está incluído no suporte premium do plano Enterprise?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>O suporte premium do plano <strong>Enterprise</strong> inclui atendimento dedicado 24/7, suporte por chat, integração personalizada, e consultoria especializada para otimizar o uso do FlowPilot na sua empresa.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>FlowPilot</h3>
+                    <p>Transformando a gestão de processos em uma experiência simples, visual e motivadora.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Produto</h3>
+                    <ul class="footer-links">
+                        <li><a href="#features">Funcionalidades</a></li>
+                        <li><a href="#pricing">Planos</a></li>
+                        <li><a href="#how-it-works">Como Funciona</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Empresa</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Sobre Nós</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Carreiras</a></li>
+                        <li><a href="#">Contato</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Suporte</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Central de Ajuda</a></li>
+                        <li><a href="#">Documentação</a></li>
+                        <li><a href="#">Status do Sistema</a></li>
+                        <li><a href="#">Fale Conosco</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2025 FlowPilot. Todos os direitos reservados.
+            </div>
+        </div>
+    </footer>
+    <script src="../scripts/pricing.js"></script>
+</body>
+</html>

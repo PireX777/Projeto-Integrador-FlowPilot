@@ -14,7 +14,7 @@
             --gradient: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
             --gradient-accent: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
         }
-        html {
+ html {
             scroll-behavior: smooth; /* Faz o scroll ser suave */
         }
         * {
@@ -134,14 +134,14 @@
 
         /* Hero Section */
         .hero {
-            padding: 100px 0;
-            
+            padding: 100px 0px;
             background: var(--gradient);
             color: white;
             text-align: center;
+            border-radius: 10px;
         }
 
-        .hero h1 {
+        .hero h2 {
             font-size: 3rem;
             margin-bottom: 20px;
             font-weight: 700;
@@ -150,7 +150,7 @@
         .hero p {
             font-size: 1.3rem;
             max-width: 800px;
-            margin: 0 auto 30px;
+            margin: 0 auto 10px;
             opacity: 0.9;
         }
 
@@ -169,7 +169,7 @@
 
         .section-title {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
         }
 
         .section-title h2 {
@@ -186,104 +186,84 @@
             font-size: 1.1rem;
         }
 
-        /* Features Grid */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .feature-card {
-            background-color: white;
-            border-radius: 15px;
-            padding: 40px 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s, box-shadow 0.3s;
-            text-align: center;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .feature-icon {
-            background: var(--gradient);
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
+        /* Billing Toggle */
+        .billing-toggle {
             display: flex;
-            align-items: center;
             justify-content: center;
-            margin: 0 auto 25px;
-            font-size: 32px;
-            color: white;
+            align-items: center;
+            margin-bottom: 30px;
+            margin-top: 25px;
+            gap: 15px;
         }
 
-        .feature-card h3 {
-            margin-bottom: 15px;
-            font-size: 1.5rem;
+        .toggle-label {
+            font-weight: 600;
             color: var(--dark);
         }
 
-        .feature-card p {
-            color: var(--gray);
-            line-height: 1.7;
-        }
-
-        /* Process Steps */
-        .process-steps {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            max-width: 1000px;
-            margin: 0 auto;
+        .toggle-switch {
             position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
         }
 
-        .process-steps::before {
-            content: '';
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
             position: absolute;
-            top: 40px;
-            left: 10%;
-            right: 10%;
-            height: 3px;
-            background: var(--gradient);
-            z-index: 1;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--light-gray);
+            transition: .4s;
+            border-radius: 34px;
         }
 
-        .step {
-            text-align: center;
-            position: relative;
-            z-index: 2;
-            flex: 1;
-            padding: 0 20px;
-        }
-
-        .step-number {
-            width: 80px;
-            height: 80px;
-            background: white;
-            border: 3px solid var(--primary);
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin: 0 auto 20px;
-            position: relative;
         }
 
-        .step h3 {
-            margin-bottom: 15px;
-            color: var(--dark);
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
         }
 
-        .step p {
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        .billing-option {
+            font-weight: 500;
             color: var(--gray);
-            line-height: 1.6;
+        }
+
+        .billing-option.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .discount-badge {
+            background-color: var(--accent);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 5px;
         }
 
         /* Pricing */
@@ -293,6 +273,7 @@
             gap: 30px;
             max-width: 1000px;
             margin: 0 auto;
+            margin-top: 45px;
         }
 
         .pricing-card {
@@ -303,26 +284,27 @@
             text-align: center;
             transition: transform 0.3s;
             border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
         }
 
         .pricing-card.featured {
             border-color: var(--primary);
             transform: scale(1.05);
-            position: relative;
         }
 
         .pricing-card.featured::before {
             content: 'Mais Popular';
             position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 15px;
+            right: -30px;
             background: var(--primary);
             color: white;
-            padding: 5px 20px;
-            border-radius: 20px;
+            padding: 5px 30px;
             font-size: 0.8rem;
             font-weight: 600;
+            transform: rotate(45deg);
+            width: 120px;
         }
 
         .pricing-card:hover {
@@ -335,6 +317,7 @@
 
         .pricing-header {
             margin-bottom: 30px;
+            position: relative;
         }
 
         .pricing-name {
@@ -349,11 +332,33 @@
             font-weight: 700;
             color: var(--primary);
             margin-bottom: 5px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .price-currency {
+            font-size: 1.5rem;
+            margin-right: 5px;
+            margin-top: 10px;
         }
 
         .pricing-period {
             color: var(--gray);
             font-size: 0.9rem;
+        }
+
+        .annual-saving {
+            color: var(--success);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .total-price {
+            margin-top: 10px;
+            font-size: 1rem;
+            color: var(--gray);
         }
 
         .pricing-features {
@@ -374,6 +379,76 @@
         .pricing-features li i {
             color: var(--success);
             margin-right: 10px;
+        }
+
+        .pricing-features li .fa-times {
+            color: var(--light-gray);
+        }
+
+        /* Plan Comparison Table - VERSÃO ANTIGA */
+        .comparison-section {
+            margin-top: 80px;
+        }
+
+        .comparison-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            overflow-x: auto;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        table tr td:first-child {
+             border-right: 1px solid var(--light-gray);
+        }
+
+        .comparison-table th {
+            background: var(--gradient);
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .comparison-table th:first-child {
+            background: var(--dark);
+            text-align: left;
+            
+        }
+
+        .comparison-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+            background: var(--light);
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .body-table  {
+            border: 1px solid var(--light-gray);
+        }
+
+        .fas.fa-check {
+        color: #02ff5e; /* verde (confere) */
+        }
+
+        .fas.fa-times {
+        color: #dc2626; /* vermelho (x) */
         }
 
         /* Testimonials */
@@ -427,7 +502,7 @@
 
         /* FAQ */
         .faq-container {
-            max-width: 800px;
+            max-width: 700px;
             margin: 0 auto;
         }
 
@@ -480,30 +555,6 @@
         .faq-question i {
             transition: transform 0.3s ease;
             color: var(--primary);
-        }
-
-        /* CTA Section */
-        .cta {
-            background: var(--gradient);
-            color: white;
-            text-align: center;
-            padding: 80px 0;
-            border-radius: 20px;
-            margin: 80px auto;
-            max-width: 1200px;
-        }
-
-        .cta h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-
-        .cta p {
-            max-width: 700px;
-            margin: 0 auto 30px;
-            font-size: 1.1rem;
-            opacity: 0.9;
         }
 
         /* Footer */
@@ -598,15 +649,6 @@
                 font-size: 1.1rem;
             }
             
-            .process-steps {
-                flex-direction: column;
-                gap: 40px;
-            }
-            
-            .process-steps::before {
-                display: none;
-            }
-            
             .pricing-card.featured {
                 transform: none;
             }
@@ -643,5 +685,14 @@
             
             .auth-buttons.active {
                 display: flex;
+            }
+            
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 12px 8px;
             }
         }

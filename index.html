@@ -3,30 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlowPilot - Gestão de Processos Simplificada</title>
+    <title>FlowPilot</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
     <!-- Header -->
     <header>
         <div class="container">
             <nav class="navbar">
-                <div class="logo">
+                <a href="index.html" class="logo">
                     <i class="fas fa-stream"></i>
                     FlowPilot
-                </div>
+                </a>
                 <ul class="nav-links">
-                    <li><a href="#home">Início</a></li>
+                    <li><a href="index.html">Início</a></li>
                     <li><a href="#features">Funcionalidades</a></li>
-                    <li><a href="#dashboard">Dashboard</a></li>
-                    <li><a href="#pricing">Preços</a></li>
-                    <li><a href="#contact">Contato</a></li>
+                    <li><a href="#how-it-works">Como Funciona</a></li>
+                    <li><a href="../pages/pricing.html#assinature-anchor">Planos</a></li>
+                    <li><a href="#faq">FAQ</a></li>
                 </ul>
                 <div class="auth-buttons">
-                    <button class="btn btn-outline" id="loginBtn">Entrar</button>
-                    <button class="btn btn-primary" id="signupBtn">Cadastre-se</button>
+                    <a href="pages/login.html" class="btn btn-outline">Entrar</a>
+                    <a href="../pages/pricing.html#assinature-anchor" class="btn btn-primary">Experimente Grátis</a>
                 </div>
                 <div class="mobile-menu">
                     <i class="fas fa-bars"></i>
@@ -36,23 +35,20 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="hero" id="home">
+    <section class="hero">
         <div class="container">
-            <h1>Gestão de Processos Simplificada</h1>
-            <p>FlowPilot oferece uma plataforma digital que permite criar fluxos de trabalho personalizados, acompanhar tarefas em tempo real e engajar colaboradores através de gamificação.</p>
-            <div class="hero-buttons">
-                <button class="btn btn-light" id="ctaPrimary">Começar Agora</button>
-                <button class="btn btn-outline btn-hero" id="ctaSecondary">Saiba Mais</button>
-            </div>
+            <h1>Conheça o FlowPilot</h1>
+            <p>Descubra como nossa plataforma pode transformar a gestão de processos da sua empresa através da automação, gamificação e análise de dados em tempo real.</p>
+            <a href="#features" class="btn btn-light">Explorar Funcionalidades</a>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section class="section" id="features">
+    <section id="features" class="section section-light">
         <div class="container">
             <div class="section-title">
-                <h2>Como a FlowPilot Transforma sua Gestão</h2>
-                <p>Nossa plataforma foi desenvolvida para atender pequenas e médias empresas que desejam organizar e digitalizar seus processos internos.</p>
+                <h2>Funcionalidades Principais</h2>
+                <p>Conheça as poderosas ferramentas que tornam o FlowPilot a solução ideal para otimização de processos.</p>
             </div>
             
             <div class="features-grid">
@@ -61,156 +57,189 @@
                         <i class="fas fa-project-diagram"></i>
                     </div>
                     <h3>Fluxos Personalizados</h3>
-                    <p>Crie fluxos de trabalho adaptados às necessidades específicas da sua empresa, com etapas claras e responsáveis definidos.</p>
+                    <p>Crie workflows adaptados ao seu negócio com arrastar e soltar. Defina etapas, responsáveis e prazos de forma intuitiva.</p>
                 </div>
                 
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-chart-line"></i>
                     </div>
-                    <h3>Acompanhamento em Tempo Real</h3>
-                    <p>Monitore o andamento de todas as tarefas e processos com atualizações instantâneas e visuais intuitivos.</p>
+                    <h3>Dashboard em Tempo Real</h3>
+                    <p>Monitore o andamento de todos os processos com métricas visuais e relatórios automáticos atualizados instantaneamente.</p>
                 </div>
                 
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-trophy"></i>
                     </div>
-                    <h3>Gamificação</h3>
-                    <p>Motive sua equipe com sistema de pontos, conquistas e rankings que transformam o trabalho em uma experiência engajadora.</p>
+                    <h3>Sistema de Gamificação</h3>
+                    <p>Engaje sua equipe com pontos, conquistas e rankings que transformam tarefas rotineiras em desafios motivadores.</p>
                 </div>
-
+                
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-file-alt"></i>
+                        <i class="fas fa-robot"></i>
                     </div>
-                    <h3>Relatórios Automáticos</h3>
-                    <p>Receba relatórios de desempenho automáticos que ajudam a identificar oportunidades de melhoria nos processos.</p>
+                    <h3>Automação Inteligente</h3>
+                    <p>Automatize tarefas repetitivas e notificações. Reduza erros manuais e aumente a produtividade da equipe.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Acesso Multiplataforma</h3>
+                    <p>Acesse o FlowPilot de qualquer dispositivo. Aplicativo nativo para mobile e interface web responsiva para desktop.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Segurança Corporativa</h3>
+                    <p>Dados protegidos com criptografia de ponta a ponta, backup automático e conformidade com LGPD.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Dashboard Preview -->
-    <section class="section" id="dashboard">
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="section section-gray">
         <div class="container">
             <div class="section-title">
-                <h2>Dashboard Interativo</h2>
-                <p>Experimente uma prévia do nosso painel de controle intuitivo e visual.</p>
+                <h2>Como o FlowPilot Funciona</h2>
+                <p>Em apenas 4 passos simples, você começa a otimizar os processos da sua empresa.</p>
             </div>
             
-            <div class="dashboard-preview">
-                <div class="dashboard-header">
-                    <h3>Dashboard - Visão Geral</h3>
-                    <div class="dashboard-tabs">
-                        <div class="tab active" data-tab="tasks">Minhas Tarefas</div>
-                        <div class="tab" data-tab="team">Equipe</div>
-                        <div class="tab" data-tab="reports">Relatórios</div>
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Cadastro e Configuração</h3>
+                    <p>Crie sua conta e configure seu espaço de trabalho. Convidar colaboradores leva apenas alguns minutos.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Mapeie seus Processos</h3>
+                    <p>Use nossa interface intuitiva para mapear fluxos de trabalho existentes ou criar novos do zero.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Engaje sua Equipe</h3>
+                    <p>Atribua tarefas, defina metas e acompanhe o progresso através do sistema de gamificação.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Analise e Otimize</h3>
+                    <p>Use os relatórios detalhados para identificar gargalos e oportunidades de melhoria contínua.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section section-gray">
+        <div class="container">
+            <div class="section-title">
+                <h2>O que Nossos Clientes Dizem</h2>
+                <p>Empresas que já transformaram sua gestão com o FlowPilot</p>
+            </div>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"O FlowPilot revolucionou nossa operação. Reduzimos o tempo de processos em 40% e a equipe está muito mais engajada com o sistema de gamificação."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RC</div>
+                        <div class="author-info">
+                            <h4>Ricardo Costa</h4>
+                            <p>Diretor de Operações, TechSolutions</p>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="dashboard-content">
-                    <div class="tasks-list tab-content active" id="tasks-tab">
-                        <h3>Tarefas do Dia</h3>
-                        <div class="task-item">
-                            <div class="task-checkbox">
-                                <input type="checkbox">
-                            </div>
-                            <div class="task-info">
-                                <div class="task-title">Revisar relatório mensal</div>
-                                <div class="task-desc">Analisar dados de desempenho do último mês</div>
-                            </div>
-                            <div class="task-priority priority-high">Alta</div>
-                        </div>
-                        
-                        <div class="task-item">
-                            <div class="task-checkbox">
-                                <input type="checkbox">
-                            </div>
-                            <div class="task-info">
-                                <div class="task-title">Preparar apresentação para reunião</div>
-                                <div class="task-desc">Slides para reunião com a diretoria</div>
-                            </div>
-                            <div class="task-priority priority-medium">Média</div>
-                        </div>
-                        
-                        <div class="task-item">
-                            <div class="task-checkbox">
-                                <input type="checkbox">
-                            </div>
-                            <div class="task-info">
-                                <div class="task-title">Atualizar documentação de processos</div>
-                                <div class="task-desc">Revisar e atualizar fluxogramas</div>
-                            </div>
-                            <div class="task-priority priority-low">Baixa</div>
-                        </div>
-
-                        <div class="task-item">
-                            <div class="task-checkbox">
-                                <input type="checkbox">
-                            </div>
-                            <div class="task-info">
-                                <div class="task-title">Reunião com equipe de desenvolvimento</div>
-                                <div class="task-desc">Discutir novas funcionalidades</div>
-                            </div>
-                            <div class="task-priority priority-medium">Média</div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"A implementação foi super simples e em uma semana já estávamos colhendo resultados. O suporte é excelente e a plataforma é muito intuitiva."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AS</div>
+                        <div class="author-info">
+                            <h4>Amanda Silva</h4>
+                            <p>Gerente de Projetos, InovaCorp</p>
                         </div>
                     </div>
-                    
-                    <div class="gamification-panel">
-                        <div class="user-stats">
-                            <div class="user-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div>
-                                <div>Seus pontos</div>
-                                <div class="user-points">1,250</div>
-                            </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Finalmente encontramos uma solução que atende tanto às necessidades da gestão quanto motiva a equipe. Os relatórios nos ajudaram a identificar vários pontos de melhoria."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">LS</div>
+                        <div class="author-info">
+                            <h4>Leonardo Santos</h4>
+                            <p>CEO, StartupGrowth</p>
                         </div>
-                        
-                        <div class="achievements">
-                            <h3>Conquistas</h3>
-                            <div class="badges">
-                                <div class="badge" data-tooltip="Primeira Tarefa">
-                                    <i class="fas fa-medal"></i>
-                                </div>
-                                <div class="badge" data-tooltip="Produtividade">
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <div class="badge" data-tooltip="Velocidade">
-                                    <i class="fas fa-bolt"></i>
-                                </div>
-                                <div class="badge" data-tooltip="Inovação">
-                                    <i class="fas fa-rocket"></i>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="ranking">
-                            <h3>Ranking da Equipe</h3>
-                            <ul class="ranking-list">
-                                <li class="ranking-item">
-                                    <div class="rank">1</div>
-                                    <div class="ranking-name">Maria Silva</div>
-                                    <div class="ranking-points">2,450</div>
-                                </li>
-                                <li class="ranking-item">
-                                    <div class="rank">2</div>
-                                    <div class="ranking-name">João Santos</div>
-                                    <div class="ranking-points">1,980</div>
-                                </li>
-                                <li class="ranking-item">
-                                    <div class="rank">3</div>
-                                    <div class="ranking-name">Você</div>
-                                    <div class="ranking-points">1,250</div>
-                                </li>
-                                <li class="ranking-item">
-                                    <div class="rank">4</div>
-                                    <div class="ranking-name">Ana Costa</div>
-                                    <div class="ranking-points">1,100</div>
-                                </li>
-                            </ul>
-                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="section section-light">
+        <div class="container">
+            <div class="section-title">
+                <h2>Perguntas Frequentes</h2>
+                <p>Tire suas dúvidas sobre o FlowPilot</p>
+            </div>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Quanto tempo leva para implementar o FlowPilot?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>A implementação básica leva menos de 1 hora. Você pode começar a usar a plataforma imediatamente após o cadastro. Para configurações mais complexas e treinamento da equipe, recomendamos dedicar 2-3 dias.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        O FlowPilot funciona para qualquer tipo de empresa?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Sim! O FlowPilot foi desenvolvido para atender empresas de todos os tamanhos e segmentos. Desde startups até grandes corporações, nossa plataforma se adapta aos diferentes tipos de processos e fluxos de trabalho.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        É possível testar gratuitamente?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Sim! Oferecemos 30 dias gratuitos do plano Professional para você testar todas as funcionalidades. Não é necessário cartão de crédito e você pode cancelar a qualquer momento durante o período de teste.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Como funciona o sistema de gamificação?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>O sistema atribui pontos por tarefas concluídas, prazos cumpridos e metas alcançadas. Os colaboradores podem desbloquear conquistas, subir no ranking da equipe e competir de forma saudável, aumentando o engajamento e a produtividade.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Meus dados estão seguros na plataforma?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Absolutamente! Utilizamos criptografia de ponta a ponta, backups automáticos em múltiplas localizações e estamos em conformidade total com a LGPD. Sua segurança e privacidade são nossa prioridade máxima.</p>
                     </div>
                 </div>
             </div>
@@ -218,16 +247,16 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="cta" id="cta">
-        <div class="container">
-            <h2>Experimente a FlowPilot Gratuitamente</h2>
-            <p>Junte-se a centenas de pequenas e médias empresas que já transformaram sua gestão de processos com nossa plataforma.</p>
-            <button class="btn btn-light" id="finalCta">Começar Agora - Grátis por 30 dias</button>
+    <section class="container">
+        <div class="cta">
+            <h2>Pronto para Transformar sua Gestão?</h2>
+            <p>Junte-se a mais de 500 empresas que já otimizaram seus processos com o FlowPilot</p>
+            <a href="../pages/pricing.html#assinature-anchor" class="btn btn-light">Começar Agora - Grátis por 7 dias</a>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer id="contact">
+    <footer>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-column">
@@ -245,8 +274,8 @@
                     <h3>Produto</h3>
                     <ul class="footer-links">
                         <li><a href="#features">Funcionalidades</a></li>
-                        <li><a href="#pricing">Preços</a></li>
-                        <li><a href="#dashboard">Dashboard</a></li>
+                        <li><a href="#pricing">Planos</a></li>
+                        <li><a href="#how-it-works">Como Funciona</a></li>
                         <li><a href="#">API</a></li>
                     </ul>
                 </div>
@@ -277,6 +306,7 @@
             </div>
         </div>
     </footer>
-    <script src="scripts/index.js"></script>
+        
+    <script src="scripts/main.js"></script>
 </body>
 </html>
