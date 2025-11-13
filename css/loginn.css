@@ -11,7 +11,7 @@
             --warning: #ffcc00;
             --danger: #dc3545;
             --gray: #6c757d;
-            --light-gray: #e9ecef;
+            --light-gray: #dddddd;
             --gradient: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
             --gradient-accent: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
         }
@@ -106,11 +106,25 @@
             background-color: transparent;
             border: 2px solid var(--primary);
             color: var(--primary);
+            width: 12rem;
+            width: 135px; 
+            height: 3rem;
+            display: flex;
+            align-content: center; 
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn-primary {
             background-color: var(--primary);
             color: white;
+            width: 12rem;
+            width: 135px; 
+            height: 3rem;
+            display: flex;
+            align-content: center; 
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn:hover {

@@ -109,11 +109,26 @@
             background-color: transparent;
             border: 2px solid var(--primary);
             color: var(--primary);
+            width: 12rem;
+            width: 135px; 
+            height: 3rem;
+            display: flex;
+            align-content: center; 
+            justify-content: center;
+            flex-wrap: wrap;
+            
         }
 
         .btn-primary {
             background-color: var(--primary);
             color: white;
+            width: 12rem;
+            width: 135px; 
+            height: 3rem;
+            display: flex;
+            align-content: center; 
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn:hover {
