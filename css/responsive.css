@@ -17,6 +17,7 @@
     .navbar {
         flex-direction: column;
         gap: 15px;
+        
     }
     
     .nav-links {
@@ -91,6 +92,7 @@
     
     .nav-links.active {
         display: flex;
+        
     }
     
     .nav-links li {

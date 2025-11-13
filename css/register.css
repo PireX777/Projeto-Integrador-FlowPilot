@@ -244,6 +244,8 @@
             background: white;
             transition: all 0.3s ease;
             color: var(--dark);
+            padding-right: 40px;
+
         }
 
         .form-input:focus {
@@ -314,7 +316,7 @@
             border: solid white;
             border-width: 0 2px 2px 0;
             transform: rotate(45deg);
-            margin-top: -1px;
+            margin-top: -2px;
         }
 
         .terms-label {
