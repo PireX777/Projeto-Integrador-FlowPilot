@@ -84,10 +84,13 @@
                 }
             });
 
-            // Signup link
+            // Register link
             signupLink.addEventListener('click', function(e) {
                 e.preventDefault();
-                window.location.href = 'register.html';
+                showNotification('Redirecionando para Cadastro...', 'info');
+                setTimeout(() => {
+                    window.location.href = 'register.html';
+                }, 1000);
             });
 
             // Social login buttons

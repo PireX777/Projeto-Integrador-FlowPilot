@@ -67,10 +67,13 @@
                 }
             });
 
-            // Login link
+            // register link
             loginLink.addEventListener('click', function(e) {
                 e.preventDefault();
-                window.location.href = 'login.html';
+                showNotification('Redirecionando para Login...', 'info');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
             });
 
             // Social signup buttons
@@ -230,8 +233,7 @@
                 `;
                 
                 document.body.appendChild(notification);
-                
-                // Auto remove after 3 seconds
+            
                 setTimeout(() => {
                     if (notification.parentNode) {
                         notification.parentNode.removeChild(notification);
@@ -255,6 +257,14 @@
             `;
             document.head.appendChild(style);
         });
+
+
+        
+            loginLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showNotification('Redirecionando para cadastro...', 'info');
+            });
+
     // Smooth Scrolling for Navigation Links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
