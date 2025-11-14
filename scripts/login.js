@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (passwordInput) showFieldError(passwordInput, 'Por favor, insira sua senha.');
             isValid = false;
         } else if (password.length < passwordMinLen) {
-            if (passwordInput) showFieldError(passwordInput, `A senha deve ter pelo menos ${passwordMinLen} caracteres.`);
+            if (passwordInput) showFieldError(passwordInput, `A senha deve ter no mínimo ${passwordMinLen} caracteres.`);
             isValid = false;
         }
 
