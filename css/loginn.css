@@ -1,5 +1,4 @@
-
-        :root {
+:root {
             --primary: #4361ee;
             --primary-dark: #3a0ca3;
             --primary-light: #4cc9f0;
@@ -309,7 +308,7 @@
             border: solid white;
             border-width: 0 2px 2px 0;
             transform: rotate(45deg);
-            margin-top: -1px;
+            margin-top: -2px;
         }
 
         .checkbox-label {
@@ -537,10 +536,7 @@
             border-color: var(--danger);
         }
 
-        .error .input-icon {
-            color: var(--danger);
-        }
-
+        /* Não colorir o ícone ao mostrar erro; apenas a mensagem */
         .error-message {
             color: var(--danger);
             font-size: 0.8rem;
@@ -722,4 +718,3 @@
                 font-size: 16px;
             }
         }
-    
