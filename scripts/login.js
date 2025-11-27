@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         setTimeout(() => {
             if (loginButton) loginButton.classList.remove('loading');
-            showNotification('Login realizado com sucesso!', 'success');
+            showNotification('Login efetuado. Redirecionando para o painel.', 'success');
 
             // Store remember me preference
             if (rememberCheckbox && rememberCheckbox.classList.contains('checked')) {
@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Redirect to dashboard
             setTimeout(() => {
-                window.location.href = 'index.html';
+                window.location.href = 'dashboard.html';
             }, 1000);
         }, 2000);
     }

@@ -207,12 +207,12 @@
                 
                 setTimeout(() => {
                     signupButton.classList.remove('loading');
-                    showNotification('Conta criada com sucesso! Redirecionando...', 'success');
+                    showNotification('Cadastro efetuado redirecionando para o sistema...', 'success');
                     
                     // Redirect to dashboard
                     setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1000);
+                        window.location.href = 'dashboard.html';
+                    }, 1200);
                 }, 2000);
             }
 
