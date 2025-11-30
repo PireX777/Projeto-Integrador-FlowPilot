@@ -1160,7 +1160,8 @@
                 ctx.clearRect(0, 0, actualWidth, actualHeight);
                 
                 // Ajustar para dar espaço para legenda à direita
-                const legendWidth = 130;
+                const isMobilePie = actualWidth < 600;
+                const legendWidth = isMobilePie ? 100 : 130;
                 const chartArea = actualWidth - legendWidth - 20; // 20px de margem
                 const centerX = chartArea / 2 + 10; // 10px margem esquerda
                 const centerY = actualHeight / 2;
@@ -1184,25 +1185,26 @@
                 });
                 
                 // Desenhar legenda ao lado direito
-                const legendX = chartArea + 30;
-                const legendStartY = (actualHeight - (data.length * 30)) / 2;
+                const legendX = chartArea + (isMobilePie ? 20 : 30);
+                const legendItemHeight = isMobilePie ? 25 : 30;
+                const legendStartY = (actualHeight - (data.length * legendItemHeight)) / 2;
                 
                 const isDarkTheme = document.body.classList.contains('dark-theme');
                 
                 data.forEach((item, index) => {
-                    const legendY = legendStartY + (index * 30);
+                    const legendY = legendStartY + (index * legendItemHeight);
                     
                     ctx.fillStyle = colors[index % colors.length];
-                    ctx.fillRect(legendX, legendY, 16, 16);
+                    ctx.fillRect(legendX, legendY, isMobilePie ? 12 : 16, isMobilePie ? 12 : 16);
                     
                     ctx.fillStyle = isDarkTheme ? '#ffffff' : '#333';
-                    ctx.font = 'bold 12px Arial';
+                    ctx.font = isMobilePie ? 'bold 10px Arial' : 'bold 12px Arial';
                     ctx.textAlign = 'left';
-                    ctx.fillText(item.name, legendX + 22, legendY + 12);
+                    ctx.fillText(item.name, legendX + (isMobilePie ? 18 : 22), legendY + (isMobilePie ? 10 : 12));
                     
                     ctx.fillStyle = isDarkTheme ? '#a0a0a0' : '#666';
-                    ctx.font = '11px Arial';
-                    ctx.fillText(`${item.value}%`, legendX + 22, legendY + 24);
+                    ctx.font = isMobilePie ? '10px Arial' : '11px Arial';
+                    ctx.fillText(`${item.value}%`, legendX + (isMobilePie ? 18 : 22), legendY + (isMobilePie ? 22 : 24));
                 });
                 
             }, [data, width, height]);
@@ -1240,7 +1242,10 @@
                 ctx.clearRect(0, 0, actualWidth, actualHeight);
                 
                 // Configurações com mais espaço
-                const padding = { top: 35, right: 25, bottom: 35, left: 35 };
+                const isMobile = actualWidth < 600;
+                const padding = isMobile 
+                    ? { top: 25, right: 15, bottom: 30, left: 30 }
+                    : { top: 35, right: 25, bottom: 35, left: 35 };
                 const chartWidth = actualWidth - padding.left - padding.right;
                 const chartHeight = actualHeight - padding.top - padding.bottom;
                 
@@ -1278,7 +1283,7 @@
                     
                     // Desenhar labels
                     ctx.fillStyle = isDarkBar ? '#a0a0a0' : '#666';
-                    ctx.font = '11px Arial';
+                    ctx.font = isMobile ? '10px Arial' : '11px Arial';
                     ctx.textAlign = 'center';
                     
                     // Nome
@@ -1290,7 +1295,7 @@
                     
                     // Valor
                     ctx.fillStyle = isDarkBar ? '#ffffff' : '#333';
-                    ctx.font = 'bold 12px Arial';
+                    ctx.font = isMobile ? 'bold 11px Arial' : 'bold 12px Arial';
                     ctx.fillText(item.tasks, x + barWidth / 2, y - 8);
                 });
                 
@@ -4024,36 +4029,51 @@
             // Swipe para abrir menu
             useEffect(() => {
                 let touchStartX = 0;
+                let touchStartY = 0;
                 let touchEndX = 0;
+                let touchEndY = 0;
                 
                 const handleTouchStart = (e) => {
-                    touchStartX = e.changedTouches[0].screenX;
+                    touchStartX = e.changedTouches[0].clientX;
+                    touchStartY = e.changedTouches[0].clientY;
+                };
+                
+                const handleTouchMove = (e) => {
+                    touchEndX = e.changedTouches[0].clientX;
+                    touchEndY = e.changedTouches[0].clientY;
                 };
                 
                 const handleTouchEnd = (e) => {
-                    touchEndX = e.changedTouches[0].screenX;
+                    touchEndX = e.changedTouches[0].clientX;
+                    touchEndY = e.changedTouches[0].clientY;
                     handleSwipe();
                 };
                 
                 const handleSwipe = () => {
-                    const swipeDistance = touchEndX - touchStartX;
+                    const swipeDistanceX = touchEndX - touchStartX;
+                    const swipeDistanceY = Math.abs(touchEndY - touchStartY);
                     
-                    // Swipe da esquerda para direita (abrir menu)
-                    if (swipeDistance > 50 && touchStartX < 50) {
-                        setMobileMenuOpen(true);
-                    }
-                    
-                    // Swipe da direita para esquerda (fechar menu)
-                    if (swipeDistance < -50 && mobileMenuOpen) {
-                        setMobileMenuOpen(false);
+                    // Verificar se é um swipe horizontal (não vertical)
+                    if (swipeDistanceY < 100) {
+                        // Swipe da esquerda para direita para abrir menu
+                        if (swipeDistanceX > 80 && touchStartX < 80 && !mobileMenuOpen) {
+                            setMobileMenuOpen(true);
+                        }
+                        
+                        // Swipe da direita para esquerda para fechar menu
+                        if (swipeDistanceX < -80 && mobileMenuOpen) {
+                            setMobileMenuOpen(false);
+                        }
                     }
                 };
                 
-                document.addEventListener('touchstart', handleTouchStart);
-                document.addEventListener('touchend', handleTouchEnd);
+                document.addEventListener('touchstart', handleTouchStart, { passive: true });
+                document.addEventListener('touchmove', handleTouchMove, { passive: true });
+                document.addEventListener('touchend', handleTouchEnd, { passive: true });
                 
                 return () => {
                     document.removeEventListener('touchstart', handleTouchStart);
+                    document.removeEventListener('touchmove', handleTouchMove);
                     document.removeEventListener('touchend', handleTouchEnd);
                 };
             }, [mobileMenuOpen]);
