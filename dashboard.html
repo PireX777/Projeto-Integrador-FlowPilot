@@ -1046,6 +1046,11 @@
         gap: 20px;
     }
     
+    .profile-grid {
+        grid-template-columns: 250px 1fr;
+        gap: 30px;
+    }
+    
     @supports not (display: grid) {
         .profile-grid,
         .settings-grid,
@@ -1059,6 +1064,41 @@
         .team-grid > * {
             flex: 1 1 300px;
             margin: 10px;
+        }
+    }
+    
+    /* Responsividade do perfil */
+    @media (max-width: 768px) {
+        .profile-grid {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+        }
+        
+        .profile-avatar {
+            width: 100px !important;
+            height: 100px !important;
+        }
+        
+        .profile-name {
+            font-size: 18px !important;
+        }
+        
+        .profile-role {
+            font-size: 13px !important;
+        }
+        
+        .profile-card,
+        .profile-stats-card,
+        .profile-info-card {
+            padding: 15px !important;
+        }
+        
+        .profile-header {
+            margin-bottom: 15px !important;
+        }
+        
+        .profile-header h3 {
+            font-size: 16px !important;
         }
     }
 
@@ -1615,6 +1655,12 @@
         .profile-header {
             flex-direction: column;
             text-align: center;
+            align-items: stretch !important;
+        }
+        
+        .profile-header button {
+            width: 100%;
+            margin-top: 10px;
         }
         
         .avatar-large {
@@ -5485,19 +5531,17 @@
                 React.createElement('div', { 
                     className: 'profile-grid',
                     style: { 
-                        display: 'grid', 
-                        gridTemplateColumns: window.innerWidth > 768 ? '250px 1fr' : '1fr', 
-                        gap: window.innerWidth > 768 ? '30px' : '20px',
-                        marginTop: window.innerWidth > 768 ? '30px' : '20px'
+                        marginTop: '30px'
                     } 
                 },
                     // Coluna da esquerda - Avatar
-                    React.createElement('div', null,
+                    React.createElement('div', { className: 'profile-sidebar' },
                         React.createElement('div', {
+                            className: 'profile-card',
                             style: {
                                 background: 'var(--bg-secondary)',
                                 borderRadius: '10px',
-                                padding: window.innerWidth > 768 ? '20px' : '15px',
+                                padding: '20px',
                                 textAlign: 'center',
                                 boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                                 marginBottom: '20px'
@@ -5506,83 +5550,46 @@
                             React.createElement('img', {
                                 src: perfil.avatar,
                                 alt: 'Avatar',
+                                className: 'profile-avatar',
                                 style: {
-                                    width: window.innerWidth > 768 ? '120px' : '100px',
-                                    height: window.innerWidth > 768 ? '120px' : '100px',
+                                    width: '120px',
+                                    height: '120px',
                                     borderRadius: '50%',
                                     marginBottom: '15px',
                                     border: '4px solid #4361ee'
                                 }
                             }),
                             React.createElement('h3', { 
+                                className: 'profile-name',
                                 style: { 
                                     marginBottom: '5px', 
-                                    fontSize: window.innerWidth > 768 ? '20px' : '18px', 
+                                    fontSize: '20px', 
                                     color: 'var(--text-primary)' 
                                 } 
                             }, perfil.nome),
                             React.createElement('p', { 
+                                className: 'profile-role',
                                 style: { 
                                     color: 'var(--text-secondary)', 
-                                    fontSize: window.innerWidth > 768 ? '14px' : '13px'
+                                    fontSize: '14px'
                                 } 
-                            }, perfil.cargo),
-                            
-                            // Botão de Sair
-                            React.createElement('button', {
-                                onClick: () => {
-                                    if (window.confirm('Você tem certeza que deseja sair?')) {
-                                        const existingNotification = document.querySelector('.notification');
-                                        if (existingNotification) {
-                                            existingNotification.remove();
-                                        }
-
-                                        const notification = document.createElement('div');
-                                        notification.className = 'notification notification-error';
-                                        notification.textContent = 'Sessão encerrada. Retornando à página inicial.';
-
-                                        document.body.appendChild(notification);
-
-                                        setTimeout(() => {
-                                            window.location.href = 'index.html';
-                                        }, 2000);
-                                        setTimeout(() => {
-                                            if (notification.parentNode) {
-                                                notification.parentNode.removeChild(notification);
-                                            }
-                                        }, 3000);
-                                    }
-                                },
-                                style: {
-                                    width: '100%',
-                                    marginTop: '20px',
-                                    padding: '12px',
-                                    background: '#dc3545',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    fontSize: '14px',
-                                    transition: 'background 0.3s'
-                                },
-                                onMouseOver: (e) => e.target.style.background = '#c82333',
-                                onMouseOut: (e) => e.target.style.background = '#dc3545'
-                            }, 'Sair da Conta')
+                            }, perfil.cargo)
                         ),
 
                         // Card de Estatísticas
                         React.createElement('div', {
+                            className: 'profile-stats-card',
                             style: {
                                 background: 'var(--bg-secondary)',
                                 borderRadius: '10px',
-                                padding: window.innerWidth > 768 ? '20px' : '15px',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                                padding: '20px',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                marginBottom: '20px'
                             }
                         },
                             React.createElement('h3', { 
                                 style: { 
-                                    fontSize: window.innerWidth > 768 ? '18px' : '16px', 
+                                    fontSize: '18px', 
                                     fontWeight: '600', 
                                     marginBottom: '20px',
                                     color: 'var(--text-primary)',
@@ -5614,24 +5621,28 @@
 
                     // Coluna da direita - Informações
                     React.createElement('div', {
+                        className: 'profile-info-card',
                         style: {
                             background: 'var(--bg-secondary)',
                             borderRadius: '10px',
-                            padding: window.innerWidth > 768 ? '30px' : '15px',
+                            padding: '30px',
                             boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
                         }
                     },
                         React.createElement('div', { 
+                            className: 'profile-header',
                             style: { 
                                 display: 'flex', 
                                 justifyContent: 'space-between', 
                                 alignItems: 'center',
-                                marginBottom: window.innerWidth > 768 ? '25px' : '15px'
+                                marginBottom: '25px',
+                                flexWrap: 'wrap',
+                                gap: '10px'
                             } 
                         },
                             React.createElement('h3', { 
                                 style: { 
-                                    fontSize: window.innerWidth > 768 ? '18px' : '16px', 
+                                    fontSize: '18px', 
                                     fontWeight: '600', 
                                     margin: 0,
                                     color: 'var(--text-primary)' 
@@ -5838,7 +5849,49 @@
                                 onMouseOver: (e) => e.target.style.background = '#5a6268',
                                 onMouseOut: (e) => e.target.style.background = '#6c757d'
                             }, '✕ Cancelar')
-                        )
+                        ),
+
+                        // Botão de Sair da Conta
+                        !modoEdicao && React.createElement('button', {
+                            onClick: () => {
+                                if (window.confirm('Você tem certeza que deseja sair?')) {
+                                    const existingNotification = document.querySelector('.notification');
+                                    if (existingNotification) {
+                                        existingNotification.remove();
+                                    }
+
+                                    const notification = document.createElement('div');
+                                    notification.className = 'notification notification-error';
+                                    notification.textContent = 'Sessão encerrada. Retornando à página inicial.';
+
+                                    document.body.appendChild(notification);
+
+                                    setTimeout(() => {
+                                        window.location.href = 'index.html';
+                                    }, 2000);
+                                    setTimeout(() => {
+                                        if (notification.parentNode) {
+                                            notification.parentNode.removeChild(notification);
+                                        }
+                                    }, 3000);
+                                }
+                            },
+                            style: {
+                                width: '100%',
+                                marginTop: '20px',
+                                padding: '12px',
+                                background: '#dc3545',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontWeight: '600',
+                                fontSize: '14px',
+                                transition: 'background 0.3s'
+                            },
+                            onMouseOver: (e) => e.target.style.background = '#c82333',
+                            onMouseOut: (e) => e.target.style.background = '#dc3545'
+                        }, 'Sair da Conta')
                     )
                 )
             );
@@ -6801,42 +6854,6 @@
                         },
                             React.createElement('a', { href: '#', onClick: (e) => e.preventDefault() },
                                 React.createElement('span', { className: 'link-text' }, pageTitles['configuracoes'])
-                            )
-                        ),
-                        React.createElement('li', {
-                            key: 'logout',
-                            onClick: (e) => {
-                                e.preventDefault();
-                                if (window.confirm('Você tem certeza que deseja sair?')) {
-                                    const existingNotification = document.querySelector('.notification');
-                                    if (existingNotification) {
-                                        existingNotification.remove();
-                                    }
-
-                                    const notification = document.createElement('div');
-                                    notification.className = 'notification notification-error';
-                                    notification.textContent = 'Sessão encerrada. Retornando à página inicial.';
-
-                                    document.body.appendChild(notification);
-
-                                    setTimeout(() => {
-                                        window.location.href = 'index.html';
-                                    }, 2000);
-                                    setTimeout(() => {
-                                        if (notification.parentNode) {
-                                            notification.parentNode.removeChild(notification);
-                                        }
-                                    }, 3000);
-                                }
-                            },
-                            style: {
-                                marginTop: 'auto',
-                                borderTop: '1px solid rgba(255,255,255,0.1)',
-                                paddingTop: '15px'
-                            }
-                        },
-                            React.createElement('a', { href: 'index.html', onClick: (e) => e.preventDefault() },
-                                React.createElement('span', { className: 'link-text' }, 'Sair')
                             )
                         )
                     )
