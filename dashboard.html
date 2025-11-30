@@ -390,6 +390,22 @@
     .header h2 {
         font-size: 24px;
         font-weight: 600;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    @media (max-width: 1024px) {
+        .header h2 {
+            font-size: 22px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .header h2 {
+            font-size: 20px;
+        }
     }
     
     .user-info {
@@ -411,6 +427,19 @@
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: 20px;
         margin-bottom: 30px;
+    }
+    
+    @media (max-width: 1024px) {
+        .stats-container {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    @media (max-width: 900px) {
+        .stats-container {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
     }
     
     @supports not (display: grid) {
@@ -444,6 +473,23 @@
         -webkit-transform: translateY(-5px);
         -moz-transform: translateY(-5px);
         -ms-transform: translateY(-5px);
+    }
+    
+    @media (max-width: 1024px) {
+        .stat-card {
+            padding: 25px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .stat-card {
+            padding: 20px;
+        }
+        
+        .stat-card:active {
+            transform: scale(0.98);
+            -webkit-transform: scale(0.98);
+        }
     }
     
     .stat-header {
@@ -513,11 +559,30 @@
         margin-bottom: 30px;
     }
     
+    @media (max-width: 1024px) {
+        .charts-container {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+    }
+    
     .chart-card {
         background-color: var(--bg-secondary);
         border-radius: 10px;
         padding: 20px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    @media (max-width: 1024px) {
+        .chart-card {
+            padding: 18px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .chart-card {
+            padding: 15px;
+        }
     }
     
     .chart-header {
@@ -529,15 +594,58 @@
         gap: 10px;
     }
     
+    @media (max-width: 768px) {
+        .chart-header {
+            margin-bottom: 15px;
+            gap: 12px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .chart-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .chart-actions {
+            width: 100%;
+        }
+        
+        .chart-actions select {
+            width: 100%;
+        }
+    }
+    
     .chart-title {
         font-size: 18px;
         font-weight: 600;
+    }
+    
+    @media (max-width: 1024px) {
+        .chart-title {
+            font-size: 17px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .chart-title {
+            font-size: 16px;
+        }
     }
     
     .chart-actions select {
         padding: 5px 10px;
         border-radius: 5px;
         border: 1px solid #ddd;
+    }
+    
+    @media (max-width: 768px) {
+        .chart-actions select {
+            padding: 8px 12px;
+            font-size: 14px;
+            min-height: 44px;
+        }
     }
     
     .chart-wrapper {
@@ -551,6 +659,13 @@
         justify-content: center;
     }
     
+    @media (max-width: 1024px) {
+        .chart-wrapper {
+            height: 300px;
+            padding: 10px;
+        }
+    }
+    
     /* Recent Activity */
     .activity-card {
         background-color: var(--bg-secondary);
@@ -559,12 +674,31 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
     
+    @media (max-width: 1024px) {
+        .activity-card {
+            padding: 15px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .activity-card {
+            padding: 12px;
+        }
+    }
+    
     .activity-list {
         list-style: none;
         max-height: 400px;
         overflow-y: auto;
         overflow-x: hidden;
         padding-right: 10px;
+    }
+    
+    @media (max-width: 768px) {
+        .activity-list {
+            max-height: 350px;
+            padding-right: 5px;
+        }
     }
     
     .activity-list::-webkit-scrollbar {
@@ -591,6 +725,13 @@
         border-bottom: 1px solid #eee;
     }
     
+    @media (max-width: 768px) {
+        .activity-item {
+            padding: 12px 0;
+            flex-wrap: wrap;
+        }
+    }
+    
     .activity-item:last-child {
         border-bottom: none;
     }
@@ -606,6 +747,24 @@
         color: white;
         font-weight: bold;
         flex-shrink: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            margin-right: 12px;
+            font-size: 14px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            margin-right: 10px;
+            font-size: 12px;
+        }
     }
     
     .activity-icon.completed {
@@ -633,6 +792,17 @@
         white-space: nowrap;
     }
     
+    @media (max-width: 768px) {
+        .activity-title {
+            font-size: 14px;
+            white-space: normal;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            display: -webkit-box;
+        }
+    }
+    
     .activity-info {
         display: flex;
         justify-content: space-between;
@@ -640,6 +810,20 @@
         font-size: 14px;
         flex-wrap: wrap;
         gap: 5px;
+    }
+    
+    @media (max-width: 768px) {
+        .activity-info {
+            font-size: 13px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .activity-info {
+            font-size: 12px;
+            flex-direction: column;
+            gap: 3px;
+        }
     }
     
     /* Gamification Section */
@@ -655,6 +839,12 @@
         margin-top: 20px;
     }
     
+    @media (max-width: 1024px) {
+        .gamification-card {
+            padding: 18px;
+        }
+    }
+    
     .gamification-header {
         display: flex;
         justify-content: space-between;
@@ -667,6 +857,18 @@
     .gamification-title {
         font-size: 18px;
         font-weight: 600;
+    }
+    
+    @media (max-width: 1024px) {
+        .gamification-title {
+            font-size: 17px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .gamification-title {
+            font-size: 16px;
+        }
     }
     
     .gamification-stats {
@@ -987,6 +1189,23 @@
         animation: pulse 2s infinite;
     }
     
+    @media (max-width: 768px) {
+        .real-time-badge {
+            font-size: 10px;
+            padding: 3px 6px;
+            margin-left: 5px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .real-time-badge {
+            font-size: 9px;
+            padding: 2px 5px;
+            margin-left: 0;
+            margin-top: 5px;
+        }
+    }
+    
     @keyframes pulse {
         0% { opacity: 1; }
         50% { opacity: 0.7; }
@@ -1084,6 +1303,37 @@
             margin-left: var(--sidebar-collapsed);
         }
     }
+    
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .stats-container {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+        
+        .stat-card {
+            padding: 22px;
+        }
+        
+        .stat-value {
+            font-size: 26px;
+        }
+        
+        .chart-card {
+            padding: 18px;
+        }
+        
+        .chart-wrapper {
+            height: 320px;
+        }
+        
+        .activity-card {
+            padding: 18px;
+        }
+        
+        .gamification-card {
+            padding: 18px;
+        }
+    }
 
     @media (max-width: 768px) {
         .sidebar {
@@ -1126,6 +1376,10 @@
             width: 100%;
             touch-action: pan-y;
             -webkit-overflow-scrolling: touch;
+        }
+        
+        .main-content > div {
+            margin-bottom: 15px;
         }
         
         .stats-container,
@@ -1206,6 +1460,7 @@
             padding: 0 8px;
             width: 100%;
             max-width: 100%;
+            margin-bottom: 20px;
         }
         
         .chart-card {
@@ -1240,8 +1495,8 @@
             text-align: left;
             gap: 8px;
             width: 100%;
-            margin-bottom: 15px;
-            padding: 15px 8px 0 25px;
+            margin-bottom: 20px;
+            padding: 15px 15px 0;
         }
         
         .header h2 {
@@ -1283,6 +1538,12 @@
         .gamification-card .data-table td {
             padding: 6px 3px;
             font-size: 10px;
+        }
+        
+        .gamification-card table {
+            overflow-x: auto;
+            display: block;
+            -webkit-overflow-scrolling: touch;
         }
         
         .gamification-title {
@@ -1933,8 +2194,24 @@
                 // Limpar canvas
                 ctx.clearRect(0, 0, actualWidth, actualHeight);
                 
-                // Configurações com mais espaço para labels e legenda
-                const padding = { top: 20, right: 30, bottom: 50, left: 50 };
+                // Configurações responsivas com mais espaço para labels e legenda
+                const isMobile = actualWidth < 600;
+                const isTablet = actualWidth >= 600 && actualWidth < 900;
+                const numPoints = data.length;
+                
+                // Ajustar padding baseado no número de pontos e tamanho da tela
+                const bottomPadding = isMobile 
+                    ? (numPoints > 7 ? 70 : 60)
+                    : isTablet 
+                    ? (numPoints > 7 ? 75 : 65)
+                    : (numPoints > 7 ? 80 : 60);
+                
+                const padding = { 
+                    top: 20, 
+                    right: isMobile ? 20 : 30, 
+                    bottom: bottomPadding, 
+                    left: isMobile ? 40 : 50 
+                };
                 const chartWidth = actualWidth - padding.left - padding.right;
                 const chartHeight = actualHeight - padding.top - padding.bottom;
                 
@@ -1957,7 +2234,7 @@
                 const drawLine = (dataKey, color) => {
                     ctx.beginPath();
                     ctx.strokeStyle = color;
-                    ctx.lineWidth = 3;
+                    ctx.lineWidth = isMobile ? 2 : 3;
                     
                     data.forEach((point, index) => {
                         const x = padding.left + (index * chartWidth) / (data.length - 1);
@@ -1976,44 +2253,54 @@
                 drawLine('processos', '#4361ee');
                 drawLine('concluidos', '#4bb543');
                 
-                // Desenhar labels do eixo X
+                // Desenhar labels do eixo X com rotação inteligente
                 const isDarkMode = document.body.classList.contains('dark-theme');
                 ctx.fillStyle = isDarkMode ? '#a0a0a0' : '#666';
-                ctx.font = '11px Arial';
-                ctx.textAlign = 'center';
+                ctx.font = isMobile ? '9px Arial' : '11px Arial';
+                
+                // Determinar se precisa rotacionar baseado no espaçamento
+                const pointSpacing = chartWidth / (data.length - 1);
+                const needsRotation = pointSpacing < 60 || numPoints > 7 || isMobile;
                 
                 data.forEach((point, index) => {
                     const x = padding.left + (index * chartWidth) / (data.length - 1);
-                    // Rotacionar labels se houver muitos pontos ou labels longas
-                    if (data.length > 7 || point.day.length > 3) {
+                    
+                    if (needsRotation) {
+                        // Rotacionar labels para evitar sobreposição
                         ctx.save();
-                        ctx.translate(x, actualHeight - padding.bottom + 15);
-                        ctx.rotate(-Math.PI / 6); // -30 graus
+                        ctx.translate(x, actualHeight - padding.bottom + 10);
+                        ctx.rotate(-Math.PI / 4); // -45 graus
                         ctx.textAlign = 'right';
                         ctx.fillText(point.day, 0, 0);
                         ctx.restore();
                     } else {
+                        // Labels horizontais quando há espaço
+                        ctx.textAlign = 'center';
                         ctx.fillText(point.day, x, actualHeight - padding.bottom + 20);
                     }
                 });
                 
-                // Desenhar legenda abaixo do gráfico
-                const legendY = actualHeight - 15;
+                // Desenhar legenda abaixo do gráfico de forma responsiva
+                const legendY = actualHeight - (isMobile ? 12 : 15);
                 const legendCenterX = actualWidth / 2;
-                ctx.font = '11px Arial';
+                const legendFontSize = isMobile ? '10px Arial' : '11px Arial';
+                ctx.font = legendFontSize;
+                
+                // Calcular espaçamento da legenda
+                const legendSpacing = isMobile ? 80 : 100;
                 
                 // Processos
                 ctx.fillStyle = '#4361ee';
-                ctx.fillRect(legendCenterX - 100, legendY, 12, 12);
+                ctx.fillRect(legendCenterX - legendSpacing, legendY, isMobile ? 10 : 12, isMobile ? 10 : 12);
                 ctx.fillStyle = isDarkMode ? '#ffffff' : '#333';
                 ctx.textAlign = 'left';
-                ctx.fillText('Processos', legendCenterX - 85, legendY + 10);
+                ctx.fillText('Processos', legendCenterX - legendSpacing + (isMobile ? 15 : 17), legendY + (isMobile ? 8 : 10));
                 
                 // Concluídos
                 ctx.fillStyle = '#4bb543';
-                ctx.fillRect(legendCenterX + 10, legendY, 12, 12);
+                ctx.fillRect(legendCenterX + (isMobile ? 5 : 10), legendY, isMobile ? 10 : 12, isMobile ? 10 : 12);
                 ctx.fillStyle = isDarkMode ? '#ffffff' : '#333';
-                ctx.fillText('Concluídos', legendCenterX + 25, legendY + 10);
+                ctx.fillText('Concluídos', legendCenterX + (isMobile ? 20 : 25), legendY + (isMobile ? 8 : 10));
                 
             }, [data, width, height]);
             
@@ -2132,18 +2419,21 @@
                 // Limpar canvas
                 ctx.clearRect(0, 0, actualWidth, actualHeight);
                 
-                // Configurações com mais espaço
+                // Configurações com mais espaço para labels
                 const isMobile = actualWidth < 600;
+                const isTablet = actualWidth >= 600 && actualWidth < 900;
                 const padding = isMobile 
-                    ? { top: 25, right: 15, bottom: 50, left: 30 }
-                    : { top: 35, right: 25, bottom: 55, left: 35 };
+                    ? { top: 25, right: 15, bottom: 65, left: 30 }
+                    : isTablet
+                    ? { top: 30, right: 20, bottom: 70, left: 35 }
+                    : { top: 35, right: 25, bottom: 75, left: 40 };
                 const chartWidth = actualWidth - padding.left - padding.right;
                 const chartHeight = actualHeight - padding.top - padding.bottom;
                 
                 // Calcular largura das barras e espaçamento
                 const numBars = data.length;
                 const totalSpace = chartWidth / numBars;
-                const barSpacing = totalSpace * 0.2; // 20% do espaço para gap
+                const barSpacing = totalSpace * 0.25; // 25% do espaço para gap
                 const barWidth = totalSpace - barSpacing;
                 
                 // Encontrar valor máximo
@@ -2172,23 +2462,44 @@
                     ctx.fillStyle = gradient;
                     ctx.fillRect(x, y, barWidth, barHeight);
                     
-                    // Desenhar labels
-                    ctx.fillStyle = isDarkBar ? '#a0a0a0' : '#666';
-                    ctx.font = isMobile ? '10px Arial' : '11px Arial';
-                    ctx.textAlign = 'center';
-                    
-                    // Nome
-                    const nameWords = item.name.split(' ');
-                    ctx.fillText(nameWords[0], x + barWidth / 2, actualHeight - padding.bottom + 15);
-                    if (nameWords.length > 1) {
-                        ctx.fillText(nameWords.slice(1).join(' '), x + barWidth / 2, actualHeight - padding.bottom + 30);
-                    }
-                    
-                    // Valor
+                    // Desenhar valor acima da barra
                     ctx.fillStyle = isDarkBar ? '#ffffff' : '#333';
-                    ctx.font = isMobile ? 'bold 11px Arial' : 'bold 12px Arial';
+                    ctx.font = isMobile ? 'bold 10px Arial' : isTablet ? 'bold 11px Arial' : 'bold 12px Arial';
+                    ctx.textAlign = 'center';
                     ctx.fillText(item.tasks, x + barWidth / 2, y - 8);
                 });
+                
+                // Desenhar labels abaixo do eixo X com rotação em mobile/tablet
+                ctx.save();
+                ctx.fillStyle = isDarkBar ? '#a0a0a0' : '#666';
+                ctx.textAlign = isMobile || isTablet ? 'right' : 'center';
+                
+                data.forEach((item, index) => {
+                    const x = padding.left + (index * totalSpace) + (barSpacing / 2) + (barWidth / 2);
+                    const y = actualHeight - padding.bottom + 10;
+                    
+                    if (isMobile || isTablet) {
+                        // Rotacionar texto 45 graus em mobile/tablet para evitar sobreposição
+                        ctx.save();
+                        ctx.translate(x, y);
+                        ctx.rotate(-Math.PI / 4); // -45 graus
+                        ctx.font = isMobile ? '9px Arial' : '10px Arial';
+                        ctx.fillText(item.name, 0, 0);
+                        ctx.restore();
+                    } else {
+                        // Desktop: tentar quebrar em 2 linhas se necessário
+                        ctx.font = '11px Arial';
+                        const nameWords = item.name.split(' ');
+                        if (nameWords.length > 1 && item.name.length > 8) {
+                            ctx.fillText(nameWords[0], x, y + 5);
+                            ctx.fillText(nameWords.slice(1).join(' '), x, y + 18);
+                        } else {
+                            ctx.fillText(item.name, x, y + 12);
+                        }
+                    }
+                });
+                
+                ctx.restore();
                 
             }, [data, width, height]);
             
@@ -2569,7 +2880,7 @@
                 React.createElement('div', { className: 'gamification-card' },
                     React.createElement('div', { className: 'gamification-title' }, 'Top 3 Colaboradores'),
                     
-                    React.createElement('table', { className: 'data-table', style: { marginTop: '15px' } },
+                    React.createElement('table', { className: 'data-table', style: { marginTop: '15px', width: '100%' } },
                         React.createElement('thead', null,
                             React.createElement('tr', null,
                                 React.createElement('th', null, 'Posição'),
@@ -2607,13 +2918,14 @@
                                 background: 'rgba(255, 255, 255, 0.15)',
                                 border: 'none',
                                 color: 'white',
-                                padding: '4px 10px',
-                                fontSize: '9px',
+                                padding: '10px 20px',
+                                fontSize: '13px',
                                 fontWeight: '600',
                                 borderRadius: '5px',
                                 cursor: 'pointer',
                                 transition: 'all 0.3s',
-                                whiteSpace: 'nowrap'
+                                whiteSpace: 'nowrap',
+                                minHeight: '44px'
                             },
                             onMouseEnter: (e) => {
                                 e.target.style.background = 'rgba(255, 255, 255, 0.25)';
