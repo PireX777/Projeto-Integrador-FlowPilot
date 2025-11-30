@@ -5415,7 +5415,7 @@
 
         // Componente MeuPerfilPage
         const MeuPerfilPage = () => {
-            const perfil = {
+            const perfilPadrao = {
                 nome: 'Diretor(CEO) - Demo',
                 email: 'diexecceo@empresaflowpilot.com',
                 cargo: 'Diretor Executivo',
@@ -5424,6 +5424,56 @@
                 dataEntrada: '03/12/2025',
                 bio: 'Profissional dedicado à otimização de processos e gestão de equipes.',
                 avatar: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%234361ee'/><circle cx='32' cy='24' r='12' fill='white'/><path d='M12 54c4-10 16-14 20-14s16 4 20 14' fill='white'/></svg>"
+            };
+
+            const [perfil, setPerfil] = useState(() => {
+                // Carregar perfil do localStorage ao inicializar
+                const perfilSalvo = localStorage.getItem('flowpilot_perfil');
+                if (perfilSalvo) {
+                    try {
+                        return JSON.parse(perfilSalvo);
+                    } catch (e) {
+                        console.error('Erro ao carregar perfil:', e);
+                        return perfilPadrao;
+                    }
+                }
+                return perfilPadrao;
+            });
+
+            const [modoEdicao, setModoEdicao] = useState(false);
+            const [perfilTemp, setPerfilTemp] = useState({...perfil});
+
+            const handleChange = (campo, valor) => {
+                setPerfilTemp({ ...perfilTemp, [campo]: valor });
+            };
+
+            const salvarPerfil = () => {
+                setPerfil({...perfilTemp});
+                // Salvar no localStorage
+                localStorage.setItem('flowpilot_perfil', JSON.stringify(perfilTemp));
+                setModoEdicao(false);
+                
+                // Mostrar notificação
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4bb543; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000;';
+                notification.textContent = '✓ Perfil atualizado com sucesso!';
+                document.body.appendChild(notification);
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 3000);
+            };
+
+            const cancelarEdicao = () => {
+                setPerfilTemp({...perfil});
+                setModoEdicao(false);
+            };
+
+            const iniciarEdicao = () => {
+                setPerfilTemp({...perfil});
+                setModoEdicao(true);
             };
 
             return React.createElement('div', { className: 'page-content' },
@@ -5551,43 +5601,140 @@
                             boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
                         }
                     },
-                        React.createElement('h3', { 
+                        React.createElement('div', { 
                             style: { 
-                                fontSize: window.innerWidth > 768 ? '18px' : '16px', 
-                                fontWeight: '600', 
-                                marginBottom: window.innerWidth > 768 ? '25px' : '15px', 
-                                color: 'var(--text-primary)' 
+                                display: 'flex', 
+                                justifyContent: 'space-between', 
+                                alignItems: 'center',
+                                marginBottom: window.innerWidth > 768 ? '25px' : '15px'
                             } 
-                        }, 'Informações Pessoais'),
+                        },
+                            React.createElement('h3', { 
+                                style: { 
+                                    fontSize: window.innerWidth > 768 ? '18px' : '16px', 
+                                    fontWeight: '600', 
+                                    margin: 0,
+                                    color: 'var(--text-primary)' 
+                                } 
+                            }, 'Informações Pessoais'),
+                            
+                            !modoEdicao ? 
+                                React.createElement('button', {
+                                    onClick: iniciarEdicao,
+                                    style: {
+                                        background: '#4361ee',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '6px',
+                                        padding: '8px 16px',
+                                        fontSize: '14px',
+                                        cursor: 'pointer',
+                                        fontWeight: '500',
+                                        transition: 'background 0.3s'
+                                    },
+                                    onMouseOver: (e) => e.target.style.background = '#3a0ca3',
+                                    onMouseOut: (e) => e.target.style.background = '#4361ee'
+                                }, '✏️ Editar Perfil') : null
+                        ),
 
                         // Nome
                         React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Nome Completo'),
-                            React.createElement('p', { style: { padding: '10px 0', fontSize: '15px', color: 'var(--text-primary)' } }, perfil.nome)
+                            modoEdicao ? 
+                                React.createElement('input', {
+                                    type: 'text',
+                                    value: perfilTemp.nome,
+                                    onChange: (e) => handleChange('nome', e.target.value),
+                                    className: 'form-control',
+                                    style: {
+                                        width: '100%',
+                                        padding: '10px',
+                                        fontSize: '15px',
+                                        borderRadius: '6px',
+                                        border: '1px solid var(--border-color)'
+                                    }
+                                }) :
+                                React.createElement('p', { style: { padding: '10px 0', fontSize: '15px', color: 'var(--text-primary)' } }, perfil.nome)
                         ),
 
                         // Email
                         React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Email'),
-                            React.createElement('p', { style: { padding: '10px 0', fontSize: '15px', color: 'var(--text-primary)' } }, perfil.email)
+                            modoEdicao ? 
+                                React.createElement('input', {
+                                    type: 'email',
+                                    value: perfilTemp.email,
+                                    onChange: (e) => handleChange('email', e.target.value),
+                                    className: 'form-control',
+                                    style: {
+                                        width: '100%',
+                                        padding: '10px',
+                                        fontSize: '15px',
+                                        borderRadius: '6px',
+                                        border: '1px solid var(--border-color)'
+                                    }
+                                }) :
+                                React.createElement('p', { style: { padding: '10px 0', fontSize: '15px', color: 'var(--text-primary)' } }, perfil.email)
                         ),
 
                         // Telefone
                         React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Telefone'),
-                            React.createElement('p', { style: { padding: '10px 0', fontSize: '15px', color: 'var(--text-primary)' } }, perfil.telefone)
+                            modoEdicao ? 
+                                React.createElement('input', {
+                                    type: 'tel',
+                                    value: perfilTemp.telefone,
+                                    onChange: (e) => handleChange('telefone', e.target.value),
+                                    className: 'form-control',
+                                    style: {
+                                        width: '100%',
+                                        padding: '10px',
+                                        fontSize: '15px',
+                                        borderRadius: '6px',
+                                        border: '1px solid var(--border-color)'
+                                    }
+                                }) :
+                                React.createElement('p', { style: { padding: '10px 0', fontSize: '15px', color: 'var(--text-primary)' } }, perfil.telefone)
                         ),
 
                         // Cargo
                         React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Cargo'),
-                            React.createElement('p', { style: { padding: '10px 0', fontSize: '15px', color: 'var(--text-primary)' } }, perfil.cargo)
+                            modoEdicao ? 
+                                React.createElement('input', {
+                                    type: 'text',
+                                    value: perfilTemp.cargo,
+                                    onChange: (e) => handleChange('cargo', e.target.value),
+                                    className: 'form-control',
+                                    style: {
+                                        width: '100%',
+                                        padding: '10px',
+                                        fontSize: '15px',
+                                        borderRadius: '6px',
+                                        border: '1px solid var(--border-color)'
+                                    }
+                                }) :
+                                React.createElement('p', { style: { padding: '10px 0', fontSize: '15px', color: 'var(--text-primary)' } }, perfil.cargo)
                         ),
 
                         // Departamento
                         React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Departamento'),
-                            React.createElement('p', { style: { padding: '10px 0', fontSize: '15px', color: 'var(--text-primary)' } }, perfil.departamento)
+                            modoEdicao ? 
+                                React.createElement('input', {
+                                    type: 'text',
+                                    value: perfilTemp.departamento,
+                                    onChange: (e) => handleChange('departamento', e.target.value),
+                                    className: 'form-control',
+                                    style: {
+                                        width: '100%',
+                                        padding: '10px',
+                                        fontSize: '15px',
+                                        borderRadius: '6px',
+                                        border: '1px solid var(--border-color)'
+                                    }
+                                }) :
+                                React.createElement('p', { style: { padding: '10px 0', fontSize: '15px', color: 'var(--text-primary)' } }, perfil.departamento)
                         ),
 
                         // Data de Entrada
@@ -5599,7 +5746,78 @@
                         // Bio
                         React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Biografia'),
-                            React.createElement('p', { style: { padding: '10px 0', fontSize: '15px', lineHeight: '1.6', color: 'var(--text-primary)' } }, perfil.bio)
+                            modoEdicao ? 
+                                React.createElement('textarea', {
+                                    value: perfilTemp.bio,
+                                    onChange: (e) => handleChange('bio', e.target.value),
+                                    className: 'form-control',
+                                    rows: 4,
+                                    style: {
+                                        width: '100%',
+                                        padding: '10px',
+                                        fontSize: '15px',
+                                        lineHeight: '1.6',
+                                        borderRadius: '6px',
+                                        border: '1px solid var(--border-color)',
+                                        resize: 'vertical',
+                                        fontFamily: 'inherit'
+                                    }
+                                }) :
+                                React.createElement('p', { 
+                                    style: { 
+                                        padding: '10px 0', 
+                                        fontSize: '15px', 
+                                        lineHeight: '1.6', 
+                                        color: 'var(--text-primary)',
+                                        whiteSpace: 'pre-wrap'
+                                    } 
+                                }, perfil.bio)
+                        ),
+
+                        // Botões de ação (aparecem apenas em modo edição)
+                        modoEdicao && React.createElement('div', { 
+                            style: { 
+                                display: 'flex', 
+                                gap: '10px', 
+                                marginTop: '20px',
+                                paddingTop: '20px',
+                                borderTop: '1px solid var(--border-color)'
+                            } 
+                        },
+                            React.createElement('button', {
+                                onClick: salvarPerfil,
+                                style: {
+                                    flex: 1,
+                                    background: '#4bb543',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    padding: '12px',
+                                    fontSize: '14px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    transition: 'background 0.3s'
+                                },
+                                onMouseOver: (e) => e.target.style.background = '#3d9435',
+                                onMouseOut: (e) => e.target.style.background = '#4bb543'
+                            }, '✓ Salvar Alterações'),
+                            React.createElement('button', {
+                                onClick: cancelarEdicao,
+                                style: {
+                                    flex: 1,
+                                    background: '#6c757d',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    padding: '12px',
+                                    fontSize: '14px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    transition: 'background 0.3s'
+                                },
+                                onMouseOver: (e) => e.target.style.background = '#5a6268',
+                                onMouseOut: (e) => e.target.style.background = '#6c757d'
+                            }, '✕ Cancelar')
                         )
                     )
                 )
