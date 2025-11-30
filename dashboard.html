@@ -2207,6 +2207,22 @@
         to { transform: translateX(0); opacity: 1; }
     }
 
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from { 
+            transform: translateY(20px); 
+            opacity: 0; 
+        }
+        to { 
+            transform: translateY(0); 
+            opacity: 1; 
+        }
+    }
+
     /* Responsive para Visão Geral em Tempo Real */
     @media (max-width: 1024px) {
         .real-time-stats {
@@ -5488,6 +5504,7 @@
 
             const [modoEdicao, setModoEdicao] = useState(false);
             const [perfilTemp, setPerfilTemp] = useState({...perfil});
+            const [mostrarConfirmacaoSair, setMostrarConfirmacaoSair] = useState(false);
 
             const handleChange = (campo, valor) => {
                 setPerfilTemp({ ...perfilTemp, [campo]: valor });
@@ -5520,6 +5537,28 @@
             const iniciarEdicao = () => {
                 setPerfilTemp({...perfil});
                 setModoEdicao(true);
+            };
+
+            const confirmarSaida = () => {
+                const existingNotification = document.querySelector('.notification');
+                if (existingNotification) {
+                    existingNotification.remove();
+                }
+
+                const notification = document.createElement('div');
+                notification.className = 'notification notification-error';
+                notification.textContent = 'Sessão encerrada. Retornando à página inicial.';
+
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 3000);
             };
 
             return React.createElement('div', { className: 'page-content' },
@@ -5853,29 +5892,7 @@
 
                         // Botão de Sair da Conta
                         !modoEdicao && React.createElement('button', {
-                            onClick: () => {
-                                if (window.confirm('Você tem certeza que deseja sair?')) {
-                                    const existingNotification = document.querySelector('.notification');
-                                    if (existingNotification) {
-                                        existingNotification.remove();
-                                    }
-
-                                    const notification = document.createElement('div');
-                                    notification.className = 'notification notification-error';
-                                    notification.textContent = 'Sessão encerrada. Retornando à página inicial.';
-
-                                    document.body.appendChild(notification);
-
-                                    setTimeout(() => {
-                                        window.location.href = 'index.html';
-                                    }, 2000);
-                                    setTimeout(() => {
-                                        if (notification.parentNode) {
-                                            notification.parentNode.removeChild(notification);
-                                        }
-                                    }, 3000);
-                                }
-                            },
+                            onClick: () => setMostrarConfirmacaoSair(true),
                             style: {
                                 width: '100%',
                                 marginTop: '20px',
@@ -5892,6 +5909,97 @@
                             onMouseOver: (e) => e.target.style.background = '#c82333',
                             onMouseOut: (e) => e.target.style.background = '#dc3545'
                         }, 'Sair da Conta')
+                    )
+                ),
+
+                // Modal de confirmação de saída
+                mostrarConfirmacaoSair && React.createElement('div', {
+                    style: {
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'rgba(0, 0, 0, 0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 10000,
+                        animation: 'fadeIn 0.2s ease'
+                    },
+                    onClick: () => setMostrarConfirmacaoSair(false)
+                },
+                    React.createElement('div', {
+                        style: {
+                            background: 'var(--bg-secondary)',
+                            borderRadius: '12px',
+                            padding: '30px',
+                            maxWidth: '400px',
+                            width: '90%',
+                            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
+                            animation: 'slideUp 0.3s ease'
+                        },
+                        onClick: (e) => e.stopPropagation()
+                    },
+                        React.createElement('h3', {
+                            style: {
+                                fontSize: '20px',
+                                fontWeight: '600',
+                                marginBottom: '15px',
+                                color: 'var(--text-primary)',
+                                textAlign: 'center'
+                            }
+                        }, 'Confirmar Saída'),
+                        React.createElement('p', {
+                            style: {
+                                fontSize: '15px',
+                                color: 'var(--text-secondary)',
+                                marginBottom: '25px',
+                                textAlign: 'center',
+                                lineHeight: '1.5'
+                            }
+                        }, 'Você tem certeza que deseja sair da sua conta?'),
+                        React.createElement('div', {
+                            style: {
+                                display: 'flex',
+                                gap: '10px'
+                            }
+                        },
+                            React.createElement('button', {
+                                onClick: () => setMostrarConfirmacaoSair(false),
+                                style: {
+                                    flex: 1,
+                                    padding: '12px',
+                                    background: '#6c757d',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '14px',
+                                    transition: 'background 0.3s'
+                                },
+                                onMouseOver: (e) => e.target.style.background = '#5a6268',
+                                onMouseOut: (e) => e.target.style.background = '#6c757d'
+                            }, 'Cancelar'),
+                            React.createElement('button', {
+                                onClick: confirmarSaida,
+                                style: {
+                                    flex: 1,
+                                    padding: '12px',
+                                    background: '#dc3545',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '14px',
+                                    transition: 'background 0.3s'
+                                },
+                                onMouseOver: (e) => e.target.style.background = '#c82333',
+                                onMouseOut: (e) => e.target.style.background = '#dc3545'
+                            }, 'Sim, Sair')
+                        )
                     )
                 )
             );
