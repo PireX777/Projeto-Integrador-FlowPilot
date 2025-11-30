@@ -317,7 +317,48 @@
     }
     
     .mobile-menu-btn {
-        display: none !important;
+        display: none;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1003;
+        background: var(--primary);
+        border: none;
+        border-radius: 8px;
+        width: 45px;
+        height: 45px;
+        cursor: pointer;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        box-shadow: 0 2px 10px rgba(67, 97, 238, 0.3);
+        transition: all 0.3s ease;
+        opacity: 1;
+        pointer-events: auto;
+    }
+    
+    .mobile-menu-btn.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+    
+    .mobile-menu-btn:hover {
+        background: var(--primary-dark);
+        transform: scale(1.05);
+    }
+    
+    .mobile-menu-btn:active {
+        transform: scale(0.95);
+    }
+    
+    .mobile-menu-btn span {
+        display: block;
+        width: 22px;
+        height: 2.5px;
+        background: white;
+        border-radius: 2px;
+        transition: all 0.3s ease;
     }
     
     /* Main Content */
@@ -504,7 +545,10 @@
         width: 100%;
         overflow: visible;
         position: relative;
-        padding: 10px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     /* Recent Activity */
@@ -723,11 +767,13 @@
         background-color: transparent;
         color: white;
         border-bottom: 1px solid rgba(255,255,255,0.2);
+        text-align: center;
     }
     
     .gamification-card .data-table td {
         color: white;
         border-bottom: 1px solid rgba(255,255,255,0.1);
+        text-align: center;
     }
     
     .gamification-card .data-table {
@@ -1066,34 +1112,122 @@
         .sidebar .nav-links li {
             padding: 12px 20px;
             justify-content: flex-start;
+            text-align: left;
         }
         
         .main-content {
             margin-left: 0;
-            padding: 15px;
+            padding: 12px 8px;
+            padding-top: 75px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            width: 100%;
+            touch-action: pan-y;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .stats-container,
+        .charts-container,
+        .activity-section {
+            width: 100%;
+            max-width: 100%;
+            touch-action: pan-y;
+        }activity-section {
+            width: 100%;
+            max-width: 100%;
+            touch-action: pan-y;
         }
         
         .mobile-menu-btn {
-            display: block;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .header {
+            padding-right: 60px;
         }
         
         .stats-container {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
+            column-gap: 5px;
+            row-gap: 12px;
+            margin-bottom: 25px;
+            justify-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            touch-action: pan-y;
+            width: 100%;
+            max-width: 100%;
+            display: grid;
+        }
+        
+        .stat-card {
+            padding: 12px 10px;
+            aspect-ratio: 1 / 1;
+            min-height: 0;
+            width: 100%;
+            max-width: min(44vw, 170px);
+            touch-action: manipulation;
+            margin: 0;
+        }
+        
+        .stat-header {
+            margin-bottom: 8px;
+        }
+        
+        .stat-icon {
+            width: 34px;
+            height: 34px;
+            font-size: 14px;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            margin-bottom: 4px;
+            line-height: 1.1;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            line-height: 1.2;
+        }
+        
+        .stat-trend {
+            font-size: 10px;
+            margin-top: 6px;
         }
         
         .charts-container {
             grid-template-columns: 1fr;
+            gap: 15px;
+            padding: 0 8px;
+            width: 100%;
+            max-width: 100%;
         }
         
         .chart-card {
-            padding: 15px;
+            padding: 12px 8px;
+            min-height: 280px;
             overflow: visible;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
         }
-        
+
         .chart-wrapper {
-            height: 300px;
+            height: 210px;
             overflow: visible;
-            padding: 15px 5px;
+            padding: 6px 4px;
+            margin: 0 auto;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .chart-title {
@@ -1103,27 +1237,56 @@
         .header {
             flex-direction: column;
             align-items: flex-start;
-            gap: 10px;
+            text-align: left;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 15px 8px 0 25px;
         }
         
         .header h2 {
-            font-size: 20px;
+            font-size: 16px;
+            width: 100%;
+            text-align: left;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         
         .user-info {
-            align-self: flex-end;
+            align-self: center;
         }
         
         .gamification-stats {
             flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .gamification-stat {
+            width: 100%;
+            max-width: 200px;
+            text-align: center;
         }
         
         .gamification-card {
-            padding: 15px;
+            padding: 12px 8px;
+            margin: 0 8px;
+            width: calc(100% - 16px);
+        }
+        
+        .gamification-card .data-table {
+            font-size: 10px;
+            width: 100%;
+        }
+        
+        .gamification-card .data-table th,
+        .gamification-card .data-table td {
+            padding: 6px 3px;
+            font-size: 10px;
         }
         
         .gamification-title {
-            font-size: 16px;
+            font-size: 14px;
         }
         
         .process-grid {
@@ -1202,30 +1365,95 @@
     @media (max-width: 480px) {
         .chart-header {
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
+            text-align: center;
             gap: 8px;
         }
         
         .chart-wrapper {
-            height: 250px;
+            height: 210px;
             overflow: visible;
-            padding: 10px 5px;
+            padding: 6px 4px;
+            margin: 0 auto;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        
+
         .chart-card {
             overflow: visible;
+            padding: 12px 8px;
+            margin: 0 auto;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
         }
         
         .chart-title {
-            font-size: 14px;
+            font-size: 13px;
+            text-align: center;
+        }
+        
+        .stats-container {
+            grid-template-columns: repeat(2, 1fr);
+            column-gap: 4px;
+            row-gap: 8px;
+            padding: 0 8px;
+            justify-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            width: 100%;
+            max-width: 100%;
+            display: grid;
         }
         
         .stat-card {
-            padding: 20px;
+            padding: 6px 4px;
+            aspect-ratio: 1 / 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 100%;
+            max-width: min(42vw, 155px);
+            border-radius: 10px;
+            margin: 0;
+        }
+        
+        .stat-header {
+            margin-bottom: 3px;
+        }
+        
+        .stat-icon {
+            width: 24px;
+            height: 24px;
+            font-size: 10px;
         }
         
         .stat-value {
-            font-size: 24px;
+            font-size: 15px;
+            margin-bottom: 1px;
+            line-height: 1;
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            font-size: 7.5px;
+            line-height: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            margin-bottom: 2px;
+        }
+        
+        .stat-trend {
+            font-size: 7.5px;
+            margin-top: 2px;
+            line-height: 1;
         }
         
         .activity-info {
@@ -1238,20 +1466,65 @@
         
         .page-content {
             padding: 20px 15px;
+            width: 100%;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .page-content > * {
+            width: 100%;
+            max-width: 100%;
         }
         
         .gamification-card {
-            padding: 12px;
+            padding: 8px 5px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .gamification-card .data-table {
+            font-size: 10px;
+            width: 100%;
+            margin: 12px auto 0;
+            display: table;
+        }
+        
+        .gamification-card .data-table th,
+        .gamification-card .data-table td {
+            padding: 6px 3px;
+            font-size: 10px;
+            white-space: nowrap;
+            text-align: center;
+        }
+        
+        .gamification-title {
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            padding: 2px 3px;
+            font-size: 7px;
         }
         
         .data-table {
             font-size: 13px;
+            margin: 0 auto;
+            text-align: center;
         }
         
         .data-table th,
         .data-table td {
             padding: 8px 10px;
             font-size: 12px;
+            text-align: center;
         }
         
         /* Inputs menores */
@@ -1278,6 +1551,7 @@
         
         .page-description {
             font-size: 13px;
+            margin-bottom: 15px;
         }
         
         /* Badges e labels menores */
@@ -1286,6 +1560,243 @@
         .tag {
             font-size: 11px;
             padding: 4px 8px;
+        }
+        
+        /* Profile page responsivo */
+        .page-content > div[style*="gridTemplateColumns"] {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+        }
+        
+        .page-title {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+        
+        /* Cards e containers */
+        .card,
+        .process-card,
+        .task-card {
+            margin-bottom: 12px;
+            padding: 12px;
+        }
+        
+        /* Formulários responsivos */
+        .form-group {
+            margin-bottom: 12px;
+        }
+        
+        .form-label {
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+        
+        /* Tabelas overflow com scroll horizontal */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .data-table {
+            min-width: 100%;
+            font-size: 11px;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 6px 4px;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+        
+        /* Botões de ação menores */
+        .btn-sm,
+        .action-btn {
+            padding: 4px 8px;
+            font-size: 10px;
+            min-height: 32px;
+        }
+        
+        /* Prioridade badges */
+        .prioridade-alta,
+        .prioridade-media,
+        .prioridade-baixa {
+            padding: 2px 6px;
+            font-size: 9px;
+        }
+        
+        /* Status badges */
+        .status-completed,
+        .status-in-progress,
+        .status-pending {
+            padding: 2px 6px;
+            font-size: 9px;
+        }
+        
+        /* Formulário de nova tarefa */
+        .task-form {
+            padding: 12px;
+        }
+        
+        .task-form input,
+        .task-form select,
+        .task-form textarea {
+            font-size: 14px;
+            padding: 8px;
+        }
+        
+        /* Reports Page - Control Panel */
+        .report-control-panel {
+            padding: 12px !important;
+            margin-bottom: 15px !important;
+        }
+        
+        .report-title {
+            font-size: 14px !important;
+            margin-bottom: 12px !important;
+        }
+        
+        /* Reports Form Grid - Stack on Mobile */
+        .report-form-grid {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+            margin-bottom: 12px !important;
+        }
+        
+        /* Reports Buttons Container */
+        .report-buttons {
+            flex-direction: column !important;
+            gap: 8px !important;
+        }
+        
+        .report-btn {
+            width: 100% !important;
+            padding: 10px 16px !important;
+            font-size: 13px !important;
+            justify-content: center !important;
+        }
+        
+        /* Reports Metrics Grid - 2 columns on mobile */
+        .report-metrics-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 8px !important;
+            margin-bottom: 15px !important;
+            padding: 0 8px;
+        }
+        
+        .report-metrics-grid > div {
+            padding: 12px 8px !important;
+        }
+        
+        .report-metrics-grid > div > div:first-child {
+            font-size: 11px !important;
+            margin-bottom: 6px !important;
+        }
+        
+        .report-metrics-grid > div > div:last-child {
+            font-size: 20px !important;
+        }
+        
+        /* Team Page Responsive */
+        .team-filter-bar {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 12px !important;
+            margin-bottom: 15px !important;
+        }
+        
+        .team-filter-group {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            width: 100%;
+            gap: 8px !important;
+        }
+        
+        .team-filter-group label {
+            font-size: 13px !important;
+        }
+        
+        .team-filter-group select {
+            width: 100% !important;
+        }
+        
+        .team-filter-group span {
+            font-size: 12px !important;
+        }
+        
+        .team-add-btn {
+            width: 100% !important;
+            justify-content: center !important;
+        }
+        
+        /* Team Form Panel */
+        .team-form-panel {
+            padding: 12px !important;
+            margin-bottom: 15px !important;
+        }
+        
+        .team-form-title {
+            font-size: 14px !important;
+            margin-bottom: 12px !important;
+        }
+        
+        .team-form-grid {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+            margin-bottom: 12px !important;
+        }
+        
+        .team-form-actions {
+            flex-direction: column !important;
+            gap: 8px !important;
+        }
+        
+        .team-form-actions button {
+            width: 100% !important;
+            padding: 10px 16px !important;
+        }
+        
+        /* Gamification/Ranking Page Responsive */
+        .gamification-card .gamification-header {
+            margin-bottom: 12px !important;
+        }
+        
+        .gamification-card .gamification-title {
+            font-size: 16px !important;
+        }
+        
+        .ranking-table {
+            min-width: 100%;
+            font-size: 11px;
+        }
+        
+        .ranking-table th,
+        .ranking-table td {
+            padding: 8px 4px !important;
+            font-size: 11px !important;
+            white-space: nowrap;
+        }
+        
+        .ranking-table th:first-child,
+        .ranking-table td:first-child {
+            width: 60px;
+            text-align: center;
+        }
+        
+        .ranking-table th:nth-child(3),
+        .ranking-table td:nth-child(3) {
+            text-align: right;
+        }
+        
+        .ranking-table th:nth-child(4),
+        .ranking-table td:nth-child(4) {
+            text-align: center;
+        }
+        
+        /* Grid de cards responsivo */
+        .cards-grid {
+            grid-template-columns: 1fr !important;
+            gap: 12px;
         }
         
         /* Melhorias de toque */
@@ -1576,8 +2087,8 @@
                 // Configurações com mais espaço
                 const isMobile = actualWidth < 600;
                 const padding = isMobile 
-                    ? { top: 25, right: 15, bottom: 30, left: 30 }
-                    : { top: 35, right: 25, bottom: 35, left: 35 };
+                    ? { top: 25, right: 15, bottom: 50, left: 30 }
+                    : { top: 35, right: 25, bottom: 55, left: 35 };
                 const chartWidth = actualWidth - padding.left - padding.right;
                 const chartHeight = actualHeight - padding.top - padding.bottom;
                 
@@ -1622,7 +2133,7 @@
                     const nameWords = item.name.split(' ');
                     ctx.fillText(nameWords[0], x + barWidth / 2, actualHeight - padding.bottom + 15);
                     if (nameWords.length > 1) {
-                        ctx.fillText(nameWords.slice(1).join(' '), x + barWidth / 2, actualHeight - padding.bottom + 28);
+                        ctx.fillText(nameWords.slice(1).join(' '), x + barWidth / 2, actualHeight - padding.bottom + 30);
                     }
                     
                     // Valor
@@ -1886,7 +2397,7 @@
             return React.createElement('div', null,
                 React.createElement('div', { className: 'header' },
                     React.createElement('h2', null, 
-                        'Dashboard Flow Pilot ',
+                        'Dashboard Geral ',
                         React.createElement(RealTimeBadge)
                     )
                 ),
@@ -2008,37 +2519,9 @@
                 ),
 
                 React.createElement('div', { className: 'gamification-card' },
-                    React.createElement('div', { className: 'gamification-header' },
-                        React.createElement('div', { className: 'gamification-title' }, 'Top 3 Colaboradores'),
-                        React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '10px' } },
-                            React.createElement('button', {
-                                onClick: () => {
-                                    setCurrentPage('gamificacao');
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                },
-                                style: {
-                                    background: 'rgba(255, 255, 255, 0.15)',
-                                    border: 'none',
-                                    color: 'white',
-                                    padding: '8px 16px',
-                                    fontSize: '13px',
-                                    fontWeight: '600',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.3s',
-                                    whiteSpace: 'nowrap'
-                                },
-                                onMouseEnter: (e) => {
-                                    e.target.style.background = 'rgba(255, 255, 255, 0.25)';
-                                },
-                                onMouseLeave: (e) => {
-                                    e.target.style.background = 'rgba(255, 255, 255, 0.15)';
-                                }
-                            }, 'Ver Ranking Completo'),
-                            React.createElement(RealTimeBadge)
-                        )
-                    ),
-                    React.createElement('table', { className: 'data-table', style: { marginTop: '20px' } },
+                    React.createElement('div', { className: 'gamification-title' }, 'Top 3 Colaboradores'),
+                    
+                    React.createElement('table', { className: 'data-table', style: { marginTop: '15px' } },
                         React.createElement('thead', null,
                             React.createElement('tr', null,
                                 React.createElement('th', null, 'Posição'),
@@ -2064,6 +2547,33 @@
                                 )
                             )
                         )
+                    ),
+                    
+                    React.createElement('div', { style: { display: 'flex', justifyContent: 'center', marginTop: '15px' } },
+                        React.createElement('button', {
+                            onClick: () => {
+                                setCurrentPage('gamificacao');
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            },
+                            style: {
+                                background: 'rgba(255, 255, 255, 0.15)',
+                                border: 'none',
+                                color: 'white',
+                                padding: '4px 10px',
+                                fontSize: '9px',
+                                fontWeight: '600',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s',
+                                whiteSpace: 'nowrap'
+                            },
+                            onMouseEnter: (e) => {
+                                e.target.style.background = 'rgba(255, 255, 255, 0.25)';
+                            },
+                            onMouseLeave: (e) => {
+                                e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                            }
+                        }, 'Ver Ranking Completo')
                     )
                 )
             );
@@ -3081,6 +3591,7 @@
 
                 // Painel de controle de relatórios
                 React.createElement('div', {
+                    className: 'report-control-panel',
                     style: {
                         background: 'var(--bg-secondary)',
                         padding: '20px',
@@ -3089,8 +3600,8 @@
                         boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
                     }
                 },
-                    React.createElement('h3', { style: { marginBottom: '15px', fontSize: '16px', fontWeight: '600' } }, 'Gerar Relatório'),
-                    React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px', marginBottom: '15px' } },
+                    React.createElement('h3', { className: 'report-title', style: { marginBottom: '15px', fontSize: '16px', fontWeight: '600' } }, 'Gerar Relatório'),
+                    React.createElement('div', { className: 'report-form-grid', style: { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px', marginBottom: '15px' } },
                         React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Tipo de Relatório'),
                             React.createElement('select', {
@@ -3125,15 +3636,15 @@
                             })
                         )
                     ),
-                    React.createElement('div', { style: { display: 'flex', gap: '10px', justifyContent: 'flex-end' } },
+                    React.createElement('div', { className: 'report-buttons', style: { display: 'flex', gap: '10px', justifyContent: 'flex-end' } },
                         React.createElement('button', {
                             onClick: gerarRelatorioPDF,
-                            className: 'btn btn-primary',
+                            className: 'btn btn-primary report-btn',
                             style: { display: 'flex', alignItems: 'center', gap: '5px' }
                         }, '📄 Exportar PDF'),
                         React.createElement('button', {
                             onClick: gerarRelatorioExcel,
-                            className: 'btn',
+                            className: 'btn report-btn',
                             style: { 
                                 display: 'flex',
                                 alignItems: 'center',
@@ -3148,7 +3659,7 @@
                         }, '📊 Exportar Excel'),
                         React.createElement('button', {
                             onClick: enviarPorEmail,
-                            className: 'btn',
+                            className: 'btn report-btn',
                             style: { 
                                 display: 'flex',
                                 alignItems: 'center',
@@ -3165,7 +3676,7 @@
                 ),
 
                 // Métricas resumidas
-                React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px', marginBottom: '20px' } },
+                React.createElement('div', { className: 'report-metrics-grid', style: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px', marginBottom: '20px' } },
                     React.createElement('div', {
                         style: {
                             background: 'var(--bg-secondary)',
@@ -3412,8 +3923,8 @@
                 ),
 
                 // Filtro por setor
-                React.createElement('div', { style: { marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'center', justifyContent: 'space-between' } },
-                    React.createElement('div', { style: { display: 'flex', gap: '10px', alignItems: 'center' } },
+                React.createElement('div', { className: 'team-filter-bar', style: { marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'center', justifyContent: 'space-between' } },
+                    React.createElement('div', { className: 'team-filter-group', style: { display: 'flex', gap: '10px', alignItems: 'center' } },
                         React.createElement('label', { style: { fontWeight: '600', fontSize: '14px' } }, 'Filtrar por Setor:'),
                         React.createElement('select', {
                             className: 'form-control',
@@ -3438,13 +3949,14 @@
                     ),
                     React.createElement('button', {
                         onClick: () => setMostrarFormulario(!mostrarFormulario),
-                        className: 'btn btn-primary',
+                        className: 'btn btn-primary team-add-btn',
                         style: { display: 'flex', alignItems: 'center', gap: '5px' }
                     }, mostrarFormulario ? '✕ Cancelar' : '+ Adicionar Membro')
                 ),
 
                 // Formulário para adicionar/editar membro
                 mostrarFormulario && React.createElement('div', {
+                    className: 'team-form-panel',
                     style: {
                         background: 'var(--bg-secondary)',
                         padding: '20px',
@@ -3453,10 +3965,10 @@
                         boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
                     }
                 },
-                    React.createElement('h3', { style: { marginBottom: '15px', fontSize: '16px', fontWeight: '600' } }, 
+                    React.createElement('h3', { className: 'team-form-title', style: { marginBottom: '15px', fontSize: '16px', fontWeight: '600' } }, 
                         membroEditando ? 'Editar Membro' : 'Novo Membro da Equipe'
                     ),
-                    React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' } },
+                    React.createElement('div', { className: 'team-form-grid', style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' } },
                         React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Nome *'),
                             React.createElement('input', {
@@ -3527,7 +4039,7 @@
                             })
                         )
                     ),
-                    React.createElement('div', { style: { display: 'flex', gap: '10px', justifyContent: 'flex-end' } },
+                    React.createElement('div', { className: 'team-form-actions', style: { display: 'flex', gap: '10px', justifyContent: 'flex-end' } },
                         React.createElement('button', {
                             onClick: handleCancelar,
                             className: 'btn',
@@ -3650,7 +4162,7 @@
                     React.createElement('div', { className: 'gamification-header' },
                         React.createElement('div', { className: 'gamification-title' }, 'Ranking dos Colaboradores')
                     ),
-                    React.createElement('table', { className: 'data-table', style: { marginTop: 0 } },
+                    React.createElement('table', { className: 'data-table ranking-table', style: { marginTop: 0 } },
                         React.createElement('thead', null,
                             React.createElement('tr', null,
                                 React.createElement('th', null, 'Posição'),
@@ -3701,11 +4213,12 @@
                 ),
 
                 React.createElement('div', { 
+                    className: 'profile-grid',
                     style: { 
                         display: 'grid', 
-                        gridTemplateColumns: '250px 1fr', 
-                        gap: '30px',
-                        marginTop: '30px'
+                        gridTemplateColumns: window.innerWidth > 768 ? '250px 1fr' : '1fr', 
+                        gap: window.innerWidth > 768 ? '30px' : '20px',
+                        marginTop: window.innerWidth > 768 ? '30px' : '20px'
                     } 
                 },
                     // Coluna da esquerda - Avatar e Estatísticas
@@ -3714,7 +4227,7 @@
                             style: {
                                 background: 'var(--bg-secondary)',
                                 borderRadius: '10px',
-                                padding: '20px',
+                                padding: window.innerWidth > 768 ? '20px' : '15px',
                                 textAlign: 'center',
                                 boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
                             }
@@ -3723,15 +4236,27 @@
                                 src: perfil.avatar,
                                 alt: 'Avatar',
                                 style: {
-                                    width: '120px',
-                                    height: '120px',
+                                    width: window.innerWidth > 768 ? '120px' : '100px',
+                                    height: window.innerWidth > 768 ? '120px' : '100px',
                                     borderRadius: '50%',
                                     marginBottom: '15px',
                                     border: '4px solid #4361ee'
                                 }
                             }),
-                            React.createElement('h3', { style: { marginBottom: '5px', fontSize: '20px', color: 'var(--text-primary)' } }, perfil.nome),
-                            React.createElement('p', { style: { color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '20px' } }, perfil.cargo),
+                            React.createElement('h3', { 
+                                style: { 
+                                    marginBottom: '5px', 
+                                    fontSize: window.innerWidth > 768 ? '20px' : '18px', 
+                                    color: 'var(--text-primary)' 
+                                } 
+                            }, perfil.nome),
+                            React.createElement('p', { 
+                                style: { 
+                                    color: 'var(--text-secondary)', 
+                                    fontSize: window.innerWidth > 768 ? '14px' : '13px', 
+                                    marginBottom: window.innerWidth > 768 ? '20px' : '15px' 
+                                } 
+                            }, perfil.cargo),
                             React.createElement('div', { 
                                 style: { 
                                     borderTop: '1px solid var(--border-color)', 
@@ -3802,11 +4327,18 @@
                         style: {
                             background: 'var(--bg-secondary)',
                             borderRadius: '10px',
-                            padding: '30px',
+                            padding: window.innerWidth > 768 ? '30px' : '15px',
                             boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
                         }
                     },
-                        React.createElement('h3', { style: { fontSize: '18px', fontWeight: '600', marginBottom: '25px', color: 'var(--text-primary)' } }, 'Informações Pessoais'),
+                        React.createElement('h3', { 
+                            style: { 
+                                fontSize: window.innerWidth > 768 ? '18px' : '16px', 
+                                fontWeight: '600', 
+                                marginBottom: window.innerWidth > 768 ? '25px' : '15px', 
+                                color: 'var(--text-primary)' 
+                            } 
+                        }, 'Informações Pessoais'),
 
                         // Nome
                         React.createElement('div', { className: 'form-group' },
@@ -3924,16 +4456,19 @@
                     }
                 }
                 
-                const notification = document.createElement('div');
-                notification.className = 'notification';
-                notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4bb543; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000; animation: slideIn 0.3s ease;';
-                notification.textContent = '✓ Configurações salvas com sucesso!';
-                document.body.appendChild(notification);
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 3000);
+                // Mostrar notificação apenas em desktop
+                if (window.innerWidth >= 768) {
+                    const notification = document.createElement('div');
+                    notification.className = 'notification';
+                    notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4bb543; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000; animation: slideIn 0.3s ease;';
+                    notification.textContent = '✓ Configurações salvas com sucesso!';
+                    document.body.appendChild(notification);
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 3000);
+                }
             };
 
             return React.createElement('div', { className: 'page-content' },
@@ -4353,6 +4888,64 @@
                 setMobileMenuOpen(!mobileMenuOpen);
             };
 
+            // Efeito para esconder/mostrar botão ao rolar
+            useEffect(() => {
+                let lastScrollTop = 0;
+                let ticking = false;
+                
+                const handleScroll = () => {
+                    if (!ticking) {
+                        window.requestAnimationFrame(() => {
+                            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+                            const menuBtn = document.querySelector('.mobile-menu-btn');
+                            
+                            if (menuBtn && !mobileMenuOpen) {
+                                if (currentScroll > lastScrollTop && currentScroll > 100) {
+                                    // Rolando para baixo - esconder botão
+                                    menuBtn.style.opacity = '0';
+                                    menuBtn.style.pointerEvents = 'none';
+                                    menuBtn.style.transform = 'translateY(-20px)';
+                                } else {
+                                    // Rolando para cima ou no topo - mostrar botão
+                                    menuBtn.style.opacity = '1';
+                                    menuBtn.style.pointerEvents = 'auto';
+                                    menuBtn.style.transform = 'translateY(0)';
+                                }
+                            }
+                            
+                            lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                };
+                
+                window.addEventListener('scroll', handleScroll, { passive: true });
+                
+                return () => {
+                    window.removeEventListener('scroll', handleScroll);
+                };
+            }, [mobileMenuOpen]);
+
+            // Efeito para esconder botão quando menu abrir
+            useEffect(() => {
+                const menuBtn = document.querySelector('.mobile-menu-btn');
+                if (menuBtn) {
+                    if (mobileMenuOpen) {
+                        menuBtn.style.opacity = '0';
+                        menuBtn.style.pointerEvents = 'none';
+                    } else {
+                        // Só restaurar se não estiver em scroll
+                        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+                        if (!(currentScroll > 100)) {
+                            menuBtn.style.opacity = '1';
+                            menuBtn.style.pointerEvents = 'auto';
+                            menuBtn.style.transform = 'translateY(0)';
+                        }
+                    }
+                }
+            }, [mobileMenuOpen]);
+
             const navigateTo = (page) => {
                 setCurrentPage(page);
                 setMobileMenuOpen(false);
@@ -4614,6 +5207,17 @@
                             )
                         )
                     )
+                ),
+                
+                // Botão de menu mobile (hamburger)
+                React.createElement('button', {
+                    className: `mobile-menu-btn ${mobileMenuOpen ? 'active' : ''}`,
+                    onClick: () => setMobileMenuOpen(!mobileMenuOpen),
+                    'aria-label': 'Menu'
+                },
+                    React.createElement('span'),
+                    React.createElement('span'),
+                    React.createElement('span')
                 ),
                 
                 // Indicador de swipe (apenas mobile)
