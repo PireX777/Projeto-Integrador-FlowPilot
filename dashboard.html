@@ -2160,6 +2160,142 @@
         from { transform: translateX(100%); opacity: 0; }
         to { transform: translateX(0); opacity: 1; }
     }
+
+    /* Responsive para Visão Geral em Tempo Real */
+    @media (max-width: 1024px) {
+        .real-time-stats {
+            padding: 15px;
+        }
+
+        .real-time-stats h3 {
+            font-size: 18px;
+        }
+
+        .stats-cards-grid {
+            gap: 12px;
+        }
+
+        .stat-card-compact .stat-value {
+            font-size: 22px;
+        }
+
+        .stat-card-compact .stat-label {
+            font-size: 13px;
+        }
+
+        .sector-distribution {
+            margin-top: 15px;
+        }
+
+        .sector-stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .real-time-stats {
+            padding: 12px;
+        }
+
+        .real-time-stats h3 {
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .stats-cards-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-card-compact {
+            padding: 12px;
+        }
+
+        .stat-card-compact .stat-value {
+            font-size: 20px;
+        }
+
+        .stat-card-compact .stat-label {
+            font-size: 12px;
+        }
+
+        .sector-distribution {
+            margin-top: 12px;
+        }
+
+        .sector-distribution h4 {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .sector-stats-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .sector-stat-item {
+            padding: 8px 10px;
+            font-size: 13px;
+        }
+
+        .sector-badge {
+            padding: 2px 8px;
+            font-size: 11px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .real-time-stats {
+            padding: 10px;
+        }
+
+        .real-time-stats h3 {
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .stats-cards-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .stat-card-compact {
+            padding: 10px 8px;
+        }
+
+        .stat-card-compact .stat-value {
+            font-size: 18px;
+        }
+
+        .stat-card-compact .stat-label {
+            font-size: 11px;
+        }
+
+        .sector-distribution {
+            margin-top: 10px;
+        }
+
+        .sector-distribution h4 {
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .sector-stats-grid {
+            grid-template-columns: 1fr;
+            gap: 6px;
+        }
+
+        .sector-stat-item {
+            padding: 6px 8px;
+            font-size: 12px;
+        }
+
+        .sector-badge {
+            padding: 2px 6px;
+            font-size: 10px;
+        }
+    }
     </style>
 </head>
 <body>
@@ -2561,6 +2697,66 @@
             const [periodFilter, setPeriodFilter] = useState('7days');
             const [activityFilter, setActivityFilter] = useState('all');
             
+            // Estados para dados em tempo real das outras páginas
+            const [dadosTempoReal, setDadosTempoReal] = useState({
+                totalFuncionarios: 0,
+                funcionariosOnline: 0,
+                totalProcessos: 0,
+                totalTarefas: 0,
+                processosAtivos: 0,
+                tarefasPendentes: 0,
+                funcionariosPorSetor: {}
+            });
+
+            // Atualizar dados em tempo real
+            useEffect(() => {
+                const atualizarDados = () => {
+                    // Obter dados da equipe
+                    const equipeData = DashboardStorage.loadPage('equipe');
+                    const funcionarios = equipeData?.membros || [];
+                    
+                    // Obter dados de processos
+                    const processosData = DashboardStorage.loadPage('processos');
+                    const processos = processosData?.processos || [];
+                    
+                    // Obter dados de tarefas (não usa localStorage, mas podemos contar os iniciais)
+                    const tarefasData = DashboardStorage.loadPage('tarefas');
+                    
+                    // Calcular estatísticas
+                    const funcionariosPorSetor = {};
+                    const funcionariosOnline = funcionarios.filter(f => f.online === true).length;
+                    
+                    funcionarios.forEach(func => {
+                        if (!funcionariosPorSetor[func.setor]) {
+                            funcionariosPorSetor[func.setor] = 0;
+                        }
+                        funcionariosPorSetor[func.setor]++;
+                    });
+
+                    setDadosTempoReal({
+                        totalFuncionarios: funcionarios.length,
+                        funcionariosOnline: funcionariosOnline,
+                        totalProcessos: processos.length,
+                        processosAtivos: processos.filter(p => p.status === 'active').length,
+                        processosConcluidos: processos.filter(p => p.progresso === 100).length,
+                        funcionariosPorSetor
+                    });
+                };
+
+                atualizarDados();
+                
+                // Atualizar quando houver mudanças
+                window.addEventListener('equipeUpdated', atualizarDados);
+                
+                // Atualizar periodicamente
+                const interval = setInterval(atualizarDados, 3000);
+
+                return () => {
+                    window.removeEventListener('equipeUpdated', atualizarDados);
+                    clearInterval(interval);
+                };
+            }, []);
+            
             // Calcular métricas dinâmicas baseadas na data atual
             const calcularMetricasMensais = () => {
                 const hoje = new Date();
@@ -2631,6 +2827,57 @@
                 ]
             };
 
+            const baseTaskDistributionData = {
+                '7days': [
+                    { name: 'Concluídas', value: 91 },
+                    { name: 'Em Andamento', value: 7 },
+                    { name: 'Pendentes', value: 2 }
+                ],
+                '30days': [
+                    { name: 'Concluídas', value: 478 },
+                    { name: 'Em Andamento', value: 35 },
+                    { name: 'Pendentes', value: 12 }
+                ],
+                '5months': [
+                    { name: 'Concluídas', value: 2047 },
+                    { name: 'Em Andamento', value: 143 },
+                    { name: 'Pendentes', value: 91 }
+                ]
+            };
+
+            const baseTeamActivityData = {
+                '7days': [
+                    { name: 'Vendas', tasks: 28 },
+                    { name: 'Financeiro', tasks: 24 },
+                    { name: 'TI', tasks: 19 },
+                    { name: 'RH', tasks: 16 },
+                    { name: 'Marketing', tasks: 15 },
+                    { name: 'Operações', tasks: 14 },
+                    { name: 'Processos', tasks: 12 },
+                    { name: 'Qualidade', tasks: 10 }
+                ],
+                '30days': [
+                    { name: 'Vendas', tasks: 112 },
+                    { name: 'Financeiro', tasks: 98 },
+                    { name: 'TI', tasks: 84 },
+                    { name: 'RH', tasks: 76 },
+                    { name: 'Marketing', tasks: 68 },
+                    { name: 'Operações', tasks: 64 },
+                    { name: 'Processos', tasks: 52 },
+                    { name: 'Qualidade', tasks: 47 }
+                ],
+                '5months': [
+                    { name: 'Vendas', tasks: 487 },
+                    { name: 'Financeiro', tasks: 412 },
+                    { name: 'TI', tasks: 356 },
+                    { name: 'RH', tasks: 298 },
+                    { name: 'Marketing', tasks: 276 },
+                    { name: 'Operações', tasks: 254 },
+                    { name: 'Processos', tasks: 218 },
+                    { name: 'Qualidade', tasks: 198 }
+                ]
+            };
+
             const baseActivities = {
                 all: [
                     { id: 1, type: 'completed', title: 'Fechar orçamento anual - Concluído', user: 'Viviane Gomes', time: '29/11/2025 14:30' },
@@ -2651,28 +2898,17 @@
             // Estados locais dos gráficos
             const [performanceData, setPerformanceData] = useState(basePerformanceData['7days']);
             
-            const [taskDistributionData, setTaskDistributionData] = useState([
-                { name: 'Concluídas', value: 91 },
-                { name: 'Em Andamento', value: 7 },
-                { name: 'Pendentes', value: 2 }
-            ]);
+            const [taskDistributionData, setTaskDistributionData] = useState(baseTaskDistributionData['7days']);
 
-            const [teamActivityData, setTeamActivityData] = useState([
-                { name: 'Comercial', tasks: 245 },
-                { name: 'Financeiro', tasks: 198 },
-                { name: 'TI', tasks: 167 },
-                { name: 'RH', tasks: 142 },
-                { name: 'Marketing', tasks: 135 },
-                { name: 'Operações', tasks: 128 },
-                { name: 'Jurídico', tasks: 98 },
-                { name: 'Logística', tasks: 87 }
-            ]);
+            const [teamActivityData, setTeamActivityData] = useState(baseTeamActivityData['7days']);
 
             const [filteredActivities, setFilteredActivities] = useState(activities);
 
             // Atualizar dados quando os filtros mudarem
             useEffect(() => {
                 setPerformanceData(basePerformanceData[periodFilter]);
+                setTaskDistributionData(baseTaskDistributionData[periodFilter]);
+                setTeamActivityData(baseTeamActivityData[periodFilter]);
             }, [periodFilter]);
 
             useEffect(() => {
@@ -2682,27 +2918,47 @@
             // Atualizações em tempo real para gráficos e atividades
             useEffect(() => {
                 const interval = setInterval(() => {
-                    setPerformanceData(prev => 
-                        prev.map(item => ({
+                    // Atualizar Performance Data baseado no filtro atual
+                    setPerformanceData(prev => {
+                        // Verificar se ainda está no mesmo período
+                        const currentBase = basePerformanceData[periodFilter];
+                        if (prev.length !== currentBase.length) return currentBase;
+                        
+                        return prev.map(item => ({
                             ...item,
                             processos: Math.max(1, item.processos + Math.floor(Math.random() * 3) - 1),
                             concluidos: Math.max(0, item.concluidos + Math.floor(Math.random() * 2) - 1)
-                        }))
-                    );
+                        }));
+                    });
 
-                    setTaskDistributionData(prev => 
-                        prev.map((item, index) => ({
-                            ...item,
-                            value: Math.max(5, Math.min(70, item.value + (index === 0 ? 1 : -1) * Math.floor(Math.random() * 3)))
-                        }))
-                    );
+                    // Atualizar Task Distribution Data baseado no filtro atual
+                    setTaskDistributionData(prev => {
+                        const currentBase = baseTaskDistributionData[periodFilter];
+                        if (prev.length !== currentBase.length) return currentBase;
+                        
+                        return prev.map((item, index) => {
+                            const maxValue = periodFilter === '7days' ? 100 : periodFilter === '30days' ? 550 : 2300;
+                            return {
+                                ...item,
+                                value: Math.max(5, Math.min(maxValue, item.value + (index === 0 ? 1 : -1) * Math.floor(Math.random() * 3)))
+                            };
+                        });
+                    });
 
-                    setTeamActivityData(prev =>
-                        prev.map(item => ({
-                            ...item,
-                            tasks: Math.max(50, Math.min(300, item.tasks + Math.floor(Math.random() * 5) - 2))
-                        }))
-                    );
+                    // Atualizar Team Activity Data baseado no filtro atual
+                    setTeamActivityData(prev => {
+                        const currentBase = baseTeamActivityData[periodFilter];
+                        if (prev.length !== currentBase.length) return currentBase;
+                        
+                        return prev.map(item => {
+                            const minValue = periodFilter === '7days' ? 5 : periodFilter === '30days' ? 30 : 150;
+                            const maxValue = periodFilter === '7days' ? 40 : periodFilter === '30days' ? 150 : 600;
+                            return {
+                                ...item,
+                                tasks: Math.max(minValue, Math.min(maxValue, item.tasks + Math.floor(Math.random() * 5) - 2))
+                            };
+                        });
+                    });
 
                     // Atualizar atividades em tempo real
                     const atividades = [
@@ -2718,7 +2974,9 @@
                         'Treinar equipe comercial'
                     ];
                     
-                    const usuarios = [
+                    // Buscar funcionários dinamicamente da equipe
+                    const funcionariosAtivos = EquipeManager.getTodosNomes();
+                    const usuarios = funcionariosAtivos.length > 0 ? funcionariosAtivos : [
                         'Viviane Gomes', 'Vanessa Melo', 'Henrique Azevedo', 
                         'Leandro Silva', 'Eduardo Freitas', 'Cristiane Batista',
                         'Luciana Teixeira', 'Roberto Maia', 'Maria Santos',
@@ -2749,7 +3007,7 @@
                 }, 3500);
 
                 return () => clearInterval(interval);
-            }, []);
+            }, [periodFilter]);
 
             const handleProfileClick = () => setShowProfileMenu(!showProfileMenu);
 
@@ -2804,12 +3062,101 @@
                     }),
                     React.createElement(StatCard, {
                         title: 'Equipe',
-                        value: '40/40',
-                        label: 'Colaboradores desde jul/25',
-                        trend: `${metricas.mesesOperacao} meses de operação`,
+                        value: dadosTempoReal.totalFuncionarios > 0 
+                            ? `${dadosTempoReal.funcionariosOnline}/${dadosTempoReal.totalFuncionarios}` 
+                            : '40/40',
+                        label: dadosTempoReal.totalFuncionarios > 0 
+                            ? 'Colaboradores online' 
+                            : 'Colaboradores ativos',
+                        trend: `${Object.keys(dadosTempoReal.funcionariosPorSetor).length || 9} setores`,
                         icon: 'team',
                         trendType: 'trend-up'
                     })
+                ),
+
+                // Seção de Estatísticas em Tempo Real
+                dadosTempoReal.totalFuncionarios > 0 && React.createElement('div', { 
+                    style: { 
+                        background: 'var(--bg-secondary)', 
+                        padding: '20px', 
+                        borderRadius: '8px', 
+                        marginBottom: '30px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                    } 
+                },
+                    React.createElement('h3', { 
+                        style: { 
+                            marginBottom: '20px', 
+                            fontSize: '18px', 
+                            color: 'var(--text-primary)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px'
+                        } 
+                    }, 
+                        'Visão Geral em Tempo Real',
+                        React.createElement(RealTimeBadge)
+                    ),
+                    React.createElement('div', { 
+                        style: { 
+                            display: 'grid', 
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+                            gap: '15px' 
+                        } 
+                    },
+                        React.createElement('div', { style: { padding: '15px', background: 'var(--bg-card)', borderRadius: '6px', border: '1px solid var(--border-color)' } },
+                            React.createElement('div', { style: { fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '5px' } }, 'Total de Processos'),
+                            React.createElement('div', { style: { fontSize: '24px', fontWeight: 'bold', color: 'var(--primary-color)' } }, dadosTempoReal.totalProcessos)
+                        ),
+                        React.createElement('div', { style: { padding: '15px', background: 'var(--bg-card)', borderRadius: '6px', border: '1px solid var(--border-color)' } },
+                            React.createElement('div', { style: { fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '5px' } }, 'Processos Ativos'),
+                            React.createElement('div', { style: { fontSize: '24px', fontWeight: 'bold', color: '#4bb543' } }, dadosTempoReal.processosAtivos)
+                        ),
+                        React.createElement('div', { style: { padding: '15px', background: 'var(--bg-card)', borderRadius: '6px', border: '1px solid var(--border-color)' } },
+                            React.createElement('div', { style: { fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '5px' } }, 'Processos Concluídos'),
+                            React.createElement('div', { style: { fontSize: '24px', fontWeight: 'bold', color: '#2196f3' } }, dadosTempoReal.processosConcluidos)
+                        ),
+                        React.createElement('div', { style: { padding: '15px', background: 'var(--bg-card)', borderRadius: '6px', border: '1px solid var(--border-color)' } },
+                            React.createElement('div', { style: { fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '5px' } }, 'Colaboradores'),
+                            React.createElement('div', { style: { fontSize: '24px', fontWeight: 'bold', color: '#ff9800' } }, dadosTempoReal.totalFuncionarios)
+                        )
+                    ),
+                    Object.keys(dadosTempoReal.funcionariosPorSetor).length > 0 && React.createElement('div', { style: { marginTop: '20px' } },
+                        React.createElement('h4', { style: { fontSize: '16px', marginBottom: '15px', color: 'var(--text-primary)' } }, 'Distribuição por Setor'),
+                        React.createElement('div', { 
+                            style: { 
+                                display: 'grid', 
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+                                gap: '10px' 
+                            } 
+                        },
+                            Object.entries(dadosTempoReal.funcionariosPorSetor).map(([setor, quantidade]) =>
+                                React.createElement('div', { 
+                                    key: setor,
+                                    style: { 
+                                        padding: '10px', 
+                                        background: 'var(--bg-primary)', 
+                                        borderRadius: '4px',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        fontSize: '13px'
+                                    } 
+                                },
+                                    React.createElement('span', { style: { color: 'var(--text-secondary)' } }, setor),
+                                    React.createElement('span', { 
+                                        style: { 
+                                            fontWeight: 'bold', 
+                                            color: 'var(--primary-color)',
+                                            background: 'rgba(67, 97, 238, 0.1)',
+                                            padding: '2px 8px',
+                                            borderRadius: '12px'
+                                        } 
+                                    }, quantidade)
+                                )
+                            )
+                        )
+                    )
                 ),
 
                 React.createElement('div', { className: 'charts-container' },
@@ -2941,75 +3288,122 @@
 
         // Componente ProcessosPage
         const ProcessosPage = () => {
-            const [processos, setProcessos] = useState([
-                { id: 1, nome: 'Processo de Vendas', responsavel: 'Maria Santos', setor: 'Vendas', status: 'active', progresso: 85, tarefas: 127, data: '15-07-2025' },
-                { id: 2, nome: 'Onboarding Clientes', responsavel: 'Carlos Lima', setor: 'Vendas', status: 'active', progresso: 92, tarefas: 102, data: '22-07-2025' },
-                { id: 3, nome: 'Análise Financeira', responsavel: 'Ana Costa', setor: 'Financeiro', status: 'active', progresso: 78, tarefas: 98, data: '08-08-2025' },
-                { id: 4, nome: 'Gestão de Projetos', responsavel: 'Pedro Alves', setor: 'Processos', status: 'active', progresso: 88, tarefas: 115, data: '12-08-2025' },
-                { id: 5, nome: 'Suporte Técnico', responsavel: 'João Silva', setor: 'Suporte', status: 'active', progresso: 95, tarefas: 143, data: '01-07-2025' },
-                { id: 6, nome: 'Atendimento ao Cliente', responsavel: 'Juliana Rocha', setor: 'Suporte', status: 'active', progresso: 82, tarefas: 89, data: '18-07-2025' },
-                { id: 7, nome: 'Desenvolvimento de Software', responsavel: 'Roberto Maia', setor: 'TI', status: 'active', progresso: 76, tarefas: 94, data: '25-08-2025' },
-                { id: 8, nome: 'Marketing Digital', responsavel: 'Fernanda Lopes', setor: 'Marketing', status: 'active', progresso: 68, tarefas: 76, data: '10-09-2025' },
-                { id: 9, nome: 'Controle de Qualidade', responsavel: 'Lucas Ferreira', setor: 'Qualidade', status: 'active', progresso: 91, tarefas: 85, data: '05-09-2025' },
-                { id: 10, nome: 'Recursos Humanos', responsavel: 'Patricia Mendes', setor: 'RH', status: 'active', progresso: 87, tarefas: 92, data: '03-07-2025' },
-                { id: 11, nome: 'Logística e Distribuição', responsavel: 'Rafael Souza', setor: 'Operações', status: 'active', progresso: 73, tarefas: 67, data: '20-09-2025' },
-                { id: 12, nome: 'Comunicação Interna', responsavel: 'Camila Oliveira', setor: 'Marketing', status: 'active', progresso: 65, tarefas: 58, data: '28-09-2025' },
-                { id: 13, nome: 'Segurança da Informação', responsavel: 'Bruno Cardoso', setor: 'TI', status: 'active', progresso: 80, tarefas: 71, data: '15-10-2025' },
-                { id: 14, nome: 'Compras e Suprimentos', responsavel: 'Tatiana Martins', setor: 'Financeiro', status: 'active', progresso: 70, tarefas: 64, data: '22-10-2025' },
-                { id: 15, nome: 'Planejamento Estratégico', responsavel: 'Gustavo Pereira', setor: 'Processos', status: 'active', progresso: 83, tarefas: 88, data: '01-08-2025' },
-                { id: 16, nome: 'Gestão de Contratos', responsavel: 'Amanda Ribeiro', setor: 'Financeiro', status: 'active', progresso: 89, tarefas: 95, data: '12-07-2025' },
-                { id: 17, nome: 'Pesquisa e Desenvolvimento', responsavel: 'Diego Barbosa', setor: 'TI', status: 'active', progresso: 62, tarefas: 73, data: '05-10-2025' },
-                { id: 18, nome: 'Treinamento e Capacitação', responsavel: 'Letícia Araujo', setor: 'RH', status: 'active', progresso: 77, tarefas: 81, data: '29-08-2025' },
-                { id: 19, nome: 'Análise de Dados', responsavel: 'Rodrigo Dias', setor: 'Processos', status: 'active', progresso: 84, tarefas: 90, data: '18-08-2025' },
-                { id: 20, nome: 'Relacionamento com Fornecedores', responsavel: 'Beatriz Nunes', setor: 'Financeiro', status: 'pending', progresso: 55, tarefas: 62, data: '12-11-2025' },
-                { id: 21, nome: 'Gestão de Estoques', responsavel: 'Marcelo Castro', setor: 'Operações', status: 'active', progresso: 79, tarefas: 74, data: '08-09-2025' },
-                { id: 22, nome: 'Controle Orçamentário', responsavel: 'Viviane Gomes', setor: 'Financeiro', status: 'active', progresso: 93, tarefas: 99, data: '10-07-2025' },
-                { id: 23, nome: 'Experiência do Cliente', responsavel: 'Thiago Moreira', setor: 'Suporte', status: 'active', progresso: 72, tarefas: 78, data: '25-09-2025' },
-                { id: 24, nome: 'Compliance e Auditoria', responsavel: 'Luciana Teixeira', setor: 'Processos', status: 'active', progresso: 86, tarefas: 87, data: '02-08-2025' },
-                { id: 25, nome: 'Gestão de Riscos', responsavel: 'André Vieira', setor: 'Processos', status: 'active', progresso: 81, tarefas: 83, data: '16-08-2025' },
-                { id: 26, nome: 'Inovação e Tecnologia', responsavel: 'Priscila Cunha', setor: 'TI', status: 'active', progresso: 58, tarefas: 69, data: '18-10-2025' },
-                { id: 27, nome: 'Manutenção Predial', responsavel: 'Fábio Monteiro', setor: 'Operações', status: 'active', progresso: 96, tarefas: 91, data: '05-07-2025' },
-                { id: 28, nome: 'Gestão Documental', responsavel: 'Renata Pires', setor: 'Processos', status: 'active', progresso: 75, tarefas: 79, data: '22-08-2025' },
-                { id: 29, nome: 'Relações Públicas', responsavel: 'Vinicius Correia', setor: 'Marketing', status: 'pending', progresso: 48, tarefas: 54, data: '15-11-2025' },
-                { id: 30, nome: 'Gestão Ambiental', responsavel: 'Carla Duarte', setor: 'Operações', status: 'active', progresso: 69, tarefas: 66, data: '30-09-2025' },
-                { id: 31, nome: 'Desenvolvimento Organizacional', responsavel: 'Eduardo Freitas', setor: 'RH', status: 'active', progresso: 82, tarefas: 86, data: '14-08-2025' },
-                { id: 32, nome: 'Gestão da Qualidade', responsavel: 'Simone Ramos', setor: 'Qualidade', status: 'active', progresso: 74, tarefas: 77, data: '10-09-2025' },
-                { id: 33, nome: 'Infraestrutura de TI', responsavel: 'Henrique Azevedo', setor: 'TI', status: 'active', progresso: 90, tarefas: 93, data: '08-07-2025' },
-                { id: 34, nome: 'Suporte Administrativo', responsavel: 'Débora Campos', setor: 'Processos', status: 'active', progresso: 88, tarefas: 84, data: '20-07-2025' },
-                { id: 35, nome: 'Gestão de Benefícios', responsavel: 'Alexandre Rocha', setor: 'RH', status: 'active', progresso: 71, tarefas: 75, data: '03-10-2025' },
-                { id: 36, nome: 'Central de Atendimento', responsavel: 'Mônica Borges', setor: 'Suporte', status: 'active', progresso: 94, tarefas: 97, data: '06-07-2025' },
-                { id: 37, nome: 'Gestão de Facilidades', responsavel: 'César Farias', setor: 'Operações', status: 'active', progresso: 76, tarefas: 72, data: '12-09-2025' },
-                { id: 38, nome: 'Planejamento Financeiro', responsavel: 'Vanessa Melo', setor: 'Financeiro', status: 'active', progresso: 85, tarefas: 89, data: '25-07-2025' },
-                { id: 39, nome: 'Gestão de Produtos', responsavel: 'Leandro Silva', setor: 'Vendas', status: 'active', progresso: 67, tarefas: 70, data: '08-10-2025' },
-                { id: 40, nome: 'Operações Comerciais', responsavel: 'Cristiane Batista', setor: 'Vendas', status: 'active', progresso: 80, tarefas: 82, data: '28-08-2025' }
-            ]);
+            // Dados iniciais padrão
+            const processosIniciais = [
+                { id: 1, nome: 'Processo de Vendas', responsavel: 'Maria Santos', setor: 'Vendas', status: 'active', progresso: 85, tarefas: 127, data: '15-07-2025', requerente: 'Cliente' },
+                { id: 2, nome: 'Onboarding Clientes', responsavel: 'Carlos Lima', setor: 'Vendas', status: 'active', progresso: 92, tarefas: 102, data: '22-07-2025', requerente: 'Gerente' },
+                { id: 3, nome: 'Análise Financeira', responsavel: 'Ana Costa', setor: 'Financeiro', status: 'active', progresso: 78, tarefas: 98, data: '08-08-2025', requerente: 'Coordenador' },
+                { id: 4, nome: 'Gestão de Projetos', responsavel: 'Pedro Alves', setor: 'Processos', status: 'active', progresso: 88, tarefas: 115, data: '12-08-2025', requerente: 'Gerente' },
+                { id: 5, nome: 'Suporte Técnico', responsavel: 'João Silva', setor: 'Suporte', status: 'active', progresso: 95, tarefas: 143, data: '01-07-2025', requerente: 'Cliente' },
+                { id: 6, nome: 'Atendimento ao Cliente', responsavel: 'Juliana Rocha', setor: 'Suporte', status: 'active', progresso: 82, tarefas: 89, data: '18-07-2025', requerente: 'Cliente' },
+                { id: 7, nome: 'Desenvolvimento de Software', responsavel: 'Roberto Maia', setor: 'TI', status: 'active', progresso: 76, tarefas: 94, data: '25-08-2025', requerente: 'Gerente' },
+                { id: 8, nome: 'Marketing Digital', responsavel: 'Fernanda Lopes', setor: 'Marketing', status: 'active', progresso: 68, tarefas: 76, data: '10-09-2025', requerente: 'Coordenador' },
+                { id: 9, nome: 'Controle de Qualidade', responsavel: 'Lucas Ferreira', setor: 'Qualidade', status: 'active', progresso: 91, tarefas: 85, data: '05-09-2025', requerente: 'Auditor' },
+                { id: 10, nome: 'Recursos Humanos', responsavel: 'Patricia Mendes', setor: 'RH', status: 'active', progresso: 87, tarefas: 92, data: '03-07-2025', requerente: 'Gerente' },
+                { id: 11, nome: 'Logística e Distribuição', responsavel: 'Rafael Souza', setor: 'Operações', status: 'active', progresso: 73, tarefas: 67, data: '20-09-2025', requerente: 'Supervisor' },
+                { id: 12, nome: 'Comunicação Interna', responsavel: 'Camila Oliveira', setor: 'Marketing', status: 'active', progresso: 65, tarefas: 58, data: '28-09-2025', requerente: 'Coordenador' },
+                { id: 13, nome: 'Segurança da Informação', responsavel: 'Bruno Cardoso', setor: 'TI', status: 'active', progresso: 80, tarefas: 71, data: '15-10-2025', requerente: 'Auditor' },
+                { id: 14, nome: 'Compras e Suprimentos', responsavel: 'Tatiana Martins', setor: 'Financeiro', status: 'active', progresso: 70, tarefas: 64, data: '22-10-2025', requerente: 'Fornecedor' },
+                { id: 15, nome: 'Planejamento Estratégico', responsavel: 'Gustavo Pereira', setor: 'Processos', status: 'active', progresso: 83, tarefas: 88, data: '01-08-2025', requerente: 'Gerente' },
+                { id: 16, nome: 'Gestão de Contratos', responsavel: 'Amanda Ribeiro', setor: 'Financeiro', status: 'active', progresso: 89, tarefas: 95, data: '12-07-2025', requerente: 'Fornecedor' },
+                { id: 17, nome: 'Pesquisa e Desenvolvimento', responsavel: 'Diego Barbosa', setor: 'TI', status: 'active', progresso: 62, tarefas: 73, data: '05-10-2025', requerente: 'Coordenador' },
+                { id: 18, nome: 'Treinamento e Capacitação', responsavel: 'Letícia Araujo', setor: 'RH', status: 'active', progresso: 77, tarefas: 81, data: '29-08-2025', requerente: 'Gerente' },
+                { id: 19, nome: 'Análise de Dados', responsavel: 'Rodrigo Dias', setor: 'Processos', status: 'active', progresso: 84, tarefas: 90, data: '18-08-2025', requerente: 'Coordenador' },
+                { id: 20, nome: 'Relacionamento com Fornecedores', responsavel: 'Beatriz Nunes', setor: 'Financeiro', status: 'pending', progresso: 55, tarefas: 62, data: '12-11-2025', requerente: 'Fornecedor' },
+                { id: 21, nome: 'Gestão de Estoques', responsavel: 'Marcelo Castro', setor: 'Operações', status: 'active', progresso: 79, tarefas: 74, data: '08-09-2025', requerente: 'Supervisor' },
+                { id: 22, nome: 'Controle Orçamentário', responsavel: 'Viviane Gomes', setor: 'Financeiro', status: 'active', progresso: 93, tarefas: 99, data: '10-07-2025', requerente: 'Gerente' },
+                { id: 23, nome: 'Experiência do Cliente', responsavel: 'Thiago Moreira', setor: 'Suporte', status: 'active', progresso: 72, tarefas: 78, data: '25-09-2025', requerente: 'Cliente' },
+                { id: 24, nome: 'Compliance e Auditoria', responsavel: 'Luciana Teixeira', setor: 'Processos', status: 'active', progresso: 86, tarefas: 87, data: '02-08-2025', requerente: 'Auditor' },
+                { id: 25, nome: 'Gestão de Riscos', responsavel: 'André Vieira', setor: 'Processos', status: 'active', progresso: 81, tarefas: 83, data: '16-08-2025', requerente: 'Auditor' },
+                { id: 26, nome: 'Inovação e Tecnologia', responsavel: 'Priscila Cunha', setor: 'TI', status: 'active', progresso: 58, tarefas: 69, data: '18-10-2025', requerente: 'Gerente' },
+                { id: 27, nome: 'Manutenção Predial', responsavel: 'Fábio Monteiro', setor: 'Operações', status: 'active', progresso: 96, tarefas: 91, data: '05-07-2025', requerente: 'Supervisor' },
+                { id: 28, nome: 'Gestão Documental', responsavel: 'Renata Pires', setor: 'Processos', status: 'active', progresso: 75, tarefas: 79, data: '22-08-2025', requerente: 'Coordenador' },
+                { id: 29, nome: 'Relações Públicas', responsavel: 'Vinicius Correia', setor: 'Marketing', status: 'pending', progresso: 48, tarefas: 54, data: '15-11-2025', requerente: 'Coordenador' },
+                { id: 30, nome: 'Gestão Ambiental', responsavel: 'Carla Duarte', setor: 'Operações', status: 'active', progresso: 69, tarefas: 66, data: '30-09-2025', requerente: 'Auditor' },
+                { id: 31, nome: 'Desenvolvimento Organizacional', responsavel: 'Eduardo Freitas', setor: 'RH', status: 'active', progresso: 82, tarefas: 86, data: '14-08-2025', requerente: 'Gerente' },
+                { id: 32, nome: 'Gestão da Qualidade', responsavel: 'Simone Ramos', setor: 'Qualidade', status: 'active', progresso: 74, tarefas: 77, data: '10-09-2025', requerente: 'Auditor' },
+                { id: 33, nome: 'Infraestrutura de TI', responsavel: 'Henrique Azevedo', setor: 'TI', status: 'active', progresso: 90, tarefas: 93, data: '08-07-2025', requerente: 'Gerente' },
+                { id: 34, nome: 'Suporte Administrativo', responsavel: 'Débora Campos', setor: 'Processos', status: 'active', progresso: 88, tarefas: 84, data: '20-07-2025', requerente: 'Coordenador' },
+                { id: 35, nome: 'Gestão de Benefícios', responsavel: 'Alexandre Rocha', setor: 'RH', status: 'active', progresso: 71, tarefas: 75, data: '03-10-2025', requerente: 'Gerente' },
+                { id: 36, nome: 'Central de Atendimento', responsavel: 'Mônica Borges', setor: 'Suporte', status: 'active', progresso: 94, tarefas: 97, data: '06-07-2025', requerente: 'Cliente' },
+                { id: 37, nome: 'Gestão de Facilidades', responsavel: 'César Farias', setor: 'Operações', status: 'active', progresso: 76, tarefas: 72, data: '12-09-2025', requerente: 'Supervisor' },
+                { id: 38, nome: 'Planejamento Financeiro', responsavel: 'Vanessa Melo', setor: 'Financeiro', status: 'active', progresso: 85, tarefas: 89, data: '25-07-2025', requerente: 'Gerente' },
+                { id: 39, nome: 'Gestão de Produtos', responsavel: 'Leandro Silva', setor: 'Vendas', status: 'active', progresso: 67, tarefas: 70, data: '08-10-2025', requerente: 'Cliente' },
+                { id: 40, nome: 'Operações Comerciais', responsavel: 'Cristiane Batista', setor: 'Vendas', status: 'active', progresso: 80, tarefas: 82, data: '28-08-2025', requerente: 'Coordenador' }
+            ];
 
-            const [filtroSetor, setFiltroSetor] = useState('todos');
+            // Carregar dados salvos ou usar dados iniciais
+            const dadosSalvos = DashboardStorage.loadPage('processos');
+            const [processos, setProcessos] = useState(dadosSalvos?.processos || processosIniciais);
+            const [filtroSetor, setFiltroSetor] = useState(dadosSalvos?.filtroSetor || 'todos');
+            const [pesquisa, setPesquisa] = useState('');
 
             const [mostrarFormulario, setMostrarFormulario] = useState(false);
             const [processoEditando, setProcessoEditando] = useState(null);
             const [novoProcesso, setNovoProcesso] = useState({
                 nome: '',
                 responsavel: '',
+                requerente: '',
+                setor: 'Vendas',
                 status: 'pending',
                 progresso: 0,
                 tarefas: 0
             });
 
-            const responsaveisDisponiveis = [
-                'Maria Santos', 'João Silva', 'Ana Costa', 'Carlos Lima', 'Pedro Alves',
-                'Juliana Rocha', 'Roberto Maia', 'Fernanda Lopes', 'Lucas Ferreira', 'Patricia Mendes',
-                'Rafael Souza', 'Camila Oliveira', 'Bruno Cardoso', 'Tatiana Martins', 'Gustavo Pereira',
-                'Amanda Ribeiro', 'Diego Barbosa', 'Letícia Araujo', 'Rodrigo Dias', 'Beatriz Nunes',
-                'Marcelo Castro', 'Viviane Gomes', 'Thiago Moreira', 'Luciana Teixeira', 'André Vieira',
-                'Priscila Cunha', 'Fábio Monteiro', 'Renata Pires', 'Vinicius Correia', 'Carla Duarte',
-                'Eduardo Freitas', 'Simone Ramos', 'Henrique Azevedo', 'Débora Campos', 'Alexandre Rocha',
-                'Mônica Borges', 'César Farias', 'Vanessa Melo', 'Leandro Silva', 'Cristiane Batista'
+            // Salvar dados sempre que mudarem
+            useEffect(() => {
+                DashboardStorage.savePage('processos', {
+                    processos,
+                    filtroSetor
+                });
+            }, [processos, filtroSetor]);
+
+            // Obter funcionários dinâmicos da equipe
+            const [funcionariosPorSetor, setFuncionariosPorSetor] = useState(EquipeManager.getNomesPorSetor());
+            const [responsaveisDisponiveis, setResponsaveisDisponiveis] = useState(EquipeManager.getTodosNomes());
+
+            // Atualizar lista de funcionários quando a equipe mudar
+            useEffect(() => {
+                const handleEquipeUpdate = () => {
+                    setFuncionariosPorSetor(EquipeManager.getNomesPorSetor());
+                    setResponsaveisDisponiveis(EquipeManager.getTodosNomes());
+                };
+
+                window.addEventListener('equipeUpdated', handleEquipeUpdate);
+                return () => window.removeEventListener('equipeUpdated', handleEquipeUpdate);
+            }, []);
+
+            // Filtrar responsáveis baseado no setor selecionado
+            const responsaveisFiltradosProcesso = novoProcesso.setor && funcionariosPorSetor[novoProcesso.setor] 
+                ? funcionariosPorSetor[novoProcesso.setor] 
+                : [];
+
+            const nomesProcessos = [
+                'Automação de Processos',
+                'Digitalização de Documentos',
+                'Otimização de Fluxos',
+                'Integração de Sistemas',
+                'Análise de Performance',
+                'Gestão de Indicadores',
+                'Melhoria Contínua',
+                'Controle de Estoque',
+                'Auditoria Interna',
+                'Gestão de Projetos',
+                'Desenvolvimento de Equipes',
+                'Capacitação Técnica',
+                'Atendimento ao Cliente',
+                'Gestão de Contratos',
+                'Compliance Regulatório',
+                'Monitoramento de KPIs',
+                'Planejamento Estratégico',
+                'Gestão de Fornecedores',
+                'Controle de Custos',
+                'Análise de Mercado'
             ];
 
             const handleCriarProcesso = () => {
-                if (!novoProcesso.nome || !novoProcesso.responsavel) {
-                    alert('Preencha o nome e o responsável do processo!');
+                if (!novoProcesso.nome || !novoProcesso.responsavel || !novoProcesso.requerente) {
+                    alert('Preencha o nome, o responsável e o requerente do processo!');
                     return;
                 }
 
@@ -3020,7 +3414,7 @@
                 };
 
                 setProcessos(prev => [...prev, processo]);
-                setNovoProcesso({ nome: '', responsavel: '', status: 'pending', progresso: 0, tarefas: 0 });
+                setNovoProcesso({ nome: '', responsavel: '', requerente: '', setor: 'Vendas', status: 'pending', progresso: 0, tarefas: 0 });
                 setMostrarFormulario(false);
             };
 
@@ -3029,6 +3423,8 @@
                 setNovoProcesso({
                     nome: processo.nome,
                     responsavel: processo.responsavel,
+                    requerente: processo.requerente || '',
+                    setor: processo.setor,
                     status: processo.status,
                     progresso: processo.progresso,
                     tarefas: processo.tarefas
@@ -3037,8 +3433,8 @@
             };
 
             const handleSalvarEdicao = () => {
-                if (!novoProcesso.nome || !novoProcesso.responsavel) {
-                    alert('Preencha o nome e o responsável do processo!');
+                if (!novoProcesso.nome || !novoProcesso.responsavel || !novoProcesso.requerente) {
+                    alert('Preencha o nome, o responsável e o requerente do processo!');
                     return;
                 }
 
@@ -3046,7 +3442,7 @@
                     p.id === processoEditando ? { ...p, ...novoProcesso } : p
                 ));
                 setProcessoEditando(null);
-                setNovoProcesso({ nome: '', responsavel: '', status: 'pending', progresso: 0, tarefas: 0 });
+                setNovoProcesso({ nome: '', responsavel: '', requerente: '', setor: 'Vendas', status: 'pending', progresso: 0, tarefas: 0 });
                 setMostrarFormulario(false);
             };
 
@@ -3059,14 +3455,14 @@
             const handleCancelar = () => {
                 setMostrarFormulario(false);
                 setProcessoEditando(null);
-                setNovoProcesso({ nome: '', responsavel: '', status: 'pending', progresso: 0, tarefas: 0 });
+                setNovoProcesso({ nome: '', responsavel: '', requerente: '', setor: 'Vendas', status: 'pending', progresso: 0, tarefas: 0 });
             };
 
-            // Atualizar processos em tempo real
+            // Atualizar processos em tempo real e gerar novos processos automaticamente
             useEffect(() => {
                 const interval = setInterval(() => {
-                    setProcessos(prev => 
-                        prev.map(processo => {
+                    setProcessos(prev => {
+                        let processosAtualizados = prev.map(processo => {
                             if (processo.status === 'active') {
                                 const novoProgresso = Math.min(100, processo.progresso + Math.floor(Math.random() * 3));
                                 const novasTarefas = Math.max(1, processo.tarefas + Math.floor(Math.random() * 3) - 1);
@@ -3079,17 +3475,54 @@
                                 };
                             }
                             return processo;
-                        })
-                    );
-                }, 4000);
+                        });
+
+                        // Gerar novos processos automaticamente (20% de chance a cada 2 segundos)
+                        if (Math.random() < 0.20) {
+                            const setoresDisponiveis = ['Vendas', 'Financeiro', 'RH', 'Suporte', 'Marketing', 'Operações', 'Processos', 'TI', 'Qualidade'];
+                            const statusDisponiveis = ['pending', 'active'];
+                            const requerentes = ['Gerente', 'Coordenador', 'Supervisor', 'Cliente', 'Fornecedor', 'Auditor'];
+                            
+                            const setorSelecionado = setoresDisponiveis[Math.floor(Math.random() * setoresDisponiveis.length)];
+                            const funcionariosDoSetor = funcionariosPorSetor[setorSelecionado] || [];
+                            const responsavelSelecionado = funcionariosDoSetor.length > 0 
+                                ? funcionariosDoSetor[Math.floor(Math.random() * funcionariosDoSetor.length)]
+                                : responsaveisDisponiveis[Math.floor(Math.random() * responsaveisDisponiveis.length)];
+
+                            const novoProcessoAuto = {
+                                id: Date.now() + Math.random(),
+                                nome: nomesProcessos[Math.floor(Math.random() * nomesProcessos.length)],
+                                responsavel: responsavelSelecionado,
+                                requerente: requerentes[Math.floor(Math.random() * requerentes.length)],
+                                setor: setorSelecionado,
+                                status: statusDisponiveis[Math.floor(Math.random() * statusDisponiveis.length)],
+                                progresso: Math.floor(Math.random() * 60),
+                                tarefas: Math.floor(Math.random() * 50) + 10
+                            };
+
+                            processosAtualizados = [novoProcessoAuto, ...processosAtualizados];
+                        }
+
+                        return processosAtualizados;
+                    });
+                }, 2000);
 
                 return () => clearInterval(interval);
             }, []);
 
-            // Filtrar processos por setor
-            const processosFiltrados = filtroSetor === 'todos' 
-                ? processos 
-                : processos.filter(p => p.setor === filtroSetor);
+            // Filtrar processos por setor e pesquisa
+            const processosFiltrados = processos
+                .filter(p => filtroSetor === 'todos' || p.setor === filtroSetor)
+                .filter(p => 
+                    pesquisa === '' || 
+                    p.nome.toLowerCase().includes(pesquisa.toLowerCase()) ||
+                    p.responsavel.toLowerCase().includes(pesquisa.toLowerCase()) ||
+                    p.setor.toLowerCase().includes(pesquisa.toLowerCase())
+                );
+
+            // Separar processos ativos/pendentes e concluídos
+            const processosAtivos = processosFiltrados.filter(p => p.progresso < 100);
+            const processosConcluidos = processosFiltrados.filter(p => p.progresso === 100);
 
             return React.createElement('div', { className: 'page-content' },
                 React.createElement('div', { className: 'header' },
@@ -3107,8 +3540,16 @@
                     'Gerencie todos os processos da sua empresa. Crie, edite e acompanhe o andamento de cada fluxo de trabalho.'
                 ),
 
-                // Filtro por setor
-                React.createElement('div', { style: { marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'center' } },
+                // Filtro e pesquisa
+                React.createElement('div', { style: { marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' } },
+                    React.createElement('input', {
+                        type: 'text',
+                        className: 'form-control',
+                        placeholder: 'Pesquisar processo, responsável ou setor...',
+                        value: pesquisa,
+                        onChange: (e) => setPesquisa(e.target.value),
+                        style: { width: '300px' }
+                    }),
                     React.createElement('label', { style: { fontWeight: '600', fontSize: '14px' } }, 'Filtrar por Setor:'),
                     React.createElement('select', {
                         className: 'form-control',
@@ -3145,7 +3586,7 @@
                     React.createElement('h3', { style: { marginBottom: '20px', fontSize: '18px' } }, 
                         processoEditando ? 'Editar Processo' : 'Novo Processo'
                     ),
-                    React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' } },
+                    React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px', marginBottom: '15px' } },
                         React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Nome do Processo *'),
                             React.createElement('input', {
@@ -3161,16 +3602,52 @@
                             React.createElement('select', {
                                 className: 'form-control',
                                 value: novoProcesso.responsavel,
-                                onChange: (e) => setNovoProcesso({ ...novoProcesso, responsavel: e.target.value })
+                                onChange: (e) => setNovoProcesso({ ...novoProcesso, responsavel: e.target.value }),
+                                disabled: !novoProcesso.setor
                             },
-                                React.createElement('option', { value: '' }, 'Selecione um responsável'),
-                                responsaveisDisponiveis.map(resp =>
+                                React.createElement('option', { value: '' }, novoProcesso.setor ? 'Selecione um responsável' : 'Selecione um setor primeiro'),
+                                responsaveisFiltradosProcesso.map(resp =>
                                     React.createElement('option', { key: resp, value: resp }, resp)
                                 )
                             )
+                        ),
+                        React.createElement('div', { className: 'form-group' },
+                            React.createElement('label', { className: 'form-label' }, 'Requerente *'),
+                            React.createElement('select', {
+                                className: 'form-control',
+                                value: novoProcesso.requerente,
+                                onChange: (e) => setNovoProcesso({ ...novoProcesso, requerente: e.target.value })
+                            },
+                                React.createElement('option', { value: '' }, 'Selecione o requerente'),
+                                React.createElement('option', { value: 'Gerente' }, 'Gerente'),
+                                React.createElement('option', { value: 'Coordenador' }, 'Coordenador'),
+                                React.createElement('option', { value: 'Supervisor' }, 'Supervisor'),
+                                React.createElement('option', { value: 'Cliente' }, 'Cliente'),
+                                React.createElement('option', { value: 'Fornecedor' }, 'Fornecedor'),
+                                React.createElement('option', { value: 'Auditor' }, 'Auditor'),
+                                React.createElement('option', { value: 'Diretor' }, 'Diretor')
+                            )
                         )
                     ),
-                    React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px', marginBottom: '20px' } },
+                    React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '15px', marginBottom: '20px' } },
+                        React.createElement('div', { className: 'form-group' },
+                            React.createElement('label', { className: 'form-label' }, 'Setor *'),
+                            React.createElement('select', {
+                                className: 'form-control',
+                                value: novoProcesso.setor,
+                                onChange: (e) => setNovoProcesso({ ...novoProcesso, setor: e.target.value, responsavel: '' })
+                            },
+                                React.createElement('option', { value: 'Vendas' }, 'Vendas'),
+                                React.createElement('option', { value: 'Financeiro' }, 'Financeiro'),
+                                React.createElement('option', { value: 'RH' }, 'RH'),
+                                React.createElement('option', { value: 'TI' }, 'TI'),
+                                React.createElement('option', { value: 'Suporte' }, 'Suporte'),
+                                React.createElement('option', { value: 'Marketing' }, 'Marketing'),
+                                React.createElement('option', { value: 'Operações' }, 'Operações'),
+                                React.createElement('option', { value: 'Processos' }, 'Processos'),
+                                React.createElement('option', { value: 'Qualidade' }, 'Qualidade')
+                            )
+                        ),
                         React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Status'),
                             React.createElement('select', {
@@ -3225,8 +3702,13 @@
                     )
                 ),
                 
-                React.createElement('div', { className: 'process-grid' },
-                    processosFiltrados.map(processo => 
+                // Seção de Processos Ativos/Pendentes
+                processosAtivos.length > 0 && React.createElement('div', { style: { marginBottom: '30px' } },
+                    React.createElement('h3', { style: { marginBottom: '15px', fontSize: '18px', color: 'var(--text-primary)' } }, 
+                        `Processos Ativos e Pendentes (${processosAtivos.length})`
+                    ),
+                    React.createElement('div', { className: 'process-grid' },
+                        processosAtivos.map(processo => 
                         React.createElement('div', { key: processo.id, className: 'process-card' },
                             React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' } },
                                 React.createElement('h3', { style: { margin: 0, flex: 1 } }, processo.nome),
@@ -3261,6 +3743,7 @@
                             ),
                             React.createElement('div', { className: 'process-meta' },
                                 React.createElement('span', null, `Responsável: ${processo.responsavel}`),
+                                React.createElement('span', null, `Requerente: ${processo.requerente || 'N/A'}`),
                                 React.createElement('span', null, `Setor: ${processo.setor}`),
                                 React.createElement('span', { 
                                     className: `status-badge status-${processo.status}` 
@@ -3280,6 +3763,78 @@
                                 React.createElement('span', null, `${processo.progresso}% concluído`)
                             )
                         )
+                        )
+                    )
+                ),
+
+                // Seção de Processos Concluídos
+                processosConcluidos.length > 0 && React.createElement('div', { style: { marginTop: '40px' } },
+                    React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' } },
+                        React.createElement('h3', { style: { fontSize: '18px', color: 'var(--text-primary)' } }, 
+                            `Processos Concluídos (${processosConcluidos.length})`
+                        ),
+                        React.createElement('button', {
+                            onClick: () => {
+                                if (window.confirm(`Deseja excluir todos os ${processosConcluidos.length} processos concluídos? Esta ação não pode ser desfeita.`)) {
+                                    setProcessos(prev => prev.filter(p => p.progresso < 100));
+                                }
+                            },
+                            style: {
+                                padding: '8px 15px',
+                                backgroundColor: '#dc3545',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                                fontSize: '14px'
+                            }
+                        }, 'Excluir Todos Concluídos')
+                    ),
+                    React.createElement('div', { className: 'process-grid' },
+                        processosConcluidos.map(processo => 
+                            React.createElement('div', { key: processo.id, className: 'process-card', style: { opacity: 0.7 } },
+                                React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' } },
+                                    React.createElement('h3', { style: { margin: 0, flex: 1 } }, processo.nome),
+                                    React.createElement('div', { style: { display: 'flex', gap: '5px' } },
+                                        React.createElement('button', {
+                                            onClick: () => {
+                                                if (window.confirm('Deseja excluir este processo concluído?')) {
+                                                    setProcessos(prev => prev.filter(p => p.id !== processo.id));
+                                                }
+                                            },
+                                            style: {
+                                                padding: '5px 10px',
+                                                backgroundColor: '#dc3545',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '4px',
+                                                cursor: 'pointer',
+                                                fontSize: '12px'
+                                            },
+                                            title: 'Excluir processo'
+                                        }, 'Excluir')
+                                    )
+                                ),
+                                React.createElement('div', { className: 'process-meta' },
+                                    React.createElement('span', null, `Responsável: ${processo.responsavel}`),
+                                    React.createElement('span', null, `Requerente: ${processo.requerente || 'N/A'}`),
+                                    React.createElement('span', null, `Setor: ${processo.setor}`),
+                                    React.createElement('span', { 
+                                        className: 'status-badge status-active'
+                                    }, 'Concluído')
+                                ),
+                                React.createElement('div', { className: 'process-progress' },
+                                    React.createElement('div', { 
+                                        className: 'progress-bar',
+                                        style: { width: '100%' }
+                                    })
+                                ),
+                                React.createElement('div', { className: 'process-meta' },
+                                    React.createElement('span', null, `${processo.tarefas} tarefas`),
+                                    React.createElement('span', null, '100% concluído')
+                                )
+                            )
+                        )
                     )
                 )
             );
@@ -3287,76 +3842,108 @@
 
         // Componente TarefasPage
         const TarefasPage = () => {
-            const [tarefas, setTarefas] = useState([
-                { id: 1, titulo: 'Revisar contrato com cliente', processo: 'Vendas', prioridade: 'alta', status: 'completed', data: '2025-07-15', responsavel: 'Maria Santos' },
-                { id: 2, titulo: 'Preparar relatório mensal julho', processo: 'Financeiro', prioridade: 'media', status: 'completed', data: '2025-07-31', responsavel: 'Ana Costa' },
-                { id: 3, titulo: 'Atualizar documentação sistema', processo: 'Suporte', prioridade: 'baixa', status: 'completed', data: '2025-07-20', responsavel: 'João Silva' },
-                { id: 4, titulo: 'Treinamento nova equipe', processo: 'RH', prioridade: 'alta', status: 'completed', data: '2025-08-05', responsavel: 'Carlos Lima' },
-                { id: 5, titulo: 'Otimizar fluxo de aprovação', processo: 'Processos', prioridade: 'media', status: 'completed', data: '2025-08-12', responsavel: 'Pedro Alves' },
-                { id: 6, titulo: 'Atender tickets de suporte', processo: 'Suporte', prioridade: 'alta', status: 'completed', data: '2025-08-18', responsavel: 'Juliana Rocha' },
-                { id: 7, titulo: 'Desenvolver novo módulo', processo: 'Processos', prioridade: 'alta', status: 'completed', data: '2025-08-25', responsavel: 'Roberto Maia' },
-                { id: 8, titulo: 'Criar campanha de marketing', processo: 'Marketing', prioridade: 'media', status: 'completed', data: '2025-09-02', responsavel: 'Fernanda Lopes' },
-                { id: 9, titulo: 'Testar funcionalidades', processo: 'Processos', prioridade: 'alta', status: 'completed', data: '2025-09-08', responsavel: 'Lucas Ferreira' },
-                { id: 10, titulo: 'Recrutar novos colaboradores', processo: 'RH', prioridade: 'media', status: 'completed', data: '2025-09-15', responsavel: 'Patricia Mendes' },
-                { id: 11, titulo: 'Organizar logística de entrega', processo: 'Operações', prioridade: 'alta', status: 'completed', data: '2025-09-20', responsavel: 'Rafael Souza' },
-                { id: 12, titulo: 'Elaborar newsletter interna', processo: 'Marketing', prioridade: 'baixa', status: 'completed', data: '2025-09-25', responsavel: 'Camila Oliveira' },
-                { id: 13, titulo: 'Revisar políticas de segurança', processo: 'Processos', prioridade: 'alta', status: 'completed', data: '2025-10-01', responsavel: 'Bruno Cardoso' },
-                { id: 14, titulo: 'Negociar com fornecedores', processo: 'Financeiro', prioridade: 'media', status: 'completed', data: '2025-10-08', responsavel: 'Tatiana Martins' },
-                { id: 15, titulo: 'Definir objetivos estratégicos', processo: 'Processos', prioridade: 'alta', status: 'completed', data: '2025-10-15', responsavel: 'Gustavo Pereira' },
-                { id: 16, titulo: 'Revisar contratos vigentes', processo: 'Financeiro', prioridade: 'media', status: 'completed', data: '2025-10-22', responsavel: 'Amanda Ribeiro' },
-                { id: 17, titulo: 'Pesquisar novas tecnologias', processo: 'Processos', prioridade: 'baixa', status: 'completed', data: '2025-10-28', responsavel: 'Diego Barbosa' },
-                { id: 18, titulo: 'Ministrar curso de capacitação', processo: 'RH', prioridade: 'alta', status: 'completed', data: '2025-11-05', responsavel: 'Letícia Araujo' },
-                { id: 19, titulo: 'Analisar métricas de performance', processo: 'Processos', prioridade: 'media', status: 'completed', data: '2025-11-10', responsavel: 'Rodrigo Dias' },
-                { id: 20, titulo: 'Avaliar novos fornecedores', processo: 'Financeiro', prioridade: 'baixa', status: 'completed', data: '2025-11-15', responsavel: 'Beatriz Nunes' },
-                { id: 21, titulo: 'Fazer inventário de estoque', processo: 'Operações', prioridade: 'alta', status: 'completed', data: '2025-11-18', responsavel: 'Marcelo Castro' },
-                { id: 22, titulo: 'Fechar orçamento anual', processo: 'Financeiro', prioridade: 'alta', status: 'completed', data: '2025-11-22', responsavel: 'Viviane Gomes' },
-                { id: 23, titulo: 'Pesquisa de satisfação', processo: 'Suporte', prioridade: 'media', status: 'completed', data: '2025-11-25', responsavel: 'Thiago Moreira' },
-                { id: 24, titulo: 'Auditoria de conformidade', processo: 'Processos', prioridade: 'alta', status: 'completed', data: '2025-11-27', responsavel: 'Luciana Teixeira' },
-                { id: 25, titulo: 'Mapear riscos operacionais', processo: 'Processos', prioridade: 'media', status: 'in-progress', data: '2025-11-30', responsavel: 'André Vieira' },
-                { id: 26, titulo: 'Implementar nova tecnologia', processo: 'Processos', prioridade: 'alta', status: 'in-progress', data: '2025-12-05', responsavel: 'Priscila Cunha' },
-                { id: 27, titulo: 'Manutenção preventiva dezembro', processo: 'Operações', prioridade: 'media', status: 'pending', data: '2025-12-10', responsavel: 'Fábio Monteiro' },
-                { id: 28, titulo: 'Digitalizar documentos antigos', processo: 'Processos', prioridade: 'baixa', status: 'in-progress', data: '2025-12-03', responsavel: 'Renata Pires' },
-                { id: 29, titulo: 'Organizar evento de fim de ano', processo: 'Marketing', prioridade: 'media', status: 'in-progress', data: '2025-12-15', responsavel: 'Vinicius Correia' },
-                { id: 30, titulo: 'Relatório de sustentabilidade', processo: 'Operações', prioridade: 'baixa', status: 'pending', data: '2025-12-08', responsavel: 'Carla Duarte' },
-                { id: 31, titulo: 'Avaliar clima organizacional Q4', processo: 'RH', prioridade: 'alta', status: 'completed', data: '2025-11-28', responsavel: 'Eduardo Freitas' },
-                { id: 32, titulo: 'Revisar processos de qualidade', processo: 'Processos', prioridade: 'media', status: 'in-progress', data: '2025-12-02', responsavel: 'Simone Ramos' },
-                { id: 33, titulo: 'Atualizar infraestrutura TI', processo: 'Processos', prioridade: 'alta', status: 'completed', data: '2025-11-29', responsavel: 'Henrique Azevedo' },
-                { id: 34, titulo: 'Organizar arquivos 2025', processo: 'Processos', prioridade: 'baixa', status: 'in-progress', data: '2025-12-12', responsavel: 'Débora Campos' },
-                { id: 35, titulo: 'Revisar plano de benefícios 2026', processo: 'RH', prioridade: 'media', status: 'in-progress', data: '2025-12-06', responsavel: 'Alexandre Rocha' },
-                { id: 36, titulo: 'Encerrar chamados pendentes', processo: 'Suporte', prioridade: 'alta', status: 'in-progress', data: '2025-11-30', responsavel: 'Mônica Borges' },
-                { id: 37, titulo: 'Gestão de instalações 2026', processo: 'Operações', prioridade: 'media', status: 'pending', data: '2025-12-18', responsavel: 'César Farias' },
-                { id: 38, titulo: 'Projetar orçamento trimestral Q1/26', processo: 'Financeiro', prioridade: 'alta', status: 'in-progress', data: '2025-12-04', responsavel: 'Vanessa Melo' },
-                { id: 39, titulo: 'Lançar novo produto linha premium', processo: 'Vendas', prioridade: 'alta', status: 'in-progress', data: '2025-12-20', responsavel: 'Leandro Silva' },
-                { id: 40, titulo: 'Otimizar operações comerciais 2026', processo: 'Vendas', prioridade: 'media', status: 'in-progress', data: '2025-12-07', responsavel: 'Cristiane Batista' }
-            ]);
+            // Dados iniciais padrão
+            const tarefasIniciais = [
+                { id: 1, titulo: 'Revisar contrato com cliente', processo: 'Vendas', prioridade: 'alta', status: 'completed', data: '2025-07-15', responsavel: 'Maria Santos', requerente: 'Cliente' },
+                { id: 2, titulo: 'Preparar relatório mensal julho', processo: 'Financeiro', prioridade: 'media', status: 'completed', data: '2025-07-31', responsavel: 'Ana Costa', requerente: 'Gerente' },
+                { id: 3, titulo: 'Atualizar documentação sistema', processo: 'Suporte', prioridade: 'baixa', status: 'completed', data: '2025-07-20', responsavel: 'João Silva', requerente: 'Coordenador' },
+                { id: 4, titulo: 'Treinamento nova equipe', processo: 'RH', prioridade: 'alta', status: 'completed', data: '2025-08-05', responsavel: 'Carlos Lima', requerente: 'Gerente' },
+                { id: 6, titulo: 'Atender tickets de suporte', processo: 'Suporte', prioridade: 'alta', status: 'completed', data: '2025-08-18', responsavel: 'Juliana Rocha', requerente: 'Cliente' },
+                { id: 7, titulo: 'Desenvolver novo módulo', processo: 'Processos', prioridade: 'alta', status: 'completed', data: '2025-08-25', responsavel: 'Roberto Maia', requerente: 'Gerente' },
+                { id: 8, titulo: 'Criar campanha de marketing', processo: 'Marketing', prioridade: 'media', status: 'completed', data: '2025-09-02', responsavel: 'Fernanda Lopes', requerente: 'Coordenador' },
+                { id: 9, titulo: 'Testar funcionalidades', processo: 'Processos', prioridade: 'alta', status: 'completed', data: '2025-09-08', responsavel: 'Lucas Ferreira', requerente: 'Supervisor' },
+                { id: 10, titulo: 'Recrutar novos colaboradores', processo: 'RH', prioridade: 'media', status: 'completed', data: '2025-09-15', responsavel: 'Patricia Mendes', requerente: 'Gerente' },
+                { id: 11, titulo: 'Organizar logística de entrega', processo: 'Operações', prioridade: 'alta', status: 'completed', data: '2025-09-20', responsavel: 'Rafael Souza', requerente: 'Cliente' },
+                { id: 12, titulo: 'Elaborar newsletter interna', processo: 'Marketing', prioridade: 'baixa', status: 'completed', data: '2025-09-25', responsavel: 'Camila Oliveira', requerente: 'Coordenador' },
+                { id: 13, titulo: 'Revisar políticas de segurança', processo: 'Processos', prioridade: 'alta', status: 'completed', data: '2025-10-01', responsavel: 'Bruno Cardoso', requerente: 'Auditor' },
+                { id: 14, titulo: 'Negociar com fornecedores', processo: 'Financeiro', prioridade: 'media', status: 'completed', data: '2025-10-08', responsavel: 'Tatiana Martins', requerente: 'Fornecedor' },
+                { id: 16, titulo: 'Revisar contratos vigentes', processo: 'Financeiro', prioridade: 'media', status: 'completed', data: '2025-10-22', responsavel: 'Amanda Ribeiro', requerente: 'Gerente' },
+                { id: 17, titulo: 'Pesquisar novas tecnologias', processo: 'Processos', prioridade: 'baixa', status: 'completed', data: '2025-10-28', responsavel: 'Diego Barbosa', requerente: 'Supervisor' },
+                { id: 18, titulo: 'Ministrar curso de capacitação', processo: 'RH', prioridade: 'alta', status: 'completed', data: '2025-11-05', responsavel: 'Letícia Araujo', requerente: 'Coordenador' },
+                { id: 19, titulo: 'Analisar métricas de performance', processo: 'Processos', prioridade: 'media', status: 'completed', data: '2025-11-10', responsavel: 'Rodrigo Dias', requerente: 'Gerente' },
+                { id: 20, titulo: 'Avaliar novos fornecedores', processo: 'Financeiro', prioridade: 'baixa', status: 'completed', data: '2025-11-15', responsavel: 'Beatriz Nunes', requerente: 'Fornecedor' },
+                { id: 21, titulo: 'Fazer inventário de estoque', processo: 'Operações', prioridade: 'alta', status: 'completed', data: '2025-11-18', responsavel: 'Marcelo Castro', requerente: 'Supervisor' },
+                { id: 23, titulo: 'Pesquisa de satisfação', processo: 'Suporte', prioridade: 'media', status: 'completed', data: '2025-11-25', responsavel: 'Thiago Moreira', requerente: 'Cliente' },
+                { id: 24, titulo: 'Auditoria de conformidade', processo: 'Processos', prioridade: 'alta', status: 'completed', data: '2025-11-27', responsavel: 'Luciana Teixeira', requerente: 'Auditor' },
+                { id: 25, titulo: 'Mapear riscos operacionais', processo: 'Processos', prioridade: 'media', status: 'in-progress', data: '2025-11-30', responsavel: 'André Vieira', requerente: 'Gerente' },
+                { id: 27, titulo: 'Manutenção preventiva dezembro', processo: 'Operações', prioridade: 'media', status: 'pending', data: '2025-12-10', responsavel: 'Fábio Monteiro', requerente: 'Supervisor' },
+                { id: 28, titulo: 'Digitalizar documentos antigos', processo: 'Processos', prioridade: 'baixa', status: 'in-progress', data: '2025-12-03', responsavel: 'Renata Pires', requerente: 'Coordenador' },
+                { id: 29, titulo: 'Organizar evento de fim de ano', processo: 'Marketing', prioridade: 'media', status: 'in-progress', data: '2025-12-15', responsavel: 'Vinicius Correia', requerente: 'Gerente' },
+                { id: 31, titulo: 'Avaliar clima organizacional Q4', processo: 'RH', prioridade: 'alta', status: 'completed', data: '2025-11-28', responsavel: 'Eduardo Freitas', requerente: 'Gerente' },
+                { id: 32, titulo: 'Revisar processos de qualidade', processo: 'Processos', prioridade: 'media', status: 'in-progress', data: '2025-12-02', responsavel: 'Simone Ramos', requerente: 'Auditor' },
+                { id: 34, titulo: 'Organizar arquivos 2025', processo: 'Processos', prioridade: 'baixa', status: 'in-progress', data: '2025-12-12', responsavel: 'Débora Campos', requerente: 'Coordenador' },
+                { id: 35, titulo: 'Revisar plano de benefícios 2026', processo: 'RH', prioridade: 'media', status: 'in-progress', data: '2025-12-06', responsavel: 'Alexandre Rocha', requerente: 'Gerente' },
+                { id: 36, titulo: 'Encerrar chamados pendentes', processo: 'Suporte', prioridade: 'alta', status: 'in-progress', data: '2025-11-30', responsavel: 'Mônica Borges', requerente: 'Cliente' },
+                { id: 37, titulo: 'Gestão de instalações 2026', processo: 'Operações', prioridade: 'media', status: 'pending', data: '2025-12-18', responsavel: 'César Farias', requerente: 'Supervisor' },
+                { id: 39, titulo: 'Lançar novo produto linha premium', processo: 'Vendas', prioridade: 'alta', status: 'in-progress', data: '2025-12-20', responsavel: 'Leandro Silva', requerente: 'Gerente' },
+                { id: 40, titulo: 'Otimizar operações comerciais 2026', processo: 'Vendas', prioridade: 'media', status: 'in-progress', data: '2025-12-07', responsavel: 'Cristiane Batista', requerente: 'Coordenador' }
+            ];
 
+            // Usar sempre dados iniciais (sem persistência)
+            const [tarefas, setTarefas] = useState(tarefasIniciais);
             const [editandoId, setEditandoId] = useState(null);
             const [editandoCampo, setEditandoCampo] = useState(null);
             const [mostrarFormulario, setMostrarFormulario] = useState(false);
             const [filtroSetor, setFiltroSetor] = useState('todos');
+            const [filtroStatus, setFiltroStatus] = useState('todos');
+            const [pesquisa, setPesquisa] = useState('');
             const [novaTarefa, setNovaTarefa] = useState({
                 titulo: '',
                 processo: '',
                 prioridade: 'media',
                 status: 'pending',
                 data: '',
-                responsavel: ''
+                responsavel: '',
+                requerente: ''
             });
 
-            const responsaveisDisponiveis = [
-                'Maria Santos', 'João Silva', 'Ana Costa', 'Carlos Lima', 'Pedro Alves',
-                'Juliana Rocha', 'Roberto Maia', 'Fernanda Lopes', 'Lucas Ferreira', 'Patricia Mendes',
-                'Rafael Souza', 'Camila Oliveira', 'Bruno Cardoso', 'Tatiana Martins', 'Gustavo Pereira',
-                'Amanda Ribeiro', 'Diego Barbosa', 'Letícia Araujo', 'Rodrigo Dias', 'Beatriz Nunes',
-                'Marcelo Castro', 'Viviane Gomes', 'Thiago Moreira', 'Luciana Teixeira', 'André Vieira',
-                'Priscila Cunha', 'Fábio Monteiro', 'Renata Pires', 'Vinicius Correia', 'Carla Duarte',
-                'Eduardo Freitas', 'Simone Ramos', 'Henrique Azevedo', 'Débora Campos', 'Alexandre Rocha',
-                'Mônica Borges', 'César Farias', 'Vanessa Melo', 'Leandro Silva', 'Cristiane Batista'
-            ];
+            // Obter funcionários dinâmicos da equipe
+            const [funcionariosPorSetor, setFuncionariosPorSetor] = useState(EquipeManager.getNomesPorSetor());
+            const [responsaveisDisponiveis, setResponsaveisDisponiveis] = useState(EquipeManager.getTodosNomes());
+
+            // Atualizar lista de funcionários quando a equipe mudar
+            useEffect(() => {
+                const handleEquipeUpdate = () => {
+                    setFuncionariosPorSetor(EquipeManager.getNomesPorSetor());
+                    setResponsaveisDisponiveis(EquipeManager.getTodosNomes());
+                };
+
+                window.addEventListener('equipeUpdated', handleEquipeUpdate);
+                return () => window.removeEventListener('equipeUpdated', handleEquipeUpdate);
+            }, []);
+            
             const processosDisponiveis = ['Vendas', 'Financeiro', 'Suporte', 'RH', 'Processos', 'Marketing', 'Operações'];
+            
+            // Filtrar responsáveis baseado no setor selecionado
+            const responsaveisFiltrados = novaTarefa.processo && funcionariosPorSetor[novaTarefa.processo] 
+                ? funcionariosPorSetor[novaTarefa.processo] 
+                : [];
+
+            const titulosTarefas = [
+                'Analisar indicadores de performance',
+                'Revisar documentação técnica',
+                'Atualizar base de conhecimento',
+                'Preparar apresentação mensal',
+                'Validar dados do relatório',
+                'Configurar ambiente de testes',
+                'Realizar backup de sistemas',
+                'Avaliar propostas comerciais',
+                'Organizar reunião de equipe',
+                'Desenvolver novo dashboard',
+                'Corrigir bugs reportados',
+                'Implementar melhorias no processo',
+                'Treinar novos colaboradores',
+                'Auditar controles internos',
+                'Pesquisar soluções inovadoras',
+                'Elaborar plano de ação',
+                'Monitorar métricas de qualidade',
+                'Atualizar procedimentos operacionais',
+                'Integrar novos sistemas',
+                'Revisar políticas da empresa'
+            ];
 
             const handleCriarTarefa = () => {
-                if (!novaTarefa.titulo || !novaTarefa.processo || !novaTarefa.responsavel || !novaTarefa.data) {
+                if (!novaTarefa.titulo || !novaTarefa.processo || !novaTarefa.responsavel || !novaTarefa.data || !novaTarefa.requerente) {
                     alert('Preencha todos os campos obrigatórios!');
                     return;
                 }
@@ -3375,14 +3962,15 @@
                     ...novaTarefa
                 };
 
-                setTarefas(prev => [...prev, tarefa]);
+                setTarefas(prev => [tarefa, ...prev]);
                 setNovaTarefa({
                     titulo: '',
                     processo: '',
                     prioridade: 'media',
                     status: 'pending',
                     data: '',
-                    responsavel: ''
+                    responsavel: '',
+                    requerente: ''
                 });
                 setMostrarFormulario(false);
             };
@@ -3395,7 +3983,8 @@
                     prioridade: 'media',
                     status: 'pending',
                     data: '',
-                    responsavel: ''
+                    responsavel: '',
+                    requerente: ''
                 });
             };
 
@@ -3426,28 +4015,86 @@
                 setEditandoCampo(null);
             };
 
-            // Atualizar tarefas em tempo real
+            // Atualizar tarefas em tempo real e gerar novas tarefas automaticamente
             useEffect(() => {
                 const interval = setInterval(() => {
-                    setTarefas(prev => 
-                        prev.map(tarefa => {
-                            if (tarefa.status === 'in-progress' && Math.random() < 0.3) {
+                    setTarefas(prev => {
+                        let tarefasAtualizadas = prev.map(tarefa => {
+                            if (tarefa.status === 'in-progress' && Math.random() < 0.15) {
                                 return { ...tarefa, status: 'completed' };
-                            } else if (tarefa.status === 'pending' && Math.random() < 0.2) {
+                            } else if (tarefa.status === 'pending' && Math.random() < 0.1) {
                                 return { ...tarefa, status: 'in-progress' };
                             }
                             return tarefa;
-                        })
-                    );
+                        });
+
+                        // Gerar novas tarefas automaticamente (10% de chance a cada 3 segundos)
+                        if (Math.random() < 0.1) {
+                            const prioridades = ['alta', 'media', 'baixa'];
+                            const status = ['pending', 'in-progress'];
+                            const requerentes = ['Gerente', 'Coordenador', 'Supervisor', 'Cliente', 'Fornecedor', 'Auditor'];
+                            
+                            // Gerar data aleatória entre hoje e 30 dias no futuro
+                            const hoje = new Date();
+                            const diasFuturos = Math.floor(Math.random() * 30) + 1;
+                            const dataFutura = new Date(hoje);
+                            dataFutura.setDate(hoje.getDate() + diasFuturos);
+                            const dataFormatada = dataFutura.toISOString().split('T')[0];
+
+                            const novaTarefaAuto = {
+                                id: Date.now() + Math.random(),
+                                titulo: titulosTarefas[Math.floor(Math.random() * titulosTarefas.length)],
+                                processo: processosDisponiveis[Math.floor(Math.random() * processosDisponiveis.length)],
+                                prioridade: prioridades[Math.floor(Math.random() * prioridades.length)],
+                                status: status[Math.floor(Math.random() * status.length)],
+                                data: dataFormatada,
+                                responsavel: responsaveisDisponiveis[Math.floor(Math.random() * responsaveisDisponiveis.length)],
+                                requerente: requerentes[Math.floor(Math.random() * requerentes.length)]
+                            };
+
+                            tarefasAtualizadas = [novaTarefaAuto, ...tarefasAtualizadas];
+                        }
+
+                        return tarefasAtualizadas;
+                    });
                 }, 3000);
 
                 return () => clearInterval(interval);
             }, []);
 
-            // Filtrar tarefas por setor (usando o campo processo como setor)
-            const tarefasFiltradas = filtroSetor === 'todos' 
-                ? tarefas 
-                : tarefas.filter(t => t.processo === filtroSetor);
+            // Filtrar tarefas por setor, status e pesquisa
+            const tarefasFiltradas = tarefas
+                .filter(t => filtroSetor === 'todos' || t.processo === filtroSetor)
+                .filter(t => filtroStatus === 'todos' || t.status === filtroStatus)
+                .filter(t => 
+                    pesquisa === '' || 
+                    t.titulo.toLowerCase().includes(pesquisa.toLowerCase()) ||
+                    t.responsavel.toLowerCase().includes(pesquisa.toLowerCase()) ||
+                    t.processo.toLowerCase().includes(pesquisa.toLowerCase())
+                )
+                .sort((a, b) => {
+                    // Se não há filtros ativos, ordena por prioridade e prazo
+                    if (filtroSetor === 'todos' && filtroStatus === 'todos' && pesquisa === '') {
+                        const prioridadeValor = { 'alta': 3, 'media': 2, 'baixa': 1 };
+                        const prioridadeA = prioridadeValor[a.prioridade];
+                        const prioridadeB = prioridadeValor[b.prioridade];
+                        
+                        // Primeiro ordena por prioridade (maior primeiro)
+                        if (prioridadeA !== prioridadeB) {
+                            return prioridadeB - prioridadeA;
+                        }
+                        
+                        // Se prioridade é igual, ordena por prazo (mais próximo primeiro)
+                        return new Date(a.data) - new Date(b.data);
+                    }
+                    
+                    // Com filtros ativos, ordena por ID (mais recentes primeiro)
+                    return b.id - a.id;
+                });
+
+            // Separar tarefas ativas e concluídas
+            const tarefasAtivas = tarefasFiltradas.filter(t => t.status !== 'completed');
+            const tarefasConcluidas = tarefasFiltradas.filter(t => t.status === 'completed');
 
             return React.createElement('div', { className: 'page-content' },
                 React.createElement('div', { className: 'header' },
@@ -3465,8 +4112,16 @@
                     'Acompanhe e gerencie todas as tarefas da sua equipe. Atribua responsáveis e defina prazos.'
                 ),
 
-                // Filtro por setor
-                React.createElement('div', { style: { marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'center' } },
+                // Filtro e pesquisa
+                React.createElement('div', { style: { marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' } },
+                    React.createElement('input', {
+                        type: 'text',
+                        className: 'form-control',
+                        placeholder: 'Pesquisar tarefa, responsável ou setor...',
+                        value: pesquisa,
+                        onChange: (e) => setPesquisa(e.target.value),
+                        style: { width: '300px' }
+                    }),
                     React.createElement('label', { style: { fontWeight: '600', fontSize: '14px' } }, 'Filtrar por Setor:'),
                     React.createElement('select', {
                         className: 'form-control',
@@ -3482,6 +4137,18 @@
                         React.createElement('option', { value: 'Marketing' }, 'Marketing'),
                         React.createElement('option', { value: 'Operações' }, 'Operações'),
                         React.createElement('option', { value: 'Processos' }, 'Processos')
+                    ),
+                    React.createElement('label', { style: { fontWeight: '600', fontSize: '14px' } }, 'Filtrar por Status:'),
+                    React.createElement('select', {
+                        className: 'form-control',
+                        value: filtroStatus,
+                        onChange: (e) => setFiltroStatus(e.target.value),
+                        style: { width: '200px' }
+                    },
+                        React.createElement('option', { value: 'todos' }, 'Todos os Status'),
+                        React.createElement('option', { value: 'pending' }, 'Pendentes'),
+                        React.createElement('option', { value: 'in-progress' }, 'Em Andamento'),
+                        React.createElement('option', { value: 'completed' }, 'Concluídas')
                     ),
                     React.createElement('span', { style: { fontSize: '13px', color: '#6c757d' } }, 
                         `Mostrando ${tarefasFiltradas.length} de ${tarefas.length} tarefas`
@@ -3499,7 +4166,7 @@
                     }
                 },
                     React.createElement('h3', { style: { marginBottom: '20px', fontSize: '18px' } }, 'Nova Tarefa'),
-                    React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '15px', marginBottom: '15px' } },
+                    React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '15px', marginBottom: '15px' } },
                         React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Título da Tarefa *'),
                             React.createElement('input', {
@@ -3511,11 +4178,28 @@
                             })
                         ),
                         React.createElement('div', { className: 'form-group' },
+                            React.createElement('label', { className: 'form-label' }, 'Requerente *'),
+                            React.createElement('select', {
+                                className: 'form-control',
+                                value: novaTarefa.requerente,
+                                onChange: (e) => setNovaTarefa({ ...novaTarefa, requerente: e.target.value })
+                            },
+                                React.createElement('option', { value: '' }, 'Selecione o requerente'),
+                                React.createElement('option', { value: 'Gerente' }, 'Gerente'),
+                                React.createElement('option', { value: 'Coordenador' }, 'Coordenador'),
+                                React.createElement('option', { value: 'Supervisor' }, 'Supervisor'),
+                                React.createElement('option', { value: 'Cliente' }, 'Cliente'),
+                                React.createElement('option', { value: 'Fornecedor' }, 'Fornecedor'),
+                                React.createElement('option', { value: 'Auditor' }, 'Auditor'),
+                                React.createElement('option', { value: 'Diretor' }, 'Diretor')
+                            )
+                        ),
+                        React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Processo *'),
                             React.createElement('select', {
                                 className: 'form-control',
                                 value: novaTarefa.processo,
-                                onChange: (e) => setNovaTarefa({ ...novaTarefa, processo: e.target.value })
+                                onChange: (e) => setNovaTarefa({ ...novaTarefa, processo: e.target.value, responsavel: '' })
                             },
                                 React.createElement('option', { value: '' }, 'Selecione um processo'),
                                 processosDisponiveis.map(proc =>
@@ -3554,10 +4238,11 @@
                             React.createElement('select', {
                                 className: 'form-control',
                                 value: novaTarefa.responsavel,
-                                onChange: (e) => setNovaTarefa({ ...novaTarefa, responsavel: e.target.value })
+                                onChange: (e) => setNovaTarefa({ ...novaTarefa, responsavel: e.target.value }),
+                                disabled: !novaTarefa.processo
                             },
-                                React.createElement('option', { value: '' }, 'Selecione'),
-                                responsaveisDisponiveis.map(resp =>
+                                React.createElement('option', { value: '' }, novaTarefa.processo ? 'Selecione um responsável' : 'Selecione um setor primeiro'),
+                                responsaveisFiltrados.map(resp =>
                                     React.createElement('option', { key: resp, value: resp }, resp)
                                 )
                             )
@@ -3593,23 +4278,30 @@
                     )
                 ),
                 
-                React.createElement('table', { className: 'data-table' },
-                    React.createElement('thead', null,
-                        React.createElement('tr', null,
-                            React.createElement('th', null, 'Tarefa'),
-                            React.createElement('th', null, 'Processo'),
-                            React.createElement('th', null, 'Prioridade'),
-                            React.createElement('th', null, 'Status'),
-                            React.createElement('th', null, 'Responsável'),
-                            React.createElement('th', null, 'Prazo'),
-                            React.createElement('th', null, 'Status do Prazo'),
-                            React.createElement('th', null, 'Ações')
-                        )
+                // Seção de Tarefas Ativas
+                tarefasAtivas.length > 0 && React.createElement('div', { style: { marginBottom: '30px' } },
+                    React.createElement('h3', { style: { marginBottom: '15px', fontSize: '18px', color: 'var(--text-primary)' } }, 
+                        `Tarefas Ativas (${tarefasAtivas.length})`
                     ),
-                    React.createElement('tbody', null,
-                        tarefasFiltradas.map(tarefa => 
-                            React.createElement('tr', { key: tarefa.id },
+                    React.createElement('table', { className: 'data-table' },
+                        React.createElement('thead', null,
+                            React.createElement('tr', null,
+                                React.createElement('th', null, 'Tarefa'),
+                                React.createElement('th', null, 'Requerente'),
+                                React.createElement('th', null, 'Processo'),
+                                React.createElement('th', null, 'Prioridade'),
+                                React.createElement('th', null, 'Status'),
+                                React.createElement('th', null, 'Responsável'),
+                                React.createElement('th', null, 'Prazo'),
+                                React.createElement('th', null, 'Status do Prazo'),
+                                React.createElement('th', null, 'Ações')
+                            )
+                        ),
+                        React.createElement('tbody', null,
+                            tarefasAtivas.map(tarefa =>
+                                React.createElement('tr', { key: tarefa.id },
                                 React.createElement('td', null, tarefa.titulo),
+                                React.createElement('td', null, tarefa.requerente || '-'),
                                 React.createElement('td', null, tarefa.processo),
                                 React.createElement('td', null, 
                                     React.createElement('span', { 
@@ -3645,7 +4337,9 @@
                                                 padding: '5px', 
                                                 borderRadius: '4px', 
                                                 border: '1px solid #4361ee',
-                                                cursor: 'pointer'
+                                                cursor: 'pointer',
+                                                backgroundColor: 'var(--bg-secondary)',
+                                                color: 'var(--text-primary)'
                                             }
                                         },
                                             responsaveisDisponiveis.map(resp => 
@@ -3656,10 +4350,15 @@
                                         React.createElement('span', {
                                             onClick: () => handleEditarCampo(tarefa.id, 'responsavel'),
                                             style: { 
-                                                cursor: 'pointer', 
-                                                textDecoration: 'underline',
-                                                color: '#4361ee'
+                                                cursor: 'pointer',
+                                                color: 'var(--text-primary)',
+                                                padding: '4px 8px',
+                                                borderRadius: '4px',
+                                                transition: 'background 0.2s',
+                                                display: 'inline-block'
                                             },
+                                            onMouseOver: (e) => e.target.style.backgroundColor = 'rgba(67, 97, 238, 0.1)',
+                                            onMouseOut: (e) => e.target.style.backgroundColor = 'transparent',
                                             title: 'Clique para alterar responsável'
                                         }, tarefa.responsavel)
                                 ),
@@ -3676,17 +4375,24 @@
                                                 padding: '5px', 
                                                 borderRadius: '4px', 
                                                 border: '1px solid #4361ee',
-                                                cursor: 'pointer'
+                                                cursor: 'pointer',
+                                                backgroundColor: 'var(--bg-secondary)',
+                                                color: 'var(--text-primary)'
                                             }
                                         })
                                     :
                                         React.createElement('span', {
                                             onClick: () => handleEditarCampo(tarefa.id, 'data'),
                                             style: { 
-                                                cursor: 'pointer', 
-                                                textDecoration: 'underline',
-                                                color: '#4361ee'
+                                                cursor: 'pointer',
+                                                color: 'var(--text-primary)',
+                                                padding: '4px 8px',
+                                                borderRadius: '4px',
+                                                transition: 'background 0.2s',
+                                                display: 'inline-block'
                                             },
+                                            onMouseOver: (e) => e.target.style.backgroundColor = 'rgba(67, 97, 238, 0.1)',
+                                            onMouseOut: (e) => e.target.style.backgroundColor = 'transparent',
                                             title: 'Clique para alterar prazo'
                                         }, new Date(tarefa.data + 'T00:00:00').toLocaleDateString('pt-BR'))
                                 ),
@@ -3763,6 +4469,85 @@
                                         React.createElement('button', {
                                             onClick: () => {
                                                 if (window.confirm('Tem certeza que deseja excluir esta tarefa?')) {
+                                                    setTarefas(prev => prev.filter(t => t.id !== tarefa.id));
+                                                }
+                                            },
+                                            style: {
+                                                padding: '5px 10px',
+                                                backgroundColor: '#dc3545',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '4px',
+                                                cursor: 'pointer',
+                                                fontSize: '12px'
+                                            },
+                                            title: 'Excluir tarefa'
+                                        }, 'Excluir')
+                                    )
+                                )
+                            )
+                            )
+                        )
+                    )
+                ),
+
+                // Seção de Tarefas Concluídas
+                tarefasConcluidas.length > 0 && React.createElement('div', { style: { marginTop: '40px' } },
+                    React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' } },
+                        React.createElement('h3', { style: { fontSize: '18px', color: 'var(--text-primary)' } }, 
+                            `Tarefas Concluídas (${tarefasConcluidas.length})`
+                        ),
+                        React.createElement('button', {
+                            onClick: () => {
+                                if (window.confirm(`Deseja excluir todas as ${tarefasConcluidas.length} tarefas concluídas? Esta ação não pode ser desfeita.`)) {
+                                    setTarefas(prev => prev.filter(t => t.status !== 'completed'));
+                                }
+                            },
+                            style: {
+                                padding: '8px 15px',
+                                backgroundColor: '#dc3545',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                                fontSize: '14px'
+                            }
+                        }, 'Excluir Todas Concluídas')
+                    ),
+                    React.createElement('table', { className: 'data-table' },
+                        React.createElement('thead', null,
+                            React.createElement('tr', null,
+                                React.createElement('th', null, 'Tarefa'),
+                                React.createElement('th', null, 'Requerente'),
+                                React.createElement('th', null, 'Processo'),
+                                React.createElement('th', null, 'Prioridade'),
+                                React.createElement('th', null, 'Responsável'),
+                                React.createElement('th', null, 'Prazo'),
+                                React.createElement('th', null, 'Ações')
+                            )
+                        ),
+                        React.createElement('tbody', null,
+                            tarefasConcluidas.map(tarefa => 
+                                React.createElement('tr', { key: tarefa.id, style: { opacity: 0.7 } },
+                                    React.createElement('td', null, tarefa.titulo),
+                                    React.createElement('td', null, tarefa.requerente || '-'),
+                                    React.createElement('td', null, tarefa.processo),
+                                    React.createElement('td', null, 
+                                        React.createElement('span', { 
+                                            className: `status-badge ${
+                                                tarefa.prioridade === 'alta' ? 'status-inactive' : 
+                                                tarefa.prioridade === 'media' ? 'status-pending' : 'status-active'
+                                            }` 
+                                        }, 
+                                            tarefa.prioridade.charAt(0).toUpperCase() + tarefa.prioridade.slice(1)
+                                        )
+                                    ),
+                                    React.createElement('td', null, tarefa.responsavel),
+                                    React.createElement('td', null, new Date(tarefa.data + 'T00:00:00').toLocaleDateString('pt-BR')),
+                                    React.createElement('td', null,
+                                        React.createElement('button', {
+                                            onClick: () => {
+                                                if (window.confirm('Deseja excluir esta tarefa concluída?')) {
                                                     setTarefas(prev => prev.filter(t => t.id !== tarefa.id));
                                                 }
                                             },
@@ -4126,7 +4911,8 @@
 
         // Componente EquipePage
         const EquipePage = () => {
-            const [membros, setMembros] = useState([
+            // Dados iniciais padrão
+            const membrosIniciais = [
                 { id: 1, nome: 'Maria Santos', cargo: 'Gerente de Vendas', setor: 'Vendas', email: 'mariasantos@empresaflowpilot.com', status: 'active', projetos: 4, online: false },
                 { id: 2, nome: 'João Silva', cargo: 'Especialista de Suporte', setor: 'Suporte', email: 'joaosilva@empresaflowpilot.com', status: 'active', projetos: 6, online: true },
                 { id: 3, nome: 'Ana Costa', cargo: 'Coordenadora de RH', setor: 'RH', email: 'anacosta@empresaflowpilot.com', status: 'active', projetos: 4, online: false },
@@ -4167,9 +4953,14 @@
                 { id: 38, nome: 'Vanessa Melo', cargo: 'Planejadora Financeira', setor: 'Financeiro', email: 'vanessamelo@empresaflowpilot.com', status: 'active', projetos: 5, online: true },
                 { id: 39, nome: 'Leandro Silva', cargo: 'Gerente de Produtos', setor: 'Vendas', email: 'leandrosilva@empresaflowpilot.com', status: 'active', projetos: 5, online: false },
                 { id: 40, nome: 'Cristiane Batista', cargo: 'Gerente Comercial', setor: 'Vendas', email: 'cristianebatista@empresaflowpilot.com', status: 'active', projetos: 6, online: true }
-            ]);
+            ];
 
-            const [filtroSetor, setFiltroSetor] = useState('todos');
+            // Carregar dados salvos ou usar dados iniciais
+            const dadosSalvos = DashboardStorage.loadPage('equipe');
+            const [membros, setMembros] = useState(dadosSalvos?.membros || membrosIniciais);
+            const [filtroSetor, setFiltroSetor] = useState(dadosSalvos?.filtroSetor || 'todos');
+            const [pesquisa, setPesquisa] = useState('');
+
             const [mostrarFormulario, setMostrarFormulario] = useState(false);
             const [membroEditando, setMembroEditando] = useState(null);
             const [novoMembro, setNovoMembro] = useState({
@@ -4181,6 +4972,14 @@
                 projetos: 0,
                 online: false
             });
+
+            // Salvar dados sempre que mudarem
+            useEffect(() => {
+                DashboardStorage.savePage('equipe', {
+                    membros,
+                    filtroSetor
+                });
+            }, [membros, filtroSetor]);
 
             // Atualizar status da equipe em tempo real
             useEffect(() => {
@@ -4210,8 +5009,14 @@
 
                 const id = Math.max(...membros.map(m => m.id), 0) + 1;
                 setMembros([...membros, { ...novoMembro, id }]);
-                setNovoMembro({ nome: '', cargo: '', email: '', status: 'active', projetos: 0, online: false });
+                setNovoMembro({ nome: '', cargo: '', setor: 'Vendas', email: '', status: 'active', projetos: 0, online: false });
                 setMostrarFormulario(false);
+                
+                // Adicionar ao ranking
+                setTimeout(() => {
+                    EquipeManager.adicionarAoRanking(novoMembro.nome);
+                    EquipeManager.notifyChange();
+                }, 100);
 
                 const notification = document.createElement('div');
                 notification.className = 'notification';
@@ -4230,8 +5035,11 @@
             const handleSalvarEdicao = () => {
                 setMembros(membros.map(m => m.id === membroEditando ? { ...novoMembro, id: membroEditando } : m));
                 setMembroEditando(null);
-                setNovoMembro({ nome: '', cargo: '', email: '', status: 'active', projetos: 0, online: false });
+                setNovoMembro({ nome: '', cargo: '', setor: 'Vendas', email: '', status: 'active', projetos: 0, online: false });
                 setMostrarFormulario(false);
+                
+                // Notificar outras páginas
+                setTimeout(() => EquipeManager.notifyChange(), 100);
 
                 const notification = document.createElement('div');
                 notification.className = 'notification';
@@ -4243,7 +5051,16 @@
 
             const handleRemoverMembro = (id) => {
                 if (confirm('Deseja realmente remover este membro da equipe?')) {
+                    const membroRemovido = membros.find(m => m.id === id);
                     setMembros(membros.filter(m => m.id !== id));
+                    
+                    // Remover do ranking e notificar outras páginas
+                    setTimeout(() => {
+                        if (membroRemovido) {
+                            EquipeManager.removerDoRanking(membroRemovido.nome);
+                        }
+                        EquipeManager.notifyChange();
+                    }, 100);
                     
                     const notification = document.createElement('div');
                     notification.className = 'notification';
@@ -4262,14 +5079,20 @@
 
             const handleCancelar = () => {
                 setMembroEditando(null);
-                setNovoMembro({ nome: '', cargo: '', email: '', status: 'active', projetos: 0, online: false });
+                setNovoMembro({ nome: '', cargo: '', setor: 'Vendas', email: '', status: 'active', projetos: 0, online: false });
                 setMostrarFormulario(false);
             };
 
-            // Filtrar membros por setor
-            const membrosFiltrados = filtroSetor === 'todos' 
-                ? membros 
-                : membros.filter(m => m.setor === filtroSetor);
+            // Filtrar membros por setor e pesquisa
+            const membrosFiltrados = membros
+                .filter(m => filtroSetor === 'todos' || m.setor === filtroSetor)
+                .filter(m => 
+                    pesquisa === '' || 
+                    m.nome.toLowerCase().includes(pesquisa.toLowerCase()) ||
+                    m.cargo.toLowerCase().includes(pesquisa.toLowerCase()) ||
+                    m.setor.toLowerCase().includes(pesquisa.toLowerCase()) ||
+                    m.email.toLowerCase().includes(pesquisa.toLowerCase())
+                );
 
             return React.createElement('div', { className: 'page-content' },
                 React.createElement('div', { className: 'header' },
@@ -4283,8 +5106,16 @@
                 ),
 
                 // Filtro por setor
-                React.createElement('div', { className: 'team-filter-bar', style: { marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'center', justifyContent: 'space-between' } },
-                    React.createElement('div', { className: 'team-filter-group', style: { display: 'flex', gap: '10px', alignItems: 'center' } },
+                React.createElement('div', { className: 'team-filter-bar', style: { marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' } },
+                    React.createElement('div', { className: 'team-filter-group', style: { display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' } },
+                        React.createElement('input', {
+                            type: 'text',
+                            className: 'form-control',
+                            placeholder: 'Pesquisar nome, cargo, setor ou email...',
+                            value: pesquisa,
+                            onChange: (e) => setPesquisa(e.target.value),
+                            style: { width: '320px' }
+                        }),
                         React.createElement('label', { style: { fontWeight: '600', fontSize: '14px' } }, 'Filtrar por Setor:'),
                         React.createElement('select', {
                             className: 'form-control',
@@ -4369,13 +5200,27 @@
                         ),
                         React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Email *'),
-                            React.createElement('input', {
-                                type: 'email',
-                                className: 'form-control',
-                                value: novoMembro.email,
-                                onChange: (e) => setNovoMembro({ ...novoMembro, email: e.target.value }),
-                                placeholder: 'nomecompleto@empresaflowpilot.com'
-                            })
+                            React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '5px' } },
+                                React.createElement('input', {
+                                    type: 'text',
+                                    className: 'form-control',
+                                    value: novoMembro.email.replace('@empresaflowpilot.com', ''),
+                                    onChange: (e) => {
+                                        const username = e.target.value.replace('@empresaflowpilot.com', '');
+                                        setNovoMembro({ ...novoMembro, email: username + '@empresaflowpilot.com' });
+                                    },
+                                    placeholder: 'nomecompleto',
+                                    style: { flex: 1 }
+                                }),
+                                React.createElement('span', { 
+                                    style: { 
+                                        color: 'var(--text-primary)', 
+                                        fontSize: '14px',
+                                        whiteSpace: 'nowrap',
+                                        fontWeight: '500'
+                                    } 
+                                }, '@empresaflowpilot.com')
+                            )
                         ),
                         React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Status'),
@@ -4503,10 +5348,14 @@
 
         // Componente GamificacaoPage
         const GamificacaoPage = ({ rankingData }) => {
-            // REMOVA o useState do rankingData daqui
-            // REMOVA o useEffect que atualiza o rankingData daqui
+            const [pesquisa, setPesquisa] = useState('');
             
-            // Use diretamente o rankingData que vem das props
+            // Filtrar ranking por pesquisa
+            const rankingFiltrado = rankingData.filter(j => 
+                pesquisa === '' || 
+                j.nome.toLowerCase().includes(pesquisa.toLowerCase()) ||
+                j.nivel.toLowerCase().includes(pesquisa.toLowerCase())
+            );
             return React.createElement('div', { className: 'page-content' },
                 React.createElement('div', { className: 'header' },
                     React.createElement('h2', null, 
@@ -4516,6 +5365,17 @@
                 ),
                 React.createElement('p', { className: 'page-description' }, 
                     'Acompanhe o ranking dos colaboradores e incentive a produtividade através do sistema de gamificação.'
+                ),
+                
+                React.createElement('div', { style: { marginBottom: '20px' } },
+                    React.createElement('input', {
+                        type: 'text',
+                        className: 'form-control',
+                        placeholder: 'Pesquisar colaborador ou nível...',
+                        value: pesquisa,
+                        onChange: (e) => setPesquisa(e.target.value),
+                        style: { width: '320px' }
+                    })
                 ),
                 
                 React.createElement('div', { className: 'gamification-card' },
@@ -4532,7 +5392,7 @@
                             )
                         ),
                         React.createElement('tbody', null,
-                            rankingData.map(jogador =>
+                            rankingFiltrado.map(jogador =>
                                 React.createElement('tr', { key: jogador.posicao },
                                     React.createElement('td', null, `${jogador.posicao}º`),
                                     React.createElement('td', null, jogador.nome),
@@ -5038,7 +5898,7 @@
                             },
                             onMouseOver: (e) => e.target.style.backgroundColor = '#3a0ca3',
                             onMouseOut: (e) => e.target.style.backgroundColor = '#4361ee'
-                        }, '💾 Salvar Configurações'),
+                        }, 'Salvar Configurações'),
                         
                         configSalva && React.createElement('span', {
                             style: {
@@ -5050,6 +5910,153 @@
                     )
                 )
             );
+        };
+
+        // Sistema de Persistência de Dados
+        const DashboardStorage = {
+            // Salvar estado de uma página específica
+            savePage: (pageName, data) => {
+                try {
+                    const key = `flowpilot_${pageName}_data`;
+                    localStorage.setItem(key, JSON.stringify(data));
+                } catch (e) {
+                    console.error(`Erro ao salvar dados de ${pageName}:`, e);
+                }
+            },
+            
+            // Carregar estado de uma página específica
+            loadPage: (pageName) => {
+                try {
+                    const key = `flowpilot_${pageName}_data`;
+                    const data = localStorage.getItem(key);
+                    return data ? JSON.parse(data) : null;
+                } catch (e) {
+                    console.error(`Erro ao carregar dados de ${pageName}:`, e);
+                    return null;
+                }
+            },
+            
+            // Limpar dados de uma página
+            clearPage: (pageName) => {
+                try {
+                    const key = `flowpilot_${pageName}_data`;
+                    localStorage.removeItem(key);
+                } catch (e) {
+                    console.error(`Erro ao limpar dados de ${pageName}:`, e);
+                }
+            },
+            
+            // Limpar todos os dados
+            clearAll: () => {
+                try {
+                    const keys = Object.keys(localStorage);
+                    keys.forEach(key => {
+                        if (key.startsWith('flowpilot_') && key.endsWith('_data')) {
+                            localStorage.removeItem(key);
+                        }
+                    });
+                } catch (e) {
+                    console.error('Erro ao limpar todos os dados:', e);
+                }
+            }
+        };
+
+        // Sistema centralizado de gerenciamento de equipe
+        const EquipeManager = {
+            // Obter todos os funcionários
+            getFuncionarios: () => {
+                const equipeData = DashboardStorage.loadPage('equipe');
+                return equipeData?.membros || [];
+            },
+
+            // Obter funcionários por setor
+            getFuncionariosPorSetor: (setor) => {
+                const funcionarios = EquipeManager.getFuncionarios();
+                if (!setor || setor === 'todos') return funcionarios;
+                return funcionarios.filter(f => f.setor === setor);
+            },
+
+            // Obter lista de nomes de funcionários por setor
+            getNomesPorSetor: () => {
+                const funcionarios = EquipeManager.getFuncionarios();
+                const mapeamento = {};
+                
+                funcionarios.forEach(func => {
+                    if (!mapeamento[func.setor]) {
+                        mapeamento[func.setor] = [];
+                    }
+                    mapeamento[func.setor].push(func.nome);
+                });
+                
+                return mapeamento;
+            },
+
+            // Obter todos os nomes de funcionários
+            getTodosNomes: () => {
+                const funcionarios = EquipeManager.getFuncionarios();
+                return funcionarios.map(f => f.nome);
+            },
+
+            // Adicionar novo membro ao ranking
+            adicionarAoRanking: (nomeMembro) => {
+                const dashboardData = DashboardStorage.loadPage('dashboard');
+                let ranking = dashboardData?.rankingData || [];
+                
+                // Verificar se o membro já existe no ranking
+                const jaExiste = ranking.some(r => r.nome === nomeMembro);
+                if (jaExiste) return;
+                
+                // Adicionar novo membro com pontos iniciais
+                const novoMembro = {
+                    posicao: ranking.length + 1,
+                    nome: nomeMembro,
+                    pontos: 50, // Pontos iniciais
+                    nivel: 'Iniciante',
+                    conquistas: 0
+                };
+                
+                ranking.push(novoMembro);
+                
+                // Reordenar ranking por pontos
+                ranking = ranking
+                    .sort((a, b) => b.pontos - a.pontos)
+                    .map((r, index) => ({ ...r, posicao: index + 1 }));
+                
+                // Salvar ranking atualizado
+                DashboardStorage.savePage('dashboard', {
+                    ...dashboardData,
+                    rankingData: ranking
+                });
+                
+                // Notificar atualização
+                window.dispatchEvent(new CustomEvent('rankingUpdated', { detail: ranking }));
+            },
+
+            // Remover membro do ranking
+            removerDoRanking: (nomeMembro) => {
+                const dashboardData = DashboardStorage.loadPage('dashboard');
+                let ranking = dashboardData?.rankingData || [];
+                
+                // Remover o membro
+                ranking = ranking.filter(r => r.nome !== nomeMembro);
+                
+                // Reordenar posições
+                ranking = ranking.map((r, index) => ({ ...r, posicao: index + 1 }));
+                
+                // Salvar ranking atualizado
+                DashboardStorage.savePage('dashboard', {
+                    ...dashboardData,
+                    rankingData: ranking
+                });
+                
+                // Notificar atualização
+                window.dispatchEvent(new CustomEvent('rankingUpdated', { detail: ranking }));
+            },
+
+            // Disparar evento customizado quando a equipe mudar
+            notifyChange: () => {
+                window.dispatchEvent(new CustomEvent('equipeUpdated'));
+            }
         };
 
         // Componente principal do Dashboard
@@ -5088,14 +6095,15 @@
                 }
             }, []);
             
-            const [dashboardData, setDashboardData] = useState({
+            // Dados iniciais do Dashboard
+            const dashboardDataInicial = {
                 activeProcesses: 28,
                 todayTasks: 20,
                 performance: 91.2,
                 teamActive: '40/40'
-            });
+            };
 
-            const [activities, setActivities] = useState([
+            const activitiesInicial = [
                 { id: 1, type: 'completed', title: 'Fechar orçamento anual - Concluído', user: 'Viviane Gomes', time: '29/11/2025 14:30' },
                 { id: 2, type: 'in-progress', title: 'Projetar orçamento trimestral - Em andamento', user: 'Vanessa Melo', time: '29/11/2025 13:45' },
                 { id: 3, type: 'completed', title: 'Atualizar infraestrutura - Finalizado', user: 'Henrique Azevedo', time: '29/11/2025 11:20' },
@@ -5103,10 +6111,9 @@
                 { id: 5, type: 'completed', title: 'Avaliar clima organizacional - Concluído', user: 'Eduardo Freitas', time: '28/11/2025 16:00' },
                 { id: 6, type: 'in-progress', title: 'Otimizar operações comerciais - Em andamento', user: 'Cristiane Batista', time: '28/11/2025 14:30' },
                 { id: 7, type: 'completed', title: 'Auditoria de conformidade - Finalizado', user: 'Luciana Teixeira', time: '27/11/2025 17:45' }
-            ]);
+            ];
 
-            // UM ÚNICO ESTADO DE RANKING (fonte única da verdade)
-            const [rankingData, setRankingData] = useState([
+            const rankingDataInicial = [
                 { posicao: 1, nome: 'Maria Santos', pontos: 2051, nivel: 'Expert', conquistas: 12 },
                 { posicao: 2, nome: 'João Silva', pontos: 1788, nivel: 'Avançado', conquistas: 11 },
                 { posicao: 3, nome: 'Ana Costa', pontos: 1665, nivel: 'Avançado', conquistas: 10 },
@@ -5147,7 +6154,32 @@
                 { posicao: 38, nome: 'Vanessa Melo', pontos: 111, nivel: 'Iniciante', conquistas: 0 },
                 { posicao: 39, nome: 'Leandro Silva', pontos: 105, nivel: 'Iniciante', conquistas: 0 },
                 { posicao: 40, nome: 'Cristiane Batista', pontos: 99, nivel: 'Iniciante', conquistas: 0 }
-            ]);
+            ];
+
+            // Carregar dados salvos ou usar dados iniciais
+            const dashboardSalvo = DashboardStorage.loadPage('dashboard');
+            const [dashboardData, setDashboardData] = useState(dashboardSalvo?.dashboardData || dashboardDataInicial);
+            const [activities, setActivities] = useState(dashboardSalvo?.activities || activitiesInicial);
+            const [rankingData, setRankingData] = useState(dashboardSalvo?.rankingData || rankingDataInicial);
+
+            // Salvar dados do dashboard sempre que mudarem
+            useEffect(() => {
+                DashboardStorage.savePage('dashboard', {
+                    dashboardData,
+                    activities,
+                    rankingData
+                });
+            }, [dashboardData, activities, rankingData]);
+
+            // Escutar atualizações do ranking
+            useEffect(() => {
+                const handleRankingUpdate = (event) => {
+                    setRankingData(event.detail);
+                };
+
+                window.addEventListener('rankingUpdated', handleRankingUpdate);
+                return () => window.removeEventListener('rankingUpdated', handleRankingUpdate);
+            }, []);
 
             // Simular atualizações em tempo real
             useEffect(() => {
