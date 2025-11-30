@@ -5491,7 +5491,7 @@
                         marginTop: window.innerWidth > 768 ? '30px' : '20px'
                     } 
                 },
-                    // Coluna da esquerda - Avatar e Estatísticas
+                    // Coluna da esquerda - Avatar
                     React.createElement('div', null,
                         React.createElement('div', {
                             style: {
@@ -5499,7 +5499,8 @@
                                 borderRadius: '10px',
                                 padding: window.innerWidth > 768 ? '20px' : '15px',
                                 textAlign: 'center',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                marginBottom: '20px'
                             }
                         },
                             React.createElement('img', {
@@ -5523,30 +5524,9 @@
                             React.createElement('p', { 
                                 style: { 
                                     color: 'var(--text-secondary)', 
-                                    fontSize: window.innerWidth > 768 ? '14px' : '13px', 
-                                    marginBottom: window.innerWidth > 768 ? '20px' : '15px' 
+                                    fontSize: window.innerWidth > 768 ? '14px' : '13px'
                                 } 
                             }, perfil.cargo),
-                            React.createElement('div', { 
-                                style: { 
-                                    borderTop: '1px solid var(--border-color)', 
-                                    paddingTop: '20px',
-                                    marginTop: '20px' 
-                                } 
-                            },
-                                React.createElement('div', { style: { marginBottom: '15px' } },
-                                    React.createElement('div', { style: { fontSize: '24px', fontWeight: '700', color: '#4361ee' } }, '12'),
-                                    React.createElement('div', { style: { fontSize: '12px', color: 'var(--text-secondary)' } }, 'Processos Ativos')
-                                ),
-                                React.createElement('div', { style: { marginBottom: '15px' } },
-                                    React.createElement('div', { style: { fontSize: '24px', fontWeight: '700', color: '#7209b7' } }, '87%'),
-                                    React.createElement('div', { style: { fontSize: '12px', color: 'var(--text-secondary)' } }, 'Taxa de Sucesso')
-                                ),
-                                React.createElement('div', null,
-                                    React.createElement('div', { style: { fontSize: '24px', fontWeight: '700', color: '#4bb543' } }, '156'),
-                                    React.createElement('div', { style: { fontSize: '12px', color: 'var(--text-secondary)' } }, 'Tarefas Concluídas')
-                                )
-                            ),
                             
                             // Botão de Sair
                             React.createElement('button', {
@@ -5589,6 +5569,46 @@
                                 onMouseOver: (e) => e.target.style.background = '#c82333',
                                 onMouseOut: (e) => e.target.style.background = '#dc3545'
                             }, 'Sair da Conta')
+                        ),
+
+                        // Card de Estatísticas
+                        React.createElement('div', {
+                            style: {
+                                background: 'var(--bg-secondary)',
+                                borderRadius: '10px',
+                                padding: window.innerWidth > 768 ? '20px' : '15px',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                            }
+                        },
+                            React.createElement('h3', { 
+                                style: { 
+                                    fontSize: window.innerWidth > 768 ? '18px' : '16px', 
+                                    fontWeight: '600', 
+                                    marginBottom: '20px',
+                                    color: 'var(--text-primary)',
+                                    textAlign: 'center'
+                                } 
+                            }, 'Minhas Estatísticas'),
+                            
+                            React.createElement('div', { 
+                                style: { 
+                                    borderTop: '1px solid var(--border-color)', 
+                                    paddingTop: '20px'
+                                } 
+                            },
+                                React.createElement('div', { style: { marginBottom: '20px', textAlign: 'center' } },
+                                    React.createElement('div', { style: { fontSize: '32px', fontWeight: '700', color: '#4361ee', marginBottom: '5px' } }, '12'),
+                                    React.createElement('div', { style: { fontSize: '13px', color: 'var(--text-secondary)', fontWeight: '500' } }, 'Processos Ativos')
+                                ),
+                                React.createElement('div', { style: { marginBottom: '20px', textAlign: 'center' } },
+                                    React.createElement('div', { style: { fontSize: '32px', fontWeight: '700', color: '#7209b7', marginBottom: '5px' } }, '87%'),
+                                    React.createElement('div', { style: { fontSize: '13px', color: 'var(--text-secondary)', fontWeight: '500' } }, 'Taxa de Sucesso')
+                                ),
+                                React.createElement('div', { style: { textAlign: 'center' } },
+                                    React.createElement('div', { style: { fontSize: '32px', fontWeight: '700', color: '#4bb543', marginBottom: '5px' } }, '156'),
+                                    React.createElement('div', { style: { fontSize: '13px', color: 'var(--text-secondary)', fontWeight: '500' } }, 'Tarefas Concluídas')
+                                )
+                            )
                         )
                     ),
 
@@ -5634,7 +5654,7 @@
                                     },
                                     onMouseOver: (e) => e.target.style.background = '#3a0ca3',
                                     onMouseOut: (e) => e.target.style.background = '#4361ee'
-                                }, '✏️ Editar Perfil') : null
+                                }, 'Editar Perfil') : null
                         ),
 
                         // Nome
