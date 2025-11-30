@@ -277,6 +277,45 @@
         margin: 15px 0;
     }
     
+    /* Indicador de swipe */
+    .swipe-indicator {
+        position: fixed;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        -webkit-transform: translateY(-50%);
+        width: 30px;
+        height: 60px;
+        background: rgba(67, 97, 238, 0.3);
+        border-radius: 0 30px 30px 0;
+        -webkit-border-radius: 0 30px 30px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s, background 0.3s;
+        -webkit-transition: opacity 0.3s, background 0.3s;
+        pointer-events: none;
+        z-index: 999;
+    }
+    
+    .swipe-indicator.visible {
+        opacity: 1;
+    }
+    
+    .swipe-indicator::after {
+        content: '›';
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    
+    @media (min-width: 769px) {
+        .swipe-indicator {
+            display: none;
+        }
+    }
+    
     .mobile-menu-btn {
         display: none !important;
     }
@@ -653,7 +692,16 @@
         margin-top: 20px;
         background: var(--bg-secondary);
         border-radius: 10px;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
         overflow: hidden;
+        overflow-x: auto;
+        display: block;
+    }
+    
+    .data-table table {
+        width: 100%;
+        min-width: 600px;
     }
 
     .data-table th,
@@ -661,6 +709,7 @@
         padding: 12px 15px;
         text-align: left;
         border-bottom: 1px solid #eee;
+        white-space: nowrap;
     }
 
     .data-table th {
@@ -724,23 +773,65 @@
         padding: 10px 15px;
         border: 1px solid #ddd;
         border-radius: 5px;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
         font-size: 14px;
         transition: border-color 0.3s;
+        -webkit-transition: border-color 0.3s;
+        box-sizing: border-box;
+        -webkit-box-sizing: border-box;
     }
 
     .form-control:focus {
         outline: none;
         border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        -webkit-box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    }
+    
+    /* Grid layouts responsivos */
+    .profile-grid,
+    .settings-grid,
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    
+    @supports not (display: grid) {
+        .profile-grid,
+        .settings-grid,
+        .team-grid {
+            display: flex;
+            flex-wrap: wrap;
+            margin: -10px;
+        }
+        .profile-grid > *,
+        .settings-grid > *,
+        .team-grid > * {
+            flex: 1 1 300px;
+            margin: 10px;
+        }
     }
 
     .btn {
         padding: 10px 20px;
         border: none;
         border-radius: 5px;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
         font-size: 14px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        box-sizing: border-box;
     }
 
     .btn-primary {
@@ -806,9 +897,12 @@
     .process-meta {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         color: var(--gray);
         font-size: 14px;
         margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
     .process-progress {
@@ -852,6 +946,67 @@
         50% { opacity: 0.7; }
         100% { opacity: 1; }
     }
+    
+    /* Estilos base para profile e team */
+    .profile-header,
+    .team-header,
+    .process-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .avatar-large {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--primary);
+    }
+    
+    .ranking-item,
+    .team-member {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        background: var(--bg-secondary);
+        border-radius: 8px;
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        margin-bottom: 10px;
+        transition: transform 0.2s;
+        -webkit-transition: transform 0.2s;
+    }
+    
+    .ranking-item:hover,
+    .team-member:hover {
+        transform: translateX(5px);
+        -webkit-transform: translateX(5px);
+        -moz-transform: translateX(5px);
+    }
+    
+    .badge,
+    .label,
+    .tag {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 15px;
+        -webkit-border-radius: 15px;
+        -moz-border-radius: 15px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    
+    .btn-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
 
     /* Responsive Design */
     @media (max-width: 1200px) {
@@ -893,11 +1048,14 @@
             top: 0;
             height: 100vh;
             z-index: 1002;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
         }
         
         .sidebar.mobile-open {
             transform: translateX(0);
+            -webkit-transform: translateX(0);
         }
         
         .sidebar .logo h1,
@@ -975,6 +1133,69 @@
         .data-table {
             display: block;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Formulários responsivos */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-control,
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select,
+        textarea {
+            width: 100%;
+            font-size: 16px;
+            padding: 12px;
+        }
+        
+        /* Botões responsivos */
+        .btn,
+        button {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        /* Cards de processo */
+        .process-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        /* Ranking cards */
+        .ranking-card {
+            padding: 15px;
+        }
+        
+        .ranking-item {
+            padding: 12px;
+        }
+        
+        /* Perfil page */
+        .profile-grid {
+            grid-template-columns: 1fr !important;
+        }
+        
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .avatar-large {
+            width: 100px;
+            height: 100px;
         }
     }
 
@@ -1030,6 +1251,51 @@
         .data-table th,
         .data-table td {
             padding: 8px 10px;
+            font-size: 12px;
+        }
+        
+        /* Inputs menores */
+        .form-control,
+        input,
+        select,
+        textarea {
+            padding: 10px;
+            font-size: 14px;
+        }
+        
+        /* Espaçamento reduzido */
+        .card,
+        .stat-card,
+        .chart-card {
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        /* Header menor */
+        .page-header h2 {
+            font-size: 18px;
+        }
+        
+        .page-description {
+            font-size: 13px;
+        }
+        
+        /* Badges e labels menores */
+        .badge,
+        .label,
+        .tag {
+            font-size: 11px;
+            padding: 4px 8px;
+        }
+        
+        /* Melhorias de toque */
+        button,
+        .btn,
+        a {
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
     }
 
@@ -4092,17 +4358,40 @@
                 setMobileMenuOpen(false);
             };
 
-            // Swipe para abrir menu
+            // Swipe para abrir menu com feedback visual
             useEffect(() => {
                 let touchStartX = 0;
                 let touchStartY = 0;
                 let touchEndX = 0;
                 let touchEndY = 0;
+                let touchStartTime = 0;
+                let isSwiping = false;
+                
+                const showSwipeIndicator = () => {
+                    const indicator = document.getElementById('swipe-indicator');
+                    if (indicator && window.innerWidth <= 768) {
+                        indicator.classList.add('visible');
+                        setTimeout(() => {
+                            indicator.classList.remove('visible');
+                        }, 2000);
+                    }
+                };
+                
+                // Mostrar indicador após 3 segundos se não houver interação
+                const indicatorTimeout = setTimeout(showSwipeIndicator, 3000);
                 
                 const handleTouchStart = (e) => {
                     if (e.changedTouches && e.changedTouches.length > 0) {
                         touchStartX = e.changedTouches[0].clientX;
                         touchStartY = e.changedTouches[0].clientY;
+                        touchStartTime = Date.now();
+                        isSwiping = false;
+                        
+                        // Mostrar indicador se tocar na borda
+                        if (touchStartX < 50 && !mobileMenuOpen) {
+                            const indicator = document.getElementById('swipe-indicator');
+                            if (indicator) indicator.classList.add('visible');
+                        }
                     }
                 };
                 
@@ -4110,6 +4399,35 @@
                     if (e.changedTouches && e.changedTouches.length > 0) {
                         touchEndX = e.changedTouches[0].clientX;
                         touchEndY = e.changedTouches[0].clientY;
+                        
+                        const swipeDistanceX = touchEndX - touchStartX;
+                        const swipeDistanceY = Math.abs(touchEndY - touchStartY);
+                        
+                        // Detectar se está fazendo swipe horizontal
+                        if (Math.abs(swipeDistanceX) > 10 && swipeDistanceY < 30) {
+                            isSwiping = true;
+                            
+                            // Feedback visual durante o swipe
+                            const sidebar = document.querySelector('.sidebar');
+                            const indicator = document.getElementById('swipe-indicator');
+                            
+                            if (sidebar && touchStartX < 80 && swipeDistanceX > 0 && !mobileMenuOpen) {
+                                // Seguir o dedo ao arrastar (com limite)
+                                const translateX = Math.min(swipeDistanceX - sidebar.offsetWidth, 0);
+                                sidebar.style.transform = `translateX(${translateX}px)`;
+                                sidebar.style.transition = 'none';
+                                
+                                // Atualizar indicador
+                                if (indicator) {
+                                    indicator.style.opacity = Math.min(swipeDistanceX / 100, 0.8);
+                                }
+                            } else if (sidebar && mobileMenuOpen && swipeDistanceX < 0) {
+                                // Visual feedback ao fechar
+                                const translateX = Math.max(swipeDistanceX, -sidebar.offsetWidth);
+                                sidebar.style.transform = `translateX(${translateX}px)`;
+                                sidebar.style.transition = 'none';
+                            }
+                        }
                     }
                 };
                 
@@ -4117,24 +4435,52 @@
                     if (e.changedTouches && e.changedTouches.length > 0) {
                         touchEndX = e.changedTouches[0].clientX;
                         touchEndY = e.changedTouches[0].clientY;
-                        handleSwipe();
+                        
+                        const sidebar = document.querySelector('.sidebar');
+                        const indicator = document.getElementById('swipe-indicator');
+                        
+                        if (sidebar) {
+                            sidebar.style.transform = ''; // Reset transform
+                            sidebar.style.transition = ''; // Restore transition
+                        }
+                        
+                        if (indicator) {
+                            indicator.classList.remove('visible');
+                            indicator.style.opacity = '';
+                        }
+                        
+                        if (isSwiping) {
+                            handleSwipe();
+                        }
                     }
                 };
                 
                 const handleSwipe = () => {
                     const swipeDistanceX = touchEndX - touchStartX;
                     const swipeDistanceY = Math.abs(touchEndY - touchStartY);
+                    const swipeTime = Date.now() - touchStartTime;
+                    const swipeVelocity = Math.abs(swipeDistanceX) / swipeTime;
                     
                     // Verificar se é um swipe horizontal (não vertical)
-                    if (swipeDistanceY < 100) {
-                        // Swipe da esquerda para direita para abrir menu
-                        if (swipeDistanceX > 80 && touchStartX < 80 && !mobileMenuOpen) {
+                    if (swipeDistanceY < 80) {
+                        // Swipe rápido ou longo da esquerda para direita para abrir menu
+                        if ((swipeDistanceX > 100 || (swipeDistanceX > 50 && swipeVelocity > 0.5)) 
+                            && touchStartX < 80 && !mobileMenuOpen) {
                             setMobileMenuOpen(true);
+                            // Haptic feedback (vibração leve se disponível)
+                            if (navigator.vibrate) {
+                                navigator.vibrate(10);
+                            }
                         }
                         
-                        // Swipe da direita para esquerda para fechar menu
-                        if (swipeDistanceX < -80 && mobileMenuOpen) {
+                        // Swipe rápido ou longo da direita para esquerda para fechar menu
+                        if ((swipeDistanceX < -100 || (swipeDistanceX < -50 && swipeVelocity > 0.5)) 
+                            && mobileMenuOpen) {
                             setMobileMenuOpen(false);
+                            // Haptic feedback (vibração leve se disponível)
+                            if (navigator.vibrate) {
+                                navigator.vibrate(10);
+                            }
                         }
                     }
                 };
@@ -4144,6 +4490,7 @@
                 document.addEventListener('touchend', handleTouchEnd, { passive: true });
                 
                 return () => {
+                    clearTimeout(indicatorTimeout);
                     document.removeEventListener('touchstart', handleTouchStart);
                     document.removeEventListener('touchmove', handleTouchMove);
                     document.removeEventListener('touchend', handleTouchEnd);
@@ -4268,6 +4615,12 @@
                         )
                     )
                 ),
+                
+                // Indicador de swipe (apenas mobile)
+                React.createElement('div', { 
+                    className: 'swipe-indicator',
+                    id: 'swipe-indicator'
+                }),
 
                 React.createElement('div', {
                     className: `main-content ${sidebarCollapsed ? 'expanded' : ''} ${mobileMenuOpen ? 'full' : ''}`
