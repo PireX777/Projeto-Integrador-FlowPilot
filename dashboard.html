@@ -277,44 +277,7 @@
         margin: 15px 0;
     }
     
-    /* Indicador de swipe */
-    .swipe-indicator {
-        position: fixed;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        -webkit-transform: translateY(-50%);
-        width: 30px;
-        height: 60px;
-        background: rgba(67, 97, 238, 0.3);
-        border-radius: 0 30px 30px 0;
-        -webkit-border-radius: 0 30px 30px 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transition: opacity 0.3s, background 0.3s;
-        -webkit-transition: opacity 0.3s, background 0.3s;
-        pointer-events: none;
-        z-index: 999;
-    }
-    
-    .swipe-indicator.visible {
-        opacity: 1;
-    }
-    
-    .swipe-indicator::after {
-        content: '›';
-        color: white;
-        font-size: 24px;
-        font-weight: bold;
-    }
-    
-    @media (min-width: 769px) {
-        .swipe-indicator {
-            display: none;
-        }
-    }
+
     
     .mobile-menu-btn {
         display: none;
@@ -723,6 +686,21 @@
         display: flex;
         padding: 15px 0;
         border-bottom: 1px solid #eee;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .activity-item:hover {
+        background: rgba(67, 97, 238, 0.03);
+        padding-left: 10px;
+        padding-right: 10px;
+        margin-left: -10px;
+        margin-right: -10px;
+        border-radius: 8px;
+    }
+    
+    body.dark-theme .activity-item:hover {
+        background: rgba(67, 97, 238, 0.1);
     }
     
     @media (max-width: 768px) {
@@ -747,6 +725,25 @@
         color: white;
         font-weight: bold;
         flex-shrink: 0;
+        font-size: 18px;
+        transition: transform 0.2s ease;
+    }
+    
+    .activity-item:hover .activity-icon {
+        transform: scale(1.1);
+    }
+    
+    .activity-icon.in-progress {
+        animation: rotate 2s linear infinite;
+    }
+    
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    .activity-item:hover .activity-icon.in-progress {
+        animation: rotate 1s linear infinite;
     }
     
     @media (max-width: 768px) {
@@ -810,6 +807,17 @@
         font-size: 14px;
         flex-wrap: wrap;
         gap: 5px;
+    }
+    
+    .activity-user {
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+    
+    .activity-time {
+        color: var(--text-secondary);
+        font-size: 13px;
+        white-space: nowrap;
     }
     
     @media (max-width: 768px) {
@@ -990,18 +998,27 @@
     }
 
     .status-active {
-        background-color: rgba(75, 181, 67, 0.1);
-        color: var(--success);
+        background-color: rgba(67, 97, 238, 0.1);
+        color: #4361ee;
+        border: 1px solid rgba(67, 97, 238, 0.2);
     }
 
     .status-pending {
-        background-color: rgba(255, 204, 0, 0.1);
-        color: var(--warning);
+        background-color: rgba(255, 193, 7, 0.1);
+        color: #f59e0b;
+        border: 1px solid rgba(255, 193, 7, 0.2);
+    }
+
+    .status-completed {
+        background-color: rgba(75, 181, 67, 0.1);
+        color: #4bb543;
+        border: 1px solid rgba(75, 181, 67, 0.2);
     }
 
     .status-inactive {
         background-color: rgba(220, 53, 69, 0.1);
         color: var(--danger);
+        border: 1px solid rgba(220, 53, 69, 0.2);
     }
 
     /* Form Styles */
@@ -2192,7 +2209,7 @@
         color: white;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1000;
+        z-index: 100000;
         animation: slideIn 0.3s ease;
         font-weight: 500;
         max-width: 300px;
@@ -2364,7 +2381,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+        const { useState, useEffect, useRef, useMemo, useCallback } = React;
 
         // Componentes de Gráfico
         const LineChart = ({ data, width = 400, height = 200 }) => {
@@ -2716,8 +2733,8 @@
                 'Tempo Real'
             );
 
-        // Componente StatCard
-        const StatCard = ({ title, value, label, trend, icon, trendType }) => {
+        // Componente StatCard (otimizado com memo)
+        const StatCard = React.memo(({ title, value, label, trend, icon, trendType }) => {
             return React.createElement('div', { className: 'stat-card' },
                 React.createElement('div', { className: 'stat-header' },
                     React.createElement('h3', null, title)
@@ -2726,32 +2743,52 @@
                 React.createElement('div', { className: 'stat-label' }, label),
                 React.createElement('div', { className: `stat-trend ${trendType}` }, trend)
             );
-        };
+        });
 
-        // Componente ActivityItem
-        const ActivityItem = ({ activity }) => {
-            const getIconConfig = (type) => {
-                switch(type) {
-                    case 'completed': return { class: 'completed', icon: '✓' };
-                    case 'in-progress': return { class: 'in-progress', icon: '⟳' };
-                    case 'pending': return { class: 'pending', icon: '⏱' };
-                    default: return { class: '', icon: '📊' };
+        // Componente ActivityItem (otimizado com memo)
+        const ActivityItem = React.memo(({ activity }) => {
+            const iconConfig = useMemo(() => {
+                switch(activity.type) {
+                    case 'completed': return { class: 'completed', icon: '✓', label: 'Concluído' };
+                    case 'in-progress': return { class: 'in-progress', icon: '↻', label: 'Em Andamento' };
+                    case 'pending': return { class: 'pending', icon: '⏱', label: 'Pendente' };
+                    default: return { class: '', icon: '•', label: '' };
                 }
-            };
+            }, [activity.type]);
 
-            const iconConfig = getIconConfig(activity.type);
+            // Calcular tempo relativo
+            const timeAgo = useMemo(() => {
+                const [datePart, timePart] = activity.time.split(' ');
+                const [day, month, year] = datePart.split('/');
+                const activityDate = new Date(`${year}-${month}-${day} ${timePart}`);
+                const now = new Date();
+                const diffMs = now - activityDate;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMs / 3600000);
+                const diffDays = Math.floor(diffMs / 86400000);
+                
+                if (diffMins < 1) return 'Agora mesmo';
+                if (diffMins < 60) return `Há ${diffMins} min`;
+                if (diffHours < 24) return `Há ${diffHours}h`;
+                if (diffDays === 1) return 'Ontem';
+                if (diffDays < 7) return `Há ${diffDays} dias`;
+                return activity.time;
+            }, [activity.time]);
 
-            return React.createElement('li', { className: 'activity-item' },
-                React.createElement('div', { className: `activity-icon ${iconConfig.class}` }, iconConfig.icon),
+            return React.createElement('li', { className: 'activity-item', key: activity.id },
+                React.createElement('div', { 
+                    className: `activity-icon ${iconConfig.class}`,
+                    title: iconConfig.label
+                }, iconConfig.icon),
                 React.createElement('div', { className: 'activity-details' },
                     React.createElement('div', { className: 'activity-title' }, activity.title),
                     React.createElement('div', { className: 'activity-info' },
-                        React.createElement('span', null, activity.user),
-                        React.createElement('span', null, activity.time)
+                        React.createElement('span', { className: 'activity-user' }, activity.user),
+                        React.createElement('span', { className: 'activity-time', title: activity.time }, timeAgo)
                     )
                 )
             );
-        };
+        });
 
         // Componente DashboardPage
         const DashboardPage = ({ dashboardData, activities, top3RankingData, showProfileMenu, setShowProfileMenu, setCurrentPage }) => {
@@ -2759,8 +2796,8 @@
             const [periodFilter, setPeriodFilter] = useState('7days');
             const [activityFilter, setActivityFilter] = useState('all');
             
-            // Estados para dados em tempo real das outras páginas
-            const [dadosTempoReal, setDadosTempoReal] = useState({
+            // Estados para dados em tempo real das outras páginas (memoizado)
+            const [dadosTempoReal, setDadosTempoReal] = useState(() => ({
                 totalFuncionarios: 0,
                 funcionariosOnline: 0,
                 totalProcessos: 0,
@@ -2768,14 +2805,13 @@
                 processosAtivos: 0,
                 tarefasPendentes: 0,
                 funcionariosPorSetor: {}
-            });
+            }));
 
-            // Atualizar dados em tempo real
-            useEffect(() => {
-                const atualizarDados = () => {
-                    // Obter dados da equipe
-                    const equipeData = DashboardStorage.loadPage('equipe');
-                    const funcionarios = equipeData?.membros || [];
+            // Atualizar dados em tempo real (otimizado com useCallback)
+            const atualizarDados = useCallback(() => {
+                // Obter dados da equipe
+                const equipeData = DashboardStorage.loadPage('equipe');
+                const funcionarios = equipeData?.membros || [];
                     
                     // Obter dados de processos
                     const processosData = DashboardStorage.loadPage('processos');
@@ -2803,24 +2839,25 @@
                         processosConcluidos: processos.filter(p => p.progresso === 100).length,
                         funcionariosPorSetor
                     });
-                };
+                }, []);
 
+            useEffect(() => {
                 atualizarDados();
                 
                 // Atualizar quando houver mudanças
                 window.addEventListener('equipeUpdated', atualizarDados);
                 
-                // Atualizar periodicamente
-                const interval = setInterval(atualizarDados, 3000);
+                // Atualizar periodicamente (otimizado para 5 segundos)
+                const interval = setInterval(atualizarDados, 5000);
 
                 return () => {
                     window.removeEventListener('equipeUpdated', atualizarDados);
                     clearInterval(interval);
                 };
-            }, []);
+            }, [atualizarDados]);
             
-            // Calcular métricas dinâmicas baseadas na data atual
-            const calcularMetricasMensais = () => {
+            // Calcular métricas dinâmicas baseadas na data atual (memoizado)
+            const metricas = useMemo(() => {
                 const hoje = new Date();
                 const mesAtual = hoje.getMonth(); // 0-11 (0=Jan, 10=Nov, 11=Dez)
                 const anoAtual = hoje.getFullYear();
@@ -2859,12 +2896,10 @@
                     diferencaMesAnterior: tarefasMesAtual - tarefasMesAnterior,
                     taxaConclusao: 91.2
                 };
-            };
+            }, []);
             
-            const metricas = calcularMetricasMensais();
-            
-            // Dados base para os gráficos - Histórico desde 01/07/2025
-            const basePerformanceData = {
+            // Dados base para os gráficos - Histórico desde 01/07/2025 (memoizado)
+            const basePerformanceData = useMemo(() => ({
                 '7days': [
                     { day: '23/Nov', processos: 18, concluidos: 17 },
                     { day: '24/Nov', processos: 22, concluidos: 20 },
@@ -2887,9 +2922,9 @@
                     { day: 'Outubro', processos: 538, concluidos: 492 },
                     { day: 'Novembro', processos: 601, concluidos: 548 }
                 ]
-            };
+            }), []);
 
-            const baseTaskDistributionData = {
+            const baseTaskDistributionData = useMemo(() => ({
                 '7days': [
                     { name: 'Concluídas', value: 91 },
                     { name: 'Em Andamento', value: 7 },
@@ -2905,9 +2940,9 @@
                     { name: 'Em Andamento', value: 143 },
                     { name: 'Pendentes', value: 91 }
                 ]
-            };
+            }), []);
 
-            const baseTeamActivityData = {
+            const baseTeamActivityData = useMemo(() => ({
                 '7days': [
                     { name: 'Vendas', tasks: 28 },
                     { name: 'Financeiro', tasks: 24 },
@@ -2938,9 +2973,9 @@
                     { name: 'Processos', tasks: 218 },
                     { name: 'Qualidade', tasks: 198 }
                 ]
-            };
+            }), []);
 
-            const baseActivities = {
+            const baseActivities = useMemo(() => ({
                 all: [
                     { id: 1, type: 'completed', title: 'Fechar orçamento anual - Concluído', user: 'Viviane Gomes', time: '29/11/2025 14:30' },
                     { id: 2, type: 'in-progress', title: 'Projetar orçamento trimestral - Em andamento', user: 'Vanessa Melo', time: '29/11/2025 13:45' },
@@ -2955,27 +2990,34 @@
                     { id: 2, type: 'in-progress', title: 'Projetar orçamento trimestral - Em andamento', user: 'Vanessa Melo', time: '29/11/2025 13:45' },
                     { id: 3, type: 'completed', title: 'Atualizar infraestrutura - Finalizado', user: 'Henrique Azevedo', time: '29/11/2025 11:20' }
                 ]
-            };
+            }), []);
             
             // Estados locais dos gráficos
-            const [performanceData, setPerformanceData] = useState(basePerformanceData['7days']);
+            const [performanceData, setPerformanceData] = useState([]);
             
-            const [taskDistributionData, setTaskDistributionData] = useState(baseTaskDistributionData['7days']);
+            const [taskDistributionData, setTaskDistributionData] = useState([]);
 
-            const [teamActivityData, setTeamActivityData] = useState(baseTeamActivityData['7days']);
+            const [teamActivityData, setTeamActivityData] = useState([]);
 
             const [filteredActivities, setFilteredActivities] = useState(activities);
+            
+            // Inicializar dados na primeira renderização
+            useEffect(() => {
+                setPerformanceData(basePerformanceData['7days']);
+                setTaskDistributionData(baseTaskDistributionData['7days']);
+                setTeamActivityData(baseTeamActivityData['7days']);
+            }, [basePerformanceData, baseTaskDistributionData, baseTeamActivityData]);
 
             // Atualizar dados quando os filtros mudarem
             useEffect(() => {
                 setPerformanceData(basePerformanceData[periodFilter]);
                 setTaskDistributionData(baseTaskDistributionData[periodFilter]);
                 setTeamActivityData(baseTeamActivityData[periodFilter]);
-            }, [periodFilter]);
+            }, [periodFilter, basePerformanceData, baseTaskDistributionData, baseTeamActivityData]);
 
             useEffect(() => {
                 setFilteredActivities(baseActivities[activityFilter]);
-            }, [activityFilter]);
+            }, [activityFilter, baseActivities]);
 
             // Atualizações em tempo real para gráficos e atividades
             useEffect(() => {
@@ -3066,7 +3108,7 @@
                     };
                     
                     setFilteredActivities(prev => [novaAtividade, ...prev.slice(0, 6)]);
-                }, 3500);
+                }, 8000);
 
                 return () => clearInterval(interval);
             }, [periodFilter]);
@@ -3091,7 +3133,7 @@
                         trendType: 'trend-up'
                     }),
                     React.createElement(StatCard, {
-                        title: `Tarefas ${metricas.mesAtual}`,
+                        title: `Atividades ${metricas.mesAtual}`,
                         value: metricas.tarefasMes.toString(),
                         label: `Total do mês (${metricas.tarefasConcluidas} concluídas)`,
                         trend: `${metricas.diferencaMesAnterior > 0 ? '+' : ''}${metricas.diferencaMesAnterior} vs mês anterior`,
@@ -3261,7 +3303,22 @@
                     ),
                     React.createElement('div', { className: 'activity-card' },
                         React.createElement('div', { className: 'chart-header' },
-                            React.createElement('div', { className: 'chart-title' }, 'Atividade Recente'),
+                            React.createElement('div', { 
+                                className: 'chart-title',
+                                style: { display: 'flex', alignItems: 'center', gap: '10px' }
+                            }, 
+                                'Atividade Recente',
+                                React.createElement('span', {
+                                    style: {
+                                        fontSize: '12px',
+                                        padding: '4px 8px',
+                                        background: 'rgba(67, 97, 238, 0.1)',
+                                        color: '#4361ee',
+                                        borderRadius: '12px',
+                                        fontWeight: '600'
+                                    }
+                                }, `${filteredActivities.length} atividades`)
+                            ),
                             React.createElement('div', { className: 'chart-actions' },
                                 React.createElement('select', { 
                                     value: activityFilter,
@@ -3610,14 +3667,14 @@
                         placeholder: 'Pesquisar processo, responsável ou setor...',
                         value: pesquisa,
                         onChange: (e) => setPesquisa(e.target.value),
-                        style: { width: '300px' }
+                        style: { flex: '1 1 300px', minWidth: '200px', maxWidth: '400px' }
                     }),
-                    React.createElement('label', { style: { fontWeight: '600', fontSize: '14px' } }, 'Filtrar por Setor:'),
+                    React.createElement('label', { style: { fontWeight: '600', fontSize: '14px', whiteSpace: 'nowrap' } }, 'Filtrar por Setor:'),
                     React.createElement('select', {
                         className: 'form-control',
                         value: filtroSetor,
                         onChange: (e) => setFiltroSetor(e.target.value),
-                        style: { width: '200px' }
+                        style: { flex: '0 1 200px', minWidth: '150px' }
                     },
                         React.createElement('option', { value: 'todos' }, 'Todos os Setores'),
                         React.createElement('option', { value: 'Vendas' }, 'Vendas'),
@@ -3903,7 +3960,7 @@
         };
 
         // Componente TarefasPage
-        const TarefasPage = () => {
+        const AtividadesEmpresaPage = () => {
             // Dados iniciais padrão
             const tarefasIniciais = [
                 { id: 1, titulo: 'Revisar contrato com cliente', processo: 'Vendas', prioridade: 'alta', status: 'completed', data: '2025-07-15', responsavel: 'Maria Santos', requerente: 'Cliente' },
@@ -4161,17 +4218,17 @@
             return React.createElement('div', { className: 'page-content' },
                 React.createElement('div', { className: 'header' },
                     React.createElement('h2', null, 
-                        'Tarefas ',
+                        'Atividades da Empresa ',
                         React.createElement(RealTimeBadge)
                     ),
                     React.createElement('button', {
                         onClick: () => setMostrarFormulario(true),
                         className: 'btn btn-primary',
                         style: { marginLeft: 'auto' }
-                    }, '+ Nova Tarefa')
+                    }, '+ Nova Atividade')
                 ),
                 React.createElement('p', { className: 'page-description' }, 
-                    'Acompanhe e gerencie todas as tarefas da sua equipe. Atribua responsáveis e defina prazos.'
+                    'Visão geral de todas as atividades da empresa. Acompanhe o que está acontecendo em cada setor.'
                 ),
 
                 // Filtro e pesquisa
@@ -4182,14 +4239,14 @@
                         placeholder: 'Pesquisar tarefa, responsável ou setor...',
                         value: pesquisa,
                         onChange: (e) => setPesquisa(e.target.value),
-                        style: { width: '300px' }
+                        style: { flex: '1 1 300px', minWidth: '200px', maxWidth: '400px' }
                     }),
-                    React.createElement('label', { style: { fontWeight: '600', fontSize: '14px' } }, 'Filtrar por Setor:'),
+                    React.createElement('label', { style: { fontWeight: '600', fontSize: '14px', whiteSpace: 'nowrap' } }, 'Filtrar por Setor:'),
                     React.createElement('select', {
                         className: 'form-control',
                         value: filtroSetor,
                         onChange: (e) => setFiltroSetor(e.target.value),
-                        style: { width: '200px' }
+                        style: { flex: '0 1 200px', minWidth: '150px' }
                     },
                         React.createElement('option', { value: 'todos' }, 'Todos os Setores'),
                         React.createElement('option', { value: 'Vendas' }, 'Vendas'),
@@ -4200,12 +4257,12 @@
                         React.createElement('option', { value: 'Operações' }, 'Operações'),
                         React.createElement('option', { value: 'Processos' }, 'Processos')
                     ),
-                    React.createElement('label', { style: { fontWeight: '600', fontSize: '14px' } }, 'Filtrar por Status:'),
+                    React.createElement('label', { style: { fontWeight: '600', fontSize: '14px', whiteSpace: 'nowrap' } }, 'Filtrar por Status:'),
                     React.createElement('select', {
                         className: 'form-control',
                         value: filtroStatus,
                         onChange: (e) => setFiltroStatus(e.target.value),
-                        style: { width: '200px' }
+                        style: { flex: '0 1 200px', minWidth: '150px' }
                     },
                         React.createElement('option', { value: 'todos' }, 'Todos os Status'),
                         React.createElement('option', { value: 'pending' }, 'Pendentes'),
@@ -4469,12 +4526,12 @@
                                             return React.createElement('span', { 
                                                 className: 'status-badge status-active',
                                                 style: { fontSize: '12px' }
-                                            }, '✓ Concluída');
+                                            }, 'Concluída');
                                         } else if (diffDias < 0) {
                                             return React.createElement('span', { 
                                                 className: 'status-badge status-inactive',
                                                 style: { fontSize: '12px', fontWeight: 'bold' }
-                                            }, `⚠️ Atrasada ${Math.abs(diffDias)} dia${Math.abs(diffDias) > 1 ? 's' : ''}`);
+                                            }, `Atrasada ${Math.abs(diffDias)} dia${Math.abs(diffDias) > 1 ? 's' : ''}`);
                                         } else if (diffDias === 0) {
                                             return React.createElement('span', { 
                                                 className: 'status-badge status-pending',
@@ -4510,7 +4567,7 @@
                                                 cursor: tarefa.status === 'completed' ? 'not-allowed' : 'pointer',
                                                 fontSize: '12px'
                                             }
-                                        }, tarefa.status === 'completed' ? '✓ Concluída' : 'Concluir'),
+                                        }, tarefa.status === 'completed' ? 'Concluída' : 'Concluir'),
                                         tarefa.status !== 'completed' && React.createElement('button', {
                                             onClick: () => {
                                                 if (window.confirm('Deseja desativar esta tarefa?')) {
@@ -4633,6 +4690,518 @@
             );
         };
 
+        // Componente MinhasTarefasPage - Tarefas pessoais do chefe
+        const MinhasTarefasPage = () => {
+            // Dados iniciais - Tarefas pessoais do chefe
+            const minhasTarefasIniciais = [
+                { id: 1, titulo: 'Reunião com diretoria', prioridade: 'alta', status: 'pending', data: '2025-12-02', descricao: 'Apresentar resultados do trimestre' },
+                { id: 2, titulo: 'Análise de orçamento 2026', prioridade: 'alta', status: 'in-progress', data: '2025-12-05', descricao: 'Revisar propostas de cada setor' },
+                { id: 3, titulo: 'Aprovar contratações RH', prioridade: 'media', status: 'pending', data: '2025-12-03', descricao: '5 novas posições para aprovação' },
+                { id: 4, titulo: 'Revisar meta de vendas', prioridade: 'alta', status: 'in-progress', data: '2025-12-01', descricao: 'Ajustar metas Q1 2026' },
+                { id: 5, titulo: 'Reunião com investidores', prioridade: 'alta', status: 'pending', data: '2025-12-08', descricao: 'Apresentação de resultados anuais' },
+                { id: 6, titulo: 'Aprovar novos projetos TI', prioridade: 'media', status: 'completed', data: '2025-11-28', descricao: 'Modernização da infraestrutura' },
+                { id: 7, titulo: 'Avaliação de desempenho gerentes', prioridade: 'alta', status: 'in-progress', data: '2025-12-10', descricao: 'Ciclo anual de avaliação' },
+                { id: 8, titulo: 'Planejamento estratégico 2026', prioridade: 'alta', status: 'pending', data: '2025-12-15', descricao: 'Workshop com liderança' },
+                { id: 9, titulo: 'Revisão de políticas internas', prioridade: 'media', status: 'pending', data: '2025-12-12', descricao: 'Atualização do código de conduta' },
+                { id: 10, titulo: 'Análise de riscos corporativos', prioridade: 'media', status: 'completed', data: '2025-11-25', descricao: 'Relatório de auditoria' }
+            ];
+
+            const [minhasTarefas, setMinhasTarefas] = useState(minhasTarefasIniciais);
+            const [mostrarFormulario, setMostrarFormulario] = useState(false);
+            const [tarefaEditando, setTarefaEditando] = useState(null);
+            const [filtroStatus, setFiltroStatus] = useState('todos');
+            const [filtroPrioridade, setFiltroPrioridade] = useState('todos');
+            const [pesquisa, setPesquisa] = useState('');
+            const [novaTarefa, setNovaTarefa] = useState({
+                titulo: '',
+                prioridade: 'media',
+                status: 'pending',
+                data: '',
+                descricao: ''
+            });
+
+            const handleCriarTarefa = () => {
+                if (!novaTarefa.titulo || !novaTarefa.data) {
+                    alert('Por favor, preencha o título e a data da tarefa.');
+                    return;
+                }
+
+                const tarefa = {
+                    id: Date.now(),
+                    ...novaTarefa
+                };
+
+                setMinhasTarefas(prev => [...prev, tarefa]);
+                setNovaTarefa({ titulo: '', prioridade: 'media', status: 'pending', data: '', descricao: '' });
+                setMostrarFormulario(false);
+            };
+
+            const handleEditarTarefa = (tarefa) => {
+                setTarefaEditando(tarefa.id);
+                setNovaTarefa({
+                    titulo: tarefa.titulo,
+                    prioridade: tarefa.prioridade,
+                    status: tarefa.status,
+                    data: tarefa.data,
+                    descricao: tarefa.descricao
+                });
+                setMostrarFormulario(true);
+            };
+
+            const handleSalvarEdicao = () => {
+                if (!novaTarefa.titulo || !novaTarefa.data) {
+                    alert('Por favor, preencha o título e a data da tarefa.');
+                    return;
+                }
+
+                setMinhasTarefas(prev => prev.map(t =>
+                    t.id === tarefaEditando ? { ...t, ...novaTarefa } : t
+                ));
+                setTarefaEditando(null);
+                setNovaTarefa({ titulo: '', prioridade: 'media', status: 'pending', data: '', descricao: '' });
+                setMostrarFormulario(false);
+            };
+
+            const handleExcluirTarefa = (id) => {
+                if (confirm('Tem certeza que deseja excluir esta tarefa?')) {
+                    setMinhasTarefas(prev => prev.filter(t => t.id !== id));
+                }
+            };
+
+            const handleCancelar = () => {
+                setMostrarFormulario(false);
+                setTarefaEditando(null);
+                setNovaTarefa({ titulo: '', prioridade: 'media', status: 'pending', data: '', descricao: '' });
+            };
+
+            const handleToggleStatus = (id) => {
+                setMinhasTarefas(prev => prev.map(t => {
+                    if (t.id === id) {
+                        const novoStatus = t.status === 'completed' ? 'pending' : 
+                                         t.status === 'pending' ? 'in-progress' : 'completed';
+                        return { ...t, status: novoStatus };
+                    }
+                    return t;
+                }));
+            };
+
+            // Filtrar tarefas
+            const tarefasFiltradas = minhasTarefas
+                .filter(t => filtroStatus === 'todos' || t.status === filtroStatus)
+                .filter(t => filtroPrioridade === 'todos' || t.prioridade === filtroPrioridade)
+                .filter(t =>
+                    pesquisa === '' ||
+                    t.titulo.toLowerCase().includes(pesquisa.toLowerCase()) ||
+                    t.descricao.toLowerCase().includes(pesquisa.toLowerCase())
+                )
+                .sort((a, b) => {
+                    const prioridadeValor = { 'alta': 3, 'media': 2, 'baixa': 1 };
+                    const prioridadeA = prioridadeValor[a.prioridade];
+                    const prioridadeB = prioridadeValor[b.prioridade];
+                    
+                    if (prioridadeA !== prioridadeB) {
+                        return prioridadeB - prioridadeA;
+                    }
+                    
+                    return new Date(a.data) - new Date(b.data);
+                });
+
+            const tarefasPendentes = tarefasFiltradas.filter(t => t.status === 'pending');
+            const tarefasEmAndamento = tarefasFiltradas.filter(t => t.status === 'in-progress');
+            const tarefasConcluidas = tarefasFiltradas.filter(t => t.status === 'completed');
+
+            const getPrioridadeColor = (prioridade) => {
+                switch(prioridade) {
+                    case 'alta': return '#dc3545';
+                    case 'media': return '#ffc107';
+                    case 'baixa': return '#28a745';
+                    default: return '#6c757d';
+                }
+            };
+
+            const getStatusBadge = useCallback((status) => {
+                switch(status) {
+                    case 'pending': return 'status-badge status-pending';
+                    case 'in-progress': return 'status-badge status-active';
+                    case 'completed': return 'status-badge status-completed';
+                    default: return 'status-badge';
+                }
+            }, []);
+
+            const getStatusText = useCallback((status) => {
+                switch(status) {
+                    case 'pending': return 'Pendente';
+                    case 'in-progress': return 'Em Andamento';
+                    case 'completed': return 'Concluída';
+                    default: return status;
+                }
+            }, []);
+
+            const getCardBackgroundColor = useCallback((status) => {
+                switch(status) {
+                    case 'pending': return 'rgba(255, 193, 7, 0.05)';
+                    case 'in-progress': return 'rgba(67, 97, 238, 0.05)';
+                    case 'completed': return 'rgba(75, 181, 67, 0.05)';
+                    default: return 'var(--bg-primary)';
+                }
+            }, []);
+
+            const getCardBorderColor = useCallback((status) => {
+                switch(status) {
+                    case 'pending': return '#ffc107';
+                    case 'in-progress': return '#4361ee';
+                    case 'completed': return '#4bb543';
+                    default: return '#6c757d';
+                }
+            }, []);
+
+            return React.createElement('div', { className: 'page-content' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('h2', null, 'Minhas Tarefas'),
+                    React.createElement('button', {
+                        onClick: () => setMostrarFormulario(true),
+                        className: 'btn btn-primary',
+                        style: { marginLeft: 'auto' }
+                    }, '+ Nova Tarefa')
+                ),
+                React.createElement('p', { className: 'page-description' },
+                    'Gerencie suas tarefas e responsabilidades como líder da empresa.'
+                ),
+
+                // Estatísticas rápidas
+                React.createElement('div', {
+                    style: {
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                        gap: '15px',
+                        marginBottom: '25px'
+                    }
+                },
+                    React.createElement('div', {
+                        style: {
+                            background: 'var(--bg-secondary)',
+                            padding: '20px',
+                            borderRadius: '8px',
+                            borderLeft: '4px solid #ffc107'
+                        }
+                    },
+                        React.createElement('div', { style: { fontSize: '14px', color: 'var(--text-secondary)' } }, 'Pendentes'),
+                        React.createElement('div', { style: { fontSize: '32px', fontWeight: 'bold', color: 'var(--text-primary)', marginTop: '5px' } }, tarefasPendentes.length)
+                    ),
+                    React.createElement('div', {
+                        style: {
+                            background: 'var(--bg-secondary)',
+                            padding: '20px',
+                            borderRadius: '8px',
+                            borderLeft: '4px solid #4361ee'
+                        }
+                    },
+                        React.createElement('div', { style: { fontSize: '14px', color: 'var(--text-secondary)' } }, 'Em Andamento'),
+                        React.createElement('div', { style: { fontSize: '32px', fontWeight: 'bold', color: 'var(--text-primary)', marginTop: '5px' } }, tarefasEmAndamento.length)
+                    ),
+                    React.createElement('div', {
+                        style: {
+                            background: 'var(--bg-secondary)',
+                            padding: '20px',
+                            borderRadius: '8px',
+                            borderLeft: '4px solid #4bb543'
+                        }
+                    },
+                        React.createElement('div', { style: { fontSize: '14px', color: 'var(--text-secondary)' } }, 'Concluídas'),
+                        React.createElement('div', { style: { fontSize: '32px', fontWeight: 'bold', color: 'var(--text-primary)', marginTop: '5px' } }, tarefasConcluidas.length)
+                    ),
+                    React.createElement('div', {
+                        style: {
+                            background: 'var(--bg-secondary)',
+                            padding: '20px',
+                            borderRadius: '8px',
+                            borderLeft: '4px solid #7209b7'
+                        }
+                    },
+                        React.createElement('div', { style: { fontSize: '14px', color: 'var(--text-secondary)' } }, 'Total'),
+                        React.createElement('div', { style: { fontSize: '32px', fontWeight: 'bold', color: 'var(--text-primary)', marginTop: '5px' } }, minhasTarefas.length)
+                    )
+                ),
+
+                // Filtros
+                React.createElement('div', { style: { marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' } },
+                    React.createElement('input', {
+                        type: 'text',
+                        className: 'form-control',
+                        placeholder: 'Pesquisar tarefas...',
+                        value: pesquisa,
+                        onChange: (e) => setPesquisa(e.target.value),
+                        style: { flex: '1 1 300px', minWidth: '200px', maxWidth: '400px' }
+                    }),
+                    React.createElement('label', { style: { fontWeight: '600', fontSize: '14px', whiteSpace: 'nowrap' } }, 'Status:'),
+                    React.createElement('select', {
+                        className: 'form-control',
+                        value: filtroStatus,
+                        onChange: (e) => setFiltroStatus(e.target.value),
+                        style: { flex: '0 1 180px', minWidth: '150px' }
+                    },
+                        React.createElement('option', { value: 'todos' }, 'Todos'),
+                        React.createElement('option', { value: 'pending' }, 'Pendentes'),
+                        React.createElement('option', { value: 'in-progress' }, 'Em Andamento'),
+                        React.createElement('option', { value: 'completed' }, 'Concluídas')
+                    ),
+                    React.createElement('label', { style: { fontWeight: '600', fontSize: '14px', whiteSpace: 'nowrap' } }, 'Prioridade:'),
+                    React.createElement('select', {
+                        className: 'form-control',
+                        value: filtroPrioridade,
+                        onChange: (e) => setFiltroPrioridade(e.target.value),
+                        style: { flex: '0 1 180px', minWidth: '150px' }
+                    },
+                        React.createElement('option', { value: 'todos' }, 'Todas'),
+                        React.createElement('option', { value: 'alta' }, 'Alta'),
+                        React.createElement('option', { value: 'media' }, 'Média'),
+                        React.createElement('option', { value: 'baixa' }, 'Baixa')
+                    ),
+                    React.createElement('span', { style: { fontSize: '13px', color: '#6c757d' } },
+                        `Mostrando ${tarefasFiltradas.length} de ${minhasTarefas.length} tarefas`
+                    )
+                ),
+
+                // Formulário
+                mostrarFormulario && React.createElement('div', {
+                    style: {
+                        background: 'var(--bg-secondary)',
+                        padding: '25px',
+                        borderRadius: '8px',
+                        marginBottom: '20px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                    }
+                },
+                    React.createElement('h3', { style: { marginBottom: '20px', fontSize: '18px' } },
+                        tarefaEditando ? 'Editar Tarefa' : 'Nova Tarefa'
+                    ),
+                    React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '15px', marginBottom: '15px' } },
+                        React.createElement('div', { className: 'form-group' },
+                            React.createElement('label', { className: 'form-label' }, 'Título *'),
+                            React.createElement('input', {
+                                type: 'text',
+                                className: 'form-control',
+                                value: novaTarefa.titulo,
+                                onChange: (e) => setNovaTarefa({ ...novaTarefa, titulo: e.target.value }),
+                                placeholder: 'Ex: Reunião com diretoria'
+                            })
+                        ),
+                        React.createElement('div', { className: 'form-group' },
+                            React.createElement('label', { className: 'form-label' }, 'Prioridade'),
+                            React.createElement('select', {
+                                className: 'form-control',
+                                value: novaTarefa.prioridade,
+                                onChange: (e) => setNovaTarefa({ ...novaTarefa, prioridade: e.target.value })
+                            },
+                                React.createElement('option', { value: 'baixa' }, 'Baixa'),
+                                React.createElement('option', { value: 'media' }, 'Média'),
+                                React.createElement('option', { value: 'alta' }, 'Alta')
+                            )
+                        ),
+                        React.createElement('div', { className: 'form-group' },
+                            React.createElement('label', { className: 'form-label' }, 'Status'),
+                            React.createElement('select', {
+                                className: 'form-control',
+                                value: novaTarefa.status,
+                                onChange: (e) => setNovaTarefa({ ...novaTarefa, status: e.target.value })
+                            },
+                                React.createElement('option', { value: 'pending' }, 'Pendente'),
+                                React.createElement('option', { value: 'in-progress' }, 'Em Andamento'),
+                                React.createElement('option', { value: 'completed' }, 'Concluída')
+                            )
+                        ),
+                        React.createElement('div', { className: 'form-group' },
+                            React.createElement('label', { className: 'form-label' }, 'Data *'),
+                            React.createElement('input', {
+                                type: 'date',
+                                className: 'form-control',
+                                value: novaTarefa.data,
+                                onChange: (e) => setNovaTarefa({ ...novaTarefa, data: e.target.value })
+                            })
+                        )
+                    ),
+                    React.createElement('div', { className: 'form-group', style: { marginBottom: '20px' } },
+                        React.createElement('label', { className: 'form-label' }, 'Descrição'),
+                        React.createElement('textarea', {
+                            className: 'form-control',
+                            value: novaTarefa.descricao,
+                            onChange: (e) => setNovaTarefa({ ...novaTarefa, descricao: e.target.value }),
+                            placeholder: 'Detalhes sobre a tarefa...',
+                            rows: 3,
+                            style: { resize: 'vertical' }
+                        })
+                    ),
+                    React.createElement('div', { style: { display: 'flex', gap: '10px', justifyContent: 'flex-end' } },
+                        React.createElement('button', {
+                            onClick: handleCancelar,
+                            className: 'btn',
+                            style: {
+                                padding: '8px 20px',
+                                backgroundColor: '#6c757d',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: 'pointer'
+                            }
+                        }, 'Cancelar'),
+                        React.createElement('button', {
+                            onClick: tarefaEditando ? handleSalvarEdicao : handleCriarTarefa,
+                            className: 'btn btn-primary',
+                            style: { padding: '8px 20px' }
+                        }, tarefaEditando ? 'Salvar' : 'Criar Tarefa')
+                    )
+                ),
+
+                // Lista de tarefas
+                React.createElement('div', {
+                    style: {
+                        background: 'var(--bg-secondary)',
+                        borderRadius: '8px',
+                        padding: '20px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                    }
+                },
+                    tarefasFiltradas.length === 0 ? React.createElement('div', {
+                        style: {
+                            textAlign: 'center',
+                            padding: '40px',
+                            color: 'var(--text-secondary)'
+                        }
+                    }, 'Nenhuma tarefa encontrada.') :
+                    tarefasFiltradas.map(tarefa => React.createElement('div', {
+                        key: tarefa.id,
+                        style: {
+                            background: getCardBackgroundColor(tarefa.status),
+                            padding: '20px',
+                            borderRadius: '8px',
+                            marginBottom: '15px',
+                            borderLeft: `4px solid ${getCardBorderColor(tarefa.status)}`,
+                            transition: 'transform 0.2s, box-shadow 0.2s',
+                            cursor: 'pointer',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                        },
+                        onMouseEnter: (e) => {
+                            e.currentTarget.style.transform = 'translateX(5px)';
+                            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                        },
+                        onMouseLeave: (e) => {
+                            e.currentTarget.style.transform = 'translateX(0)';
+                            e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                        }
+                    },
+                        React.createElement('div', {
+                            style: {
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'flex-start',
+                                marginBottom: '10px'
+                            }
+                        },
+                            React.createElement('div', { style: { flex: 1 } },
+                                React.createElement('h3', {
+                                    style: {
+                                        fontSize: '16px',
+                                        fontWeight: '600',
+                                        marginBottom: '8px',
+                                        color: 'var(--text-primary)',
+                                        textDecoration: tarefa.status === 'completed' ? 'line-through' : 'none',
+                                        opacity: tarefa.status === 'completed' ? 0.7 : 1
+                                    }
+                                }, tarefa.titulo),
+                                tarefa.descricao && React.createElement('p', {
+                                    style: {
+                                        fontSize: '14px',
+                                        color: 'var(--text-secondary)',
+                                        marginBottom: '12px',
+                                        lineHeight: '1.5'
+                                    }
+                                }, tarefa.descricao),
+                                React.createElement('div', {
+                                    style: {
+                                        display: 'flex',
+                                        gap: '10px',
+                                        flexWrap: 'wrap',
+                                        alignItems: 'center'
+                                    }
+                                },
+                                    React.createElement('span', {
+                                        className: getStatusBadge(tarefa.status)
+                                    }, getStatusText(tarefa.status)),
+                                    React.createElement('span', {
+                                        style: {
+                                            fontSize: '13px',
+                                            padding: '4px 10px',
+                                            borderRadius: '4px',
+                                            background: getPrioridadeColor(tarefa.prioridade),
+                                            color: 'white',
+                                            fontWeight: '500'
+                                        }
+                                    }, tarefa.prioridade.charAt(0).toUpperCase() + tarefa.prioridade.slice(1)),
+                                    React.createElement('span', {
+                                        style: {
+                                            fontSize: '13px',
+                                            color: 'var(--text-secondary)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '5px'
+                                        }
+                                    }, new Date(tarefa.data).toLocaleDateString('pt-BR'))
+                                )
+                            ),
+                            React.createElement('div', {
+                                style: {
+                                    display: 'flex',
+                                    gap: '8px',
+                                    marginLeft: '15px'
+                                }
+                            },
+                                React.createElement('button', {
+                                    onClick: () => handleToggleStatus(tarefa.id),
+                                    style: {
+                                        padding: '8px 12px',
+                                        background: '#4bb543',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '5px',
+                                        cursor: 'pointer',
+                                        fontSize: '12px',
+                                        whiteSpace: 'nowrap'
+                                    },
+                                    title: 'Alterar status'
+                                }, '○'),
+                                React.createElement('button', {
+                                    onClick: () => handleEditarTarefa(tarefa),
+                                    style: {
+                                        padding: '8px 12px',
+                                        background: '#4361ee',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '5px',
+                                        cursor: 'pointer',
+                                        fontSize: '12px'
+                                    },
+                                    title: 'Editar'
+                                }, 'E'),
+                                React.createElement('button', {
+                                    onClick: () => handleExcluirTarefa(tarefa.id),
+                                    style: {
+                                        padding: '8px 12px',
+                                        background: '#dc3545',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '5px',
+                                        cursor: 'pointer',
+                                        fontSize: '12px'
+                                    },
+                                    title: 'Excluir'
+                                }, 'X')
+                            )
+                        )
+                    ))
+                )
+            );
+        };
+
         // Componente RelatoriosPage
         const RelatoriosPage = () => {
             const [performanceData, setPerformanceData] = useState([
@@ -4677,8 +5246,8 @@
                 
                 const notification = document.createElement('div');
                 notification.className = 'notification';
-                notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4361ee; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000;';
-                notification.textContent = `⚠️ DEMO: Relatório PDF gerado! (${totalProcessos} processos, ${taxaConclusao}% conclusão)`;
+                notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4361ee; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 100000;';
+                notification.textContent = `DEMO: Relatório PDF gerado (${totalProcessos} processos, ${taxaConclusao}% conclusão)`;
                 document.body.appendChild(notification);
                 setTimeout(() => {
                     if (notification.parentNode) {
@@ -4736,8 +5305,8 @@
                 
                 const notification = document.createElement('div');
                 notification.className = 'notification';
-                notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #217346; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000;';
-                notification.textContent = '✓ Relatório Excel exportado com sucesso!';
+                notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #217346; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 100000;';
+                notification.textContent = 'Relatório Excel exportado com sucesso';
                 document.body.appendChild(notification);
                 setTimeout(() => {
                     if (notification.parentNode) {
@@ -4754,7 +5323,7 @@
                 const notification = document.createElement('div');
                 notification.className = 'notification';
                 notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #0078d4; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000;';
-                notification.textContent = `⚠️ DEMO: Relatório enviado para diexecceo@empresaflowpilot.com (${taxaConclusao}% conclusão)`;
+                notification.textContent = `DEMO: Relatório enviado para diexecceo@empresaflowpilot.com (${taxaConclusao}% conclusão)`;
                 document.body.appendChild(notification);
                 setTimeout(() => {
                     if (notification.parentNode) {
@@ -4863,7 +5432,7 @@
                                 borderRadius: '5px',
                                 cursor: 'pointer'
                             }
-                        }, '📊 Exportar Excel'),
+                        }, 'Exportar Excel'),
                         React.createElement('button', {
                             onClick: enviarPorEmail,
                             className: 'btn report-btn',
@@ -5063,7 +5632,7 @@
                     const notification = document.createElement('div');
                     notification.className = 'notification';
                     notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #dc3545; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000;';
-                    notification.textContent = '⚠️ Preencha todos os campos obrigatórios';
+                    notification.textContent = 'Preencha todos os campos obrigatórios';
                     document.body.appendChild(notification);
                     setTimeout(() => notification.parentNode?.removeChild(notification), 3000);
                     return;
@@ -5083,7 +5652,7 @@
                 const notification = document.createElement('div');
                 notification.className = 'notification';
                 notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4bb543; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000;';
-                notification.textContent = '✓ Membro adicionado com sucesso!';
+                notification.textContent = 'Membro adicionado com sucesso';
                 document.body.appendChild(notification);
                 setTimeout(() => notification.parentNode?.removeChild(notification), 3000);
             };
@@ -5106,7 +5675,7 @@
                 const notification = document.createElement('div');
                 notification.className = 'notification';
                 notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4bb543; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000;';
-                notification.textContent = '✓ Membro atualizado com sucesso!';
+                notification.textContent = 'Membro atualizado com sucesso';
                 document.body.appendChild(notification);
                 setTimeout(() => notification.parentNode?.removeChild(notification), 3000);
             };
@@ -5127,7 +5696,7 @@
                     const notification = document.createElement('div');
                     notification.className = 'notification';
                     notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ff9800; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000;';
-                    notification.textContent = '✓ Membro removido da equipe';
+                    notification.textContent = 'Membro removido da equipe';
                     document.body.appendChild(notification);
                     setTimeout(() => notification.parentNode?.removeChild(notification), 3000);
                 }
@@ -5176,14 +5745,14 @@
                             placeholder: 'Pesquisar nome, cargo, setor ou email...',
                             value: pesquisa,
                             onChange: (e) => setPesquisa(e.target.value),
-                            style: { width: '320px' }
+                            style: { flex: '1 1 300px', minWidth: '200px', maxWidth: '400px' }
                         }),
-                        React.createElement('label', { style: { fontWeight: '600', fontSize: '14px' } }, 'Filtrar por Setor:'),
+                        React.createElement('label', { style: { fontWeight: '600', fontSize: '14px', whiteSpace: 'nowrap' } }, 'Filtrar por Setor:'),
                         React.createElement('select', {
                             className: 'form-control',
                             value: filtroSetor,
                             onChange: (e) => setFiltroSetor(e.target.value),
-                            style: { width: '200px' }
+                            style: { flex: '0 1 200px', minWidth: '150px' }
                         },
                             React.createElement('option', { value: 'todos' }, 'Todos os Setores'),
                             React.createElement('option', { value: 'Vendas' }, 'Vendas'),
@@ -5520,7 +6089,7 @@
                 const notification = document.createElement('div');
                 notification.className = 'notification';
                 notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4bb543; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000;';
-                notification.textContent = '✓ Perfil atualizado com sucesso!';
+                notification.textContent = 'Perfil atualizado com sucesso';
                 document.body.appendChild(notification);
                 setTimeout(() => {
                     if (notification.parentNode) {
@@ -5613,48 +6182,6 @@
                                     fontSize: '14px'
                                 } 
                             }, perfil.cargo)
-                        ),
-
-                        // Card de Estatísticas
-                        React.createElement('div', {
-                            className: 'profile-stats-card',
-                            style: {
-                                background: 'var(--bg-secondary)',
-                                borderRadius: '10px',
-                                padding: '20px',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                                marginBottom: '20px'
-                            }
-                        },
-                            React.createElement('h3', { 
-                                style: { 
-                                    fontSize: '18px', 
-                                    fontWeight: '600', 
-                                    marginBottom: '20px',
-                                    color: 'var(--text-primary)',
-                                    textAlign: 'center'
-                                } 
-                            }, 'Minhas Estatísticas'),
-                            
-                            React.createElement('div', { 
-                                style: { 
-                                    borderTop: '1px solid var(--border-color)', 
-                                    paddingTop: '20px'
-                                } 
-                            },
-                                React.createElement('div', { style: { marginBottom: '20px', textAlign: 'center' } },
-                                    React.createElement('div', { style: { fontSize: '32px', fontWeight: '700', color: '#4361ee', marginBottom: '5px' } }, '12'),
-                                    React.createElement('div', { style: { fontSize: '13px', color: 'var(--text-secondary)', fontWeight: '500' } }, 'Processos Ativos')
-                                ),
-                                React.createElement('div', { style: { marginBottom: '20px', textAlign: 'center' } },
-                                    React.createElement('div', { style: { fontSize: '32px', fontWeight: '700', color: '#7209b7', marginBottom: '5px' } }, '87%'),
-                                    React.createElement('div', { style: { fontSize: '13px', color: 'var(--text-secondary)', fontWeight: '500' } }, 'Taxa de Sucesso')
-                                ),
-                                React.createElement('div', { style: { textAlign: 'center' } },
-                                    React.createElement('div', { style: { fontSize: '32px', fontWeight: '700', color: '#4bb543', marginBottom: '5px' } }, '156'),
-                                    React.createElement('div', { style: { fontSize: '13px', color: 'var(--text-secondary)', fontWeight: '500' } }, 'Tarefas Concluídas')
-                                )
-                            )
                         )
                     ),
 
@@ -5870,7 +6397,7 @@
                                 },
                                 onMouseOver: (e) => e.target.style.background = '#3d9435',
                                 onMouseOut: (e) => e.target.style.background = '#4bb543'
-                            }, '✓ Salvar Alterações'),
+                            }, 'Salvar Alterações'),
                             React.createElement('button', {
                                 onClick: cancelarEdicao,
                                 style: {
@@ -6079,8 +6606,8 @@
                 if (window.innerWidth >= 768) {
                     const notification = document.createElement('div');
                     notification.className = 'notification';
-                    notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4bb543; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000; animation: slideIn 0.3s ease;';
-                    notification.textContent = '✓ Configurações salvas com sucesso!';
+                    notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4bb543; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 100000; animation: slideIn 0.3s ease;';
+                    notification.textContent = 'Configurações salvas com sucesso';
                     document.body.appendChild(notification);
                     setTimeout(() => {
                         if (notification.parentNode) {
@@ -6305,7 +6832,7 @@
                                 fontSize: '14px',
                                 fontWeight: '500'
                             }
-                        }, '✓ Salvo')
+                        }, 'Salvo')
                     )
                 )
             );
@@ -6651,8 +7178,10 @@
                         });
                     case 'processos':
                         return React.createElement(ProcessosPage);
+                    case 'atividades':
+                        return React.createElement(AtividadesEmpresaPage);
                     case 'tarefas':
-                        return React.createElement(TarefasPage);
+                        return React.createElement(MinhasTarefasPage);
                     case 'relatorios':
                         return React.createElement(RelatoriosPage);
                     case 'equipe':
@@ -6745,154 +7274,17 @@
                 setMobileMenuOpen(false);
             };
 
-            // Swipe para abrir menu com feedback visual
-            useEffect(() => {
-                let touchStartX = 0;
-                let touchStartY = 0;
-                let touchEndX = 0;
-                let touchEndY = 0;
-                let touchStartTime = 0;
-                let isSwiping = false;
-                
-                const showSwipeIndicator = () => {
-                    const indicator = document.getElementById('swipe-indicator');
-                    if (indicator && window.innerWidth <= 768) {
-                        indicator.classList.add('visible');
-                        setTimeout(() => {
-                            indicator.classList.remove('visible');
-                        }, 2000);
-                    }
-                };
-                
-                // Mostrar indicador após 3 segundos se não houver interação
-                const indicatorTimeout = setTimeout(showSwipeIndicator, 3000);
-                
-                const handleTouchStart = (e) => {
-                    if (e.changedTouches && e.changedTouches.length > 0) {
-                        touchStartX = e.changedTouches[0].clientX;
-                        touchStartY = e.changedTouches[0].clientY;
-                        touchStartTime = Date.now();
-                        isSwiping = false;
-                        
-                        // Mostrar indicador se tocar na borda
-                        if (touchStartX < 50 && !mobileMenuOpen) {
-                            const indicator = document.getElementById('swipe-indicator');
-                            if (indicator) indicator.classList.add('visible');
-                        }
-                    }
-                };
-                
-                const handleTouchMove = (e) => {
-                    if (e.changedTouches && e.changedTouches.length > 0) {
-                        touchEndX = e.changedTouches[0].clientX;
-                        touchEndY = e.changedTouches[0].clientY;
-                        
-                        const swipeDistanceX = touchEndX - touchStartX;
-                        const swipeDistanceY = Math.abs(touchEndY - touchStartY);
-                        
-                        // Detectar se está fazendo swipe horizontal
-                        if (Math.abs(swipeDistanceX) > 10 && swipeDistanceY < 30) {
-                            isSwiping = true;
-                            
-                            // Feedback visual durante o swipe
-                            const sidebar = document.querySelector('.sidebar');
-                            const indicator = document.getElementById('swipe-indicator');
-                            
-                            if (sidebar && touchStartX < 80 && swipeDistanceX > 0 && !mobileMenuOpen) {
-                                // Seguir o dedo ao arrastar (com limite)
-                                const translateX = Math.min(swipeDistanceX - sidebar.offsetWidth, 0);
-                                sidebar.style.transform = `translateX(${translateX}px)`;
-                                sidebar.style.transition = 'none';
-                                
-                                // Atualizar indicador
-                                if (indicator) {
-                                    indicator.style.opacity = Math.min(swipeDistanceX / 100, 0.8);
-                                }
-                            } else if (sidebar && mobileMenuOpen && swipeDistanceX < 0) {
-                                // Visual feedback ao fechar
-                                const translateX = Math.max(swipeDistanceX, -sidebar.offsetWidth);
-                                sidebar.style.transform = `translateX(${translateX}px)`;
-                                sidebar.style.transition = 'none';
-                            }
-                        }
-                    }
-                };
-                
-                const handleTouchEnd = (e) => {
-                    if (e.changedTouches && e.changedTouches.length > 0) {
-                        touchEndX = e.changedTouches[0].clientX;
-                        touchEndY = e.changedTouches[0].clientY;
-                        
-                        const sidebar = document.querySelector('.sidebar');
-                        const indicator = document.getElementById('swipe-indicator');
-                        
-                        if (sidebar) {
-                            sidebar.style.transform = ''; // Reset transform
-                            sidebar.style.transition = ''; // Restore transition
-                        }
-                        
-                        if (indicator) {
-                            indicator.classList.remove('visible');
-                            indicator.style.opacity = '';
-                        }
-                        
-                        if (isSwiping) {
-                            handleSwipe();
-                        }
-                    }
-                };
-                
-                const handleSwipe = () => {
-                    const swipeDistanceX = touchEndX - touchStartX;
-                    const swipeDistanceY = Math.abs(touchEndY - touchStartY);
-                    const swipeTime = Date.now() - touchStartTime;
-                    const swipeVelocity = Math.abs(swipeDistanceX) / swipeTime;
-                    
-                    // Verificar se é um swipe horizontal (não vertical)
-                    if (swipeDistanceY < 80) {
-                        // Swipe rápido ou longo da esquerda para direita para abrir menu
-                        if ((swipeDistanceX > 100 || (swipeDistanceX > 50 && swipeVelocity > 0.5)) 
-                            && touchStartX < 80 && !mobileMenuOpen) {
-                            setMobileMenuOpen(true);
-                            // Haptic feedback (vibração leve se disponível)
-                            if (navigator.vibrate) {
-                                navigator.vibrate(10);
-                            }
-                        }
-                        
-                        // Swipe rápido ou longo da direita para esquerda para fechar menu
-                        if ((swipeDistanceX < -100 || (swipeDistanceX < -50 && swipeVelocity > 0.5)) 
-                            && mobileMenuOpen) {
-                            setMobileMenuOpen(false);
-                            // Haptic feedback (vibração leve se disponível)
-                            if (navigator.vibrate) {
-                                navigator.vibrate(10);
-                            }
-                        }
-                    }
-                };
-                
-                document.addEventListener('touchstart', handleTouchStart, { passive: true });
-                document.addEventListener('touchmove', handleTouchMove, { passive: true });
-                document.addEventListener('touchend', handleTouchEnd, { passive: true });
-                
-                return () => {
-                    clearTimeout(indicatorTimeout);
-                    document.removeEventListener('touchstart', handleTouchStart);
-                    document.removeEventListener('touchmove', handleTouchMove);
-                    document.removeEventListener('touchend', handleTouchEnd);
-                };
-            }, [mobileMenuOpen]);
+
 
             const pageTitles = {
                 perfil: 'Meu Perfil',
                 dashboard: 'Dashboard Geral',
                 processos: 'Processos',
-                tarefas: 'Tarefas',
+                atividades: 'Atividades da Empresa',
+                tarefas: 'Minhas Atividades',
                 relatorios: 'Relatórios',
                 equipe: 'Equipe',
                 gamificacao: 'Ranking',
-                perfil: 'Meu Perfil',
                 configuracoes: 'Configurações'
             };
 
@@ -6906,7 +7298,7 @@
                     className: `sidebar ${sidebarCollapsed ? 'collapsed' : ''} ${mobileMenuOpen ? 'mobile-open' : ''}`
                 },
                     React.createElement('div', { className: 'logo' },
-                        React.createElement('div', { className: 'logo-icon' }, 'FP'),
+                        React.createElement('img', { src: 'assets/Mask group.svg', alt: 'FlowPilot Logo', style: { height: '40px', width: 'auto' } }),
                         React.createElement('h1', null, 'FlowPilot')
                     ),
                     React.createElement('ul', { className: 'nav-links' },
@@ -6937,7 +7329,7 @@
                         React.createElement('div', { className: 'nav-divider' }),
                         
                         // Menu principal
-                        ['dashboard', 'processos', 'tarefas', 'relatorios', 'equipe', 'gamificacao'].map(page => {
+                        ['dashboard', 'processos', 'atividades', 'tarefas', 'relatorios', 'equipe', 'gamificacao'].map(page => {
                             return React.createElement('li', {
                                 key: page,
                                 className: currentPage === page ? 'active' : '',
