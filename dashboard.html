@@ -177,7 +177,11 @@
     
     .sidebar.collapsed .logo {
         justify-content: center;
-        padding: 0 10px 20px;
+        padding: 20px 10px;
+    }
+    
+    .sidebar.collapsed .logo img {
+        height: 40px;
     }
     
     .sidebar.collapsed .nav-links li {
@@ -188,9 +192,16 @@
     .logo {
         display: flex;
         align-items: center;
-        padding: 0 20px 20px;
+        justify-content: center;
+        padding: 20px 20px;
         border-bottom: 1px solid rgba(255,255,255,0.1);
         margin-bottom: 20px;
+    }
+    
+    .logo img {
+        max-width: 100%;
+        height: auto;
+        transition: all 0.3s ease;
     }
     
     .logo h1 {
@@ -218,6 +229,8 @@
         display: flex;
         flex-direction: column;
         height: calc(100vh - 100px);
+        overflow-y: auto;
+        overflow-x: hidden;
     }
     
     .nav-links li {
@@ -277,6 +290,24 @@
         margin: 15px 0;
     }
     
+    /* Scrollbar para nav-links */
+    .nav-links::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .nav-links::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 3px;
+    }
+    
+    .nav-links::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+    }
+    
+    .nav-links::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
 
     
     .mobile-menu-btn {
@@ -351,7 +382,7 @@
     }
     
     .header h2 {
-        font-size: 24px;
+        font-size: 28px;
         font-weight: 600;
         display: flex;
         align-items: center;
@@ -361,13 +392,13 @@
     
     @media (max-width: 1024px) {
         .header h2 {
-            font-size: 22px;
+            font-size: 26px;
         }
     }
     
     @media (max-width: 768px) {
         .header h2 {
-            font-size: 20px;
+            font-size: 24px;
         }
     }
     
@@ -1020,6 +1051,53 @@
         color: var(--danger);
         border: 1px solid rgba(220, 53, 69, 0.2);
     }
+    
+    /* Níveis de Ranking com Degradê */
+    .nivel-iniciante {
+        background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+        color: white;
+        border: none;
+        font-weight: 700;
+        box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
+    }
+    
+    .nivel-intermediario {
+        background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+        color: white;
+        border: none;
+        font-weight: 700;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    }
+    
+    .nivel-avancado {
+        background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+        color: white;
+        border: none;
+        font-weight: 700;
+        box-shadow: 0 2px 4px rgba(249, 115, 22, 0.3);
+    }
+    
+    .nivel-expert {
+        background: linear-gradient(135deg, #c084fc 0%, #a855f7 100%);
+        color: white;
+        border: none;
+        font-weight: 700;
+        box-shadow: 0 2px 4px rgba(168, 85, 247, 0.3);
+    }
+    
+    .nivel-mestre {
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        color: white;
+        border: none;
+        font-weight: 700;
+        box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+        animation: shimmer 3s infinite;
+    }
+    
+    @keyframes shimmer {
+        0%, 100% { box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3); }
+        50% { box-shadow: 0 2px 8px rgba(245, 158, 11, 0.6), 0 0 15px rgba(245, 158, 11, 0.4); }
+    }
 
     /* Form Styles */
     .form-group {
@@ -1329,6 +1407,49 @@
         gap: 10px;
         flex-wrap: wrap;
     }
+    
+    /* Team Filter Styles */
+    .team-filter-bar {
+        background: var(--bg-secondary);
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 20px;
+    }
+    
+    .team-filter-group {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .team-filter-group .form-control {
+        max-height: 42px;
+    }
+    
+    .team-filter-group label {
+        font-weight: 600;
+        font-size: 14px;
+        white-space: nowrap;
+        margin: 0;
+    }
+    
+    .team-filter-group select.form-control {
+        min-width: 180px;
+        flex: 0 1 200px;
+    }
+    
+    .team-filter-group input.form-control {
+        flex: 1 1 300px;
+        min-width: 200px;
+        max-width: 400px;
+    }
+    
+    .team-add-btn {
+        white-space: nowrap;
+        padding: 10px 20px;
+    }
 
     /* Responsive Design */
     @media (max-width: 1200px) {
@@ -1348,7 +1469,11 @@
         
         .sidebar .logo {
             justify-content: center;
-            padding: 0 10px 20px;
+            padding: 20px 10px;
+        }
+        
+        .sidebar .logo img {
+            height: 40px;
         }
         
         .sidebar .nav-links li {
@@ -1417,10 +1542,27 @@
             display: block;
         }
         
+        .sidebar .nav-links {
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: calc(100vh - 120px);
+            padding-bottom: 20px;
+        }
+        
         .sidebar .nav-links li {
             padding: 12px 20px;
             justify-content: flex-start;
             text-align: left;
+        }
+        
+        .sidebar .nav-links li a {
+            width: 100%;
+            text-align: left;
+        }
+        
+        .sidebar .nav-links .link-text {
+            text-align: left;
+            width: 100%;
         }
         
         .main-content {
@@ -1558,7 +1700,7 @@
         }
         
         .header h2 {
-            font-size: 16px;
+            font-size: 20px;
             width: 100%;
             text-align: left;
             word-wrap: break-word;
@@ -2024,34 +2166,41 @@
         
         /* Team Page Responsive */
         .team-filter-bar {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 12px !important;
+            padding: 15px !important;
             margin-bottom: 15px !important;
         }
         
         .team-filter-group {
             flex-direction: column !important;
-            align-items: flex-start !important;
+            align-items: stretch !important;
             width: 100%;
-            gap: 8px !important;
+            gap: 12px !important;
         }
         
         .team-filter-group label {
             font-size: 13px !important;
+            margin-bottom: 0 !important;
         }
         
-        .team-filter-group select {
+        .team-filter-group input.form-control,
+        .team-filter-group select.form-control {
             width: 100% !important;
+            max-width: 100% !important;
+            flex: 1 1 auto !important;
         }
         
         .team-filter-group span {
             font-size: 12px !important;
+            text-align: center;
+            padding: 8px;
+            background: var(--light-gray);
+            border-radius: 4px;
         }
         
         .team-add-btn {
             width: 100% !important;
             justify-content: center !important;
+            margin-top: 10px;
         }
         
         /* Team Form Panel */
@@ -5738,43 +5887,42 @@
                 ),
 
                 // Filtro por setor
-                React.createElement('div', { className: 'team-filter-bar', style: { marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' } },
-                    React.createElement('div', { className: 'team-filter-group', style: { display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' } },
-                        React.createElement('input', {
-                            type: 'text',
-                            className: 'form-control',
-                            placeholder: 'Pesquisar nome, cargo, setor ou email...',
-                            value: pesquisa,
-                            onChange: (e) => setPesquisa(e.target.value),
-                            style: { flex: '1 1 300px', minWidth: '200px', maxWidth: '400px' }
-                        }),
-                        React.createElement('label', { style: { fontWeight: '600', fontSize: '14px', whiteSpace: 'nowrap' } }, 'Filtrar por Setor:'),
-                        React.createElement('select', {
-                            className: 'form-control',
-                            value: filtroSetor,
-                            onChange: (e) => setFiltroSetor(e.target.value),
-                            style: { flex: '0 1 200px', minWidth: '150px' }
-                        },
-                            React.createElement('option', { value: 'todos' }, 'Todos os Setores'),
-                            React.createElement('option', { value: 'Vendas' }, 'Vendas'),
-                            React.createElement('option', { value: 'Financeiro' }, 'Financeiro'),
-                            React.createElement('option', { value: 'RH' }, 'RH'),
-                            React.createElement('option', { value: 'TI' }, 'TI'),
-                            React.createElement('option', { value: 'Suporte' }, 'Suporte'),
-                            React.createElement('option', { value: 'Marketing' }, 'Marketing'),
-                            React.createElement('option', { value: 'Operações' }, 'Operações'),
-                            React.createElement('option', { value: 'Processos' }, 'Processos'),
-                            React.createElement('option', { value: 'Qualidade' }, 'Qualidade')
+                React.createElement('div', { className: 'team-filter-bar' },
+                    React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '15px', flexWrap: 'wrap' } },
+                        React.createElement('div', { className: 'team-filter-group', style: { flex: '1 1 auto' } },
+                            React.createElement('input', {
+                                type: 'text',
+                                className: 'form-control',
+                                placeholder: 'Pesquisar nome, cargo, setor ou email...',
+                                value: pesquisa,
+                                onChange: (e) => setPesquisa(e.target.value)
+                            }),
+                            React.createElement('label', null, 'Setor:'),
+                            React.createElement('select', {
+                                className: 'form-control',
+                                value: filtroSetor,
+                                onChange: (e) => setFiltroSetor(e.target.value)
+                            },
+                                React.createElement('option', { value: 'todos' }, 'Todos'),
+                                React.createElement('option', { value: 'Vendas' }, 'Vendas'),
+                                React.createElement('option', { value: 'Financeiro' }, 'Financeiro'),
+                                React.createElement('option', { value: 'RH' }, 'RH'),
+                                React.createElement('option', { value: 'TI' }, 'TI'),
+                                React.createElement('option', { value: 'Suporte' }, 'Suporte'),
+                                React.createElement('option', { value: 'Marketing' }, 'Marketing'),
+                                React.createElement('option', { value: 'Operações' }, 'Operações'),
+                                React.createElement('option', { value: 'Processos' }, 'Processos'),
+                                React.createElement('option', { value: 'Qualidade' }, 'Qualidade')
+                            ),
+                            React.createElement('span', null, 
+                                `${membrosFiltrados.length} de ${membros.length} membros`
+                            )
                         ),
-                        React.createElement('span', { style: { fontSize: '13px', color: '#6c757d' } }, 
-                            `Mostrando ${membrosFiltrados.length} de ${membros.length} membros`
-                        )
-                    ),
-                    React.createElement('button', {
-                        onClick: () => setMostrarFormulario(!mostrarFormulario),
-                        className: 'btn btn-primary team-add-btn',
-                        style: { display: 'flex', alignItems: 'center', gap: '5px' }
-                    }, mostrarFormulario ? '✕ Cancelar' : '+ Adicionar Membro')
+                        React.createElement('button', {
+                            onClick: () => setMostrarFormulario(!mostrarFormulario),
+                            className: 'btn btn-primary team-add-btn'
+                        }, mostrarFormulario ? '✕ Cancelar' : '+ Adicionar Membro')
+                    )
                 ),
 
                 // Formulário para adicionar/editar membro
@@ -6024,21 +6172,32 @@
                             )
                         ),
                         React.createElement('tbody', null,
-                            rankingFiltrado.map(jogador =>
-                                React.createElement('tr', { key: jogador.posicao },
+                            rankingFiltrado.map(jogador => {
+                                // Determinar classe do nível
+                                let nivelClass = 'nivel-iniciante';
+                                const nivelLower = jogador.nivel.toLowerCase();
+                                
+                                if (nivelLower === 'intermediário' || nivelLower === 'intermediario') {
+                                    nivelClass = 'nivel-intermediario';
+                                } else if (nivelLower === 'avançado' || nivelLower === 'avancado') {
+                                    nivelClass = 'nivel-avancado';
+                                } else if (nivelLower === 'expert') {
+                                    nivelClass = 'nivel-expert';
+                                } else if (nivelLower === 'mestre') {
+                                    nivelClass = 'nivel-mestre';
+                                }
+                                
+                                return React.createElement('tr', { key: jogador.posicao },
                                     React.createElement('td', null, `${jogador.posicao}º`),
                                     React.createElement('td', null, jogador.nome),
                                     React.createElement('td', null, jogador.pontos.toLocaleString()),
                                     React.createElement('td', null, 
                                         React.createElement('span', { 
-                                            className: `status-badge ${
-                                                jogador.nivel === 'Expert' ? 'status-inactive' : 
-                                                jogador.nivel === 'Avançado' ? 'status-pending' : 'status-active'
-                                            }` 
+                                            className: `status-badge ${nivelClass}` 
                                         }, jogador.nivel)
                                     )
-                                )
-                            )
+                                );
+                            })
                         )
                     )
                 )
@@ -7299,7 +7458,7 @@
                     className: `sidebar ${sidebarCollapsed ? 'collapsed' : ''} ${mobileMenuOpen ? 'mobile-open' : ''}`
                 },
                     React.createElement('div', { className: 'logo' },
-                        React.createElement('img', { src: 'assets/images/Mask group.svg', alt: 'FlowPilot Logo', style: { height: '65px', width: 'auto' } })
+                        React.createElement('img', { src: 'assets/images/logo.svg', alt: 'FlowPilot Logo', style: { height: '50px', width: 'auto' } })
                     ),
                     React.createElement('ul', { className: 'nav-links' },
                         // Perfil do usuário com avatar
