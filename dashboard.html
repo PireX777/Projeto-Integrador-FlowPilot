@@ -152,7 +152,7 @@
     /* Sidebar */
     .sidebar {
         width: var(--sidebar-width);
-        background-color: var(--dark);
+        background-color: #000d1a;
         color: white;
         padding: 20px 0;
         transition: all 0.3s;
@@ -232,8 +232,8 @@
     }
     
     .nav-links li.active {
-        background-color: rgba(67, 97, 238, 0.2);
-        border-left: 4px solid var(--primary);
+        background-color: rgba(76, 201, 240, 0.15);
+        border-left: 4px solid #4cc9f0;
     }
     
     .nav-links li.active::before {
@@ -242,13 +242,13 @@
         right: 10px;
         width: 6px;
         height: 6px;
-        background: var(--primary);
+        background: #4cc9f0;
         border-radius: 50%;
     }
     
     .nav-links li:hover {
-        background-color: rgba(67, 97, 238, 0.1);
-        border-left: 4px solid rgba(67, 97, 238, 0.6);
+        background-color: rgba(76, 201, 240, 0.08);
+        border-left: 4px solid rgba(76, 201, 240, 0.6);
         transform: translateX(3px);
     }
     
@@ -1404,6 +1404,7 @@
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             -webkit-transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+            background-color: #001a2e;
         }
         
         .sidebar.mobile-open {
@@ -7298,8 +7299,7 @@
                     className: `sidebar ${sidebarCollapsed ? 'collapsed' : ''} ${mobileMenuOpen ? 'mobile-open' : ''}`
                 },
                     React.createElement('div', { className: 'logo' },
-                        React.createElement('img', { src: 'assets/Mask group.svg', alt: 'FlowPilot Logo', style: { height: '40px', width: 'auto' } }),
-                        React.createElement('h1', null, 'FlowPilot')
+                        React.createElement('img', { src: 'assets/images/Mask group.svg', alt: 'FlowPilot Logo', style: { height: '65px', width: 'auto' } })
                     ),
                     React.createElement('ul', { className: 'nav-links' },
                         // Perfil do usuário com avatar

@@ -173,6 +173,8 @@
             justify-content: center;
             gap: 12px;
             margin-bottom: 16px;
+            text-decoration: none;
+            color: inherit;
         }
 
         .login-logo-icon {
