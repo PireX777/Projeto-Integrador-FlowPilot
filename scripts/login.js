@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Style the notification
         const bgColor = type === 'success' ? 'var(--success)' :
-                       type === 'error' ? 'var(--danger)' : 'var(--primary)';
+                       type === 'error' ? 'var(--danger)' : '#4CC9F0';
 
         notification.style.cssText = `
             position: fixed;

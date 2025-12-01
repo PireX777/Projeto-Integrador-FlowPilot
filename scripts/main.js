@@ -205,10 +205,35 @@ document.addEventListener('DOMContentLoaded', function() {
             // Smooth Scrolling for Navigation Links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-
                     const targetId = this.getAttribute('href');
                     if (targetId === '#') return;
+
+                    // Lógica especial para o link "Início"
+                    if (targetId === '#hero') {
+                        const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                        
+                        // Se já estiver no topo (menos de 100px do início), não faz nada
+                        if (currentScrollPosition < 100) {
+                            e.preventDefault();
+                            return;
+                        }
+                        
+                        // Se não estiver no topo, sobe para o topo da página (não para o #hero)
+                        e.preventDefault();
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Close mobile menu if open
+                        if (navLinks.classList.contains('active')) {
+                            navLinks.classList.remove('active');
+                            authButtons.classList.remove('active');
+                        }
+                        return;
+                    }
+
+                    e.preventDefault();
 
                     const targetElement = document.querySelector(targetId);
                     if (targetElement) {
