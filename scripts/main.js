@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileOverlay = document.querySelector('.mobile-overlay');
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
     const closeSidebar = document.getElementById('close-sidebar');
-    const swipeIndicator = document.getElementById('swipe-indicator');
+
     const mobileNavLinks = document.querySelectorAll('.mobile-nav-links a');
 
     // Função para abrir sidebar
@@ -59,109 +59,6 @@ document.addEventListener('DOMContentLoaded', function() {
             closeSidebarFunc();
         });
     });
-
-    // Swipe para abrir/fechar menu
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchEndX = 0;
-    let touchEndY = 0;
-    let touchStartTime = 0;
-    let isSwiping = false;
-
-    // Mostrar indicador após 3 segundos
-    if (swipeIndicator && window.innerWidth <= 768) {
-        setTimeout(() => {
-            swipeIndicator.classList.add('visible');
-            setTimeout(() => {
-                swipeIndicator.classList.remove('visible');
-            }, 2000);
-        }, 3000);
-    }
-
-    const handleTouchStart = (e) => {
-        touchStartX = e.changedTouches[0].clientX;
-        touchStartY = e.changedTouches[0].clientY;
-        touchStartTime = Date.now();
-        isSwiping = false;
-
-        // Mostrar indicador se tocar na borda
-        if (touchStartX < 50 && !mobileSidebar.classList.contains('active') && swipeIndicator) {
-            swipeIndicator.classList.add('visible');
-        }
-    };
-
-    const handleTouchMove = (e) => {
-        touchEndX = e.changedTouches[0].clientX;
-        touchEndY = e.changedTouches[0].clientY;
-
-        const swipeDistanceX = touchEndX - touchStartX;
-        const swipeDistanceY = Math.abs(touchEndY - touchStartY);
-
-        // Detectar swipe horizontal
-        if (Math.abs(swipeDistanceX) > 10 && swipeDistanceY < 30) {
-            isSwiping = true;
-
-            // Feedback visual durante o swipe
-            if (mobileSidebar && touchStartX < 80 && swipeDistanceX > 0 && !mobileSidebar.classList.contains('active')) {
-                const translateX = Math.min(swipeDistanceX - mobileSidebar.offsetWidth, 0);
-                mobileSidebar.style.transform = `translateX(${translateX}px)`;
-                mobileSidebar.style.transition = 'none';
-
-                if (swipeIndicator) {
-                    swipeIndicator.style.opacity = Math.min(swipeDistanceX / 100, 0.8);
-                }
-            } else if (mobileSidebar && mobileSidebar.classList.contains('active') && swipeDistanceX < 0) {
-                const translateX = Math.max(swipeDistanceX, -mobileSidebar.offsetWidth);
-                mobileSidebar.style.transform = `translateX(${translateX}px)`;
-                mobileSidebar.style.transition = 'none';
-            }
-        }
-    };
-
-    const handleTouchEnd = (e) => {
-        touchEndX = e.changedTouches[0].clientX;
-        touchEndY = e.changedTouches[0].clientY;
-
-        if (mobileSidebar) {
-            mobileSidebar.style.transform = '';
-            mobileSidebar.style.transition = '';
-        }
-
-        if (swipeIndicator) {
-            swipeIndicator.classList.remove('visible');
-            swipeIndicator.style.opacity = '';
-        }
-
-        if (isSwiping) {
-            handleSwipe();
-        }
-    };
-
-    const handleSwipe = () => {
-        const swipeDistanceX = touchEndX - touchStartX;
-        const swipeDistanceY = Math.abs(touchEndY - touchStartY);
-        const swipeTime = Date.now() - touchStartTime;
-        const swipeVelocity = Math.abs(swipeDistanceX) / swipeTime;
-
-        // Verificar se é swipe horizontal
-        if (swipeDistanceY < 80) {
-            // Swipe da esquerda para direita para abrir
-            if ((swipeDistanceX > 100 || (swipeDistanceX > 50 && swipeVelocity > 0.5)) 
-                && touchStartX < 80 && !mobileSidebar.classList.contains('active')) {
-                openSidebar();
-            }
-
-            // Swipe da direita para esquerda para fechar
-            if ((swipeDistanceX < -100 || (swipeDistanceX < -50 && swipeVelocity > 0.5)) 
-                && mobileSidebar.classList.contains('active')) {
-                closeSidebarFunc();
-            }
-        }
-    };
-
-    document.addEventListener('touchstart', handleTouchStart, { passive: true });
-    document.addEventListener('touchmove', handleTouchMove, { passive: true });
-    document.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     // Header hide/show on scroll
     let lastScrollTop = 0;
