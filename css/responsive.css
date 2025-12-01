@@ -120,6 +120,14 @@
         padding: 60px 0;
     }
     
+    .section-light {
+        padding: 40px 0;
+    }
+    
+    .logo img {
+        height: 55px;
+    }
+    
     .hero h1 {
         font-size: 1.8rem;
     }
