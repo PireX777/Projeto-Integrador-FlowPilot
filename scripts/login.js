@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.removeItem('rememberedEmail');
             }
             
-            showNotification('Login efetuado! Redirecionando para o painel.', 'success');
+            showNotification('Login efetuado! Redirecionando para o dashboard.', 'success');
 
             // Redirect to dashboard - usar replace para garantir
             setTimeout(() => {

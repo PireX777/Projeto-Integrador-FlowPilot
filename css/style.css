@@ -868,6 +868,24 @@ body {
             margin: 0;
         }
 
+        /* Global responsive utilities */
+        img, video {
+            max-width: 100%;
+            height: auto;
+        }
+
+        table {
+            width: 100%;
+            overflow-x: auto;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.9rem;
+            }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .navbar {
@@ -1000,6 +1018,81 @@ body {
             .pricing-card.featured {
                 transform: none;
             }
+
+            /* Contact page responsive */
+            .contact-info-card {
+                padding: 25px 15px;
+            }
+
+            .contact-info-card .contact-icon {
+                font-size: 2rem;
+            }
+
+            /* Form responsive */
+            form input,
+            form textarea,
+            form select {
+                font-size: 16px !important; /* Previne zoom no iOS */
+            }
+
+            /* Content sections responsive */
+            section .container > div[style*="max-width"] {
+                padding: 0 15px;
+            }
+
+            /* Generic grid responsive */
+            div[style*="grid-template-columns: repeat(auto-fit"] {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Help page search */
+            #help-search {
+                font-size: 16px !important;
+                padding: 12px 45px 12px 15px !important;
+            }
+
+            /* About page content */
+            div[style*="line-height: 1.8"] {
+                padding: 0 10px !important;
+            }
+
+            div[style*="line-height: 1.8"] h3 {
+                font-size: 1.3rem !important;
+            }
+
+            div[style*="line-height: 1.8"] p,
+            div[style*="line-height: 1.8"] li {
+                font-size: 0.95rem !important;
+            }
+
+            /* Terms and Privacy content */
+            .terms-content,
+            .privacy-content {
+                padding: 0 15px;
+            }
+
+            .terms-content h2,
+            .privacy-content h2 {
+                font-size: 1.5rem;
+            }
+
+            .terms-content h3,
+            .privacy-content h3 {
+                font-size: 1.2rem;
+            }
+
+            .terms-content p,
+            .privacy-content p,
+            .terms-content li,
+            .privacy-content li {
+                font-size: 0.95rem;
+            }
+
+            /* Boxes and alerts */
+            div[style*="background: rgba"] {
+                padding: 15px !important;
+                margin-bottom: 30px !important;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1044,6 +1137,43 @@ body {
             .btn {
                 padding: 12px 24px;
                 font-size: 0.95rem;
+            }
+
+            /* Contact page small screens */
+            .contact-info-card {
+                padding: 20px 12px;
+            }
+
+            .contact-info-card .contact-icon {
+                font-size: 1.8rem;
+            }
+
+            .contact-info-card h3 {
+                font-size: 1.1rem;
+            }
+
+            /* Form adjustments */
+            form > div {
+                margin-bottom: 15px !important;
+            }
+
+            form input,
+            form textarea {
+                padding: 10px !important;
+            }
+
+            /* Help page adjustments */
+            div[style*="grid-template-columns"] {
+                gap: 15px !important;
+            }
+
+            /* Content padding */
+            div[style*="padding: 40px"] {
+                padding: 25px 20px !important;
+            }
+
+            div[style*="padding: 20px"] {
+                padding: 15px !important;
             }
         }
 
@@ -1108,5 +1238,60 @@ body {
             .prototype-warning {
                 font-size: 0.8rem;
                 padding: 6px 12px;
+            }
+
+            /* Contact cards ultra small */
+            .contact-info-card {
+                padding: 15px 10px;
+            }
+
+            .contact-info-card .contact-icon {
+                font-size: 1.5rem;
+                margin-bottom: 10px;
+            }
+
+            .contact-info-card h3 {
+                font-size: 1rem;
+            }
+
+            .contact-info-card p {
+                font-size: 0.85rem;
+            }
+
+            /* Form ultra small */
+            form input,
+            form textarea {
+                padding: 8px !important;
+                font-size: 14px !important;
+            }
+
+            form button {
+                padding: 10px !important;
+                font-size: 0.9rem !important;
+            }
+
+            /* Content adjustments */
+            div[style*="padding: 40px"],
+            div[style*="padding: 25px"] {
+                padding: 15px 10px !important;
+            }
+
+            /* Help search */
+            #help-search {
+                padding: 10px 40px 10px 12px !important;
+            }
+
+            /* About, Terms, Privacy text adjustments */
+            div[style*="line-height: 1.8"] h2,
+            .terms-content h2,
+            .privacy-content h2 {
+                font-size: 1.2rem !important;
+                margin-top: 25px !important;
+            }
+
+            div[style*="line-height: 1.8"] h3,
+            .terms-content h3,
+            .privacy-content h3 {
+                font-size: 1.05rem !important;
             }
         }
