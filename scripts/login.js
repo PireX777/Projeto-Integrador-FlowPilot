@@ -1,17 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Mobile Menu Toggle
+    // Cache all DOM elements
     const mobileMenu = document.querySelector('.mobile-menu');
     const navLinks = document.querySelector('.nav-links');
     const authButtons = document.querySelector('.auth-buttons');
-
-    if (mobileMenu) {
-        mobileMenu.addEventListener('click', function() {
-            if (navLinks) navLinks.classList.toggle('active');
-            if (authButtons) authButtons.classList.toggle('active');
-        });
-    }
-
-    // Elements
     const loginForm = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
@@ -23,6 +14,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeModal = document.getElementById('closeModal');
     const recoveryForm = document.getElementById('recoveryForm');
     const signupLink = document.getElementById('signupLink');
+    const socialButtons = document.querySelectorAll('.social-button');
+    const smoothScrollLinks = document.querySelectorAll('a[href^="#"]');
+
+    // Mobile Menu Toggle
+
+    if (mobileMenu) {
+        mobileMenu.addEventListener('click', function() {
+            if (navLinks) navLinks.classList.toggle('active');
+            if (authButtons) authButtons.classList.toggle('active');
+        });
+    }
 
     // Não usar atributo minlength — usamos um mínimo interno para validação/visual
     const passwordMinLen = 8;
@@ -120,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Social login buttons (safe: NodeList even if empty)
-    document.querySelectorAll('.social-button').forEach(button => {
+    socialButtons.forEach(button => {
         button.addEventListener('click', function() {
             const provider = this.classList.contains('google') ? 'Google' : 'Microsoft';
             showNotification(`Conectando com ${provider}...`, 'info');
@@ -222,17 +224,52 @@ document.addEventListener('DOMContentLoaded', function() {
         if (loginButton) loginButton.classList.add('loading');
 
         setTimeout(() => {
+            // Verificar se o usuário existe no localStorage
+            const savedUser = localStorage.getItem('flowpilot_user');
+            
+            if (!savedUser) {
+                // Usuário não cadastrado
+                if (loginButton) loginButton.classList.remove('loading');
+                showNotification('Você não possui cadastro. Redirecionando para a página inicial...', 'error');
+                
+                // Redirecionar para a página inicial após 2 segundos
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+                return;
+            }
+            
+            // Validar credenciais
+            const userData = JSON.parse(savedUser);
+            
+            if (userData.email !== email) {
+                if (loginButton) loginButton.classList.remove('loading');
+                showNotification('E-mail não encontrado. Verifique suas credenciais ou faça o cadastro.', 'error');
+                return;
+            }
+            
+            if (userData.password !== password) {
+                if (loginButton) loginButton.classList.remove('loading');
+                showNotification('Senha incorreta. Tente novamente.', 'error');
+                return;
+            }
+            
+            // Login bem-sucedido
             if (loginButton) loginButton.classList.remove('loading');
-            showNotification('Login efetuado. Redirecionando para o painel.', 'success');
+            
+            // Marcar usuário como logado ANTES de mostrar notificação
+            localStorage.setItem('flowpilot_logged_in', 'true');
 
             // Store remember me preference
             if (rememberCheckbox && rememberCheckbox.classList.contains('checked')) {
                 localStorage.setItem('rememberedEmail', email);
             }
+            
+            showNotification('Login efetuado! Redirecionando para o painel.', 'success');
 
-            // Redirect to dashboard
+            // Redirect to dashboard - usar replace para garantir
             setTimeout(() => {
-                window.location.href = 'dashboard.html';
+                window.location.replace('dashboard.html');
             }, 1000);
         }, 2000);
     }
@@ -248,9 +285,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Notification system
+    let currentNotification = null;
     function showNotification(message, type) {
-        // Remove existing notifications
-        document.querySelectorAll('.notification').forEach(el => el.remove());
+        // Remove existing notification
+        if (currentNotification && currentNotification.parentNode) {
+            currentNotification.parentNode.removeChild(currentNotification);
+        }
 
         const notification = document.createElement('div');
         notification.className = `notification notification-${type || 'info'}`;
@@ -276,11 +316,15 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
 
         document.body.appendChild(notification);
+        currentNotification = notification;
 
         // Auto remove after 3 seconds
         setTimeout(() => {
             if (notification.parentNode) {
                 notification.parentNode.removeChild(notification);
+                if (currentNotification === notification) {
+                    currentNotification = null;
+                }
             }
         }, 3000);
     }
@@ -306,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Smooth Scrolling for Navigation Links (moved inside DOMContentLoaded and guarded)
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    smoothScrollLinks.forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
 
@@ -321,13 +365,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 // Close mobile menu if open (guarded)
-                const navLinksEl = document.querySelector('.nav-links');
-                const authButtonsEl = document.querySelector('.auth-buttons');
-                if (navLinksEl && navLinksEl.classList.contains('active')) {
-                    navLinksEl.classList.remove('active');
+                if (navLinks && navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
                 }
-                if (authButtonsEl && authButtonsEl.classList.contains('active')) {
-                    authButtonsEl.classList.remove('active');
+                if (authButtons && authButtons.classList.contains('active')) {
+                    authButtons.classList.remove('active');
                 }
             }
         });

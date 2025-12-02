@@ -5,8 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>FlowPilot - Gestão de Processos Digitais</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Suprimir erros de extensões do navegador -->
+    <script>
+        window.addEventListener('error', function(e) {
+            if (e.message && e.message.includes('message channel closed')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        });
+        window.addEventListener('unhandledrejection', function(e) {
+            if (e.reason && e.reason.message && e.reason.message.includes('message channel closed')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        });
+    </script>
+    <!-- Script de proteção de autenticação - deve ser o primeiro a executar -->
+    <script src="scripts/auth-check.js"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
     :root {
@@ -193,7 +212,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 20px 20px;
+        padding: 15px 20px;
         border-bottom: 1px solid rgba(255,255,255,0.1);
         margin-bottom: 20px;
     }
@@ -242,6 +261,17 @@
         border-left: 4px solid transparent;
         margin: 2px 0;
         position: relative;
+        overflow: visible;
+    }
+    
+    .nav-links li a {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .nav-links li .link-text {
+        overflow: visible;
+        text-overflow: clip;
     }
     
     .nav-links li.active {
@@ -867,15 +897,16 @@
     
     /* Gamification Section */
     .gamification-card {
-        background: var(--gradient-accent);
-        background: -webkit-linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
-        background: -moz-linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1e40af 100%);
+        background: -webkit-linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1e40af 100%);
+        background: -moz-linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1e40af 100%);
         border-radius: 10px;
         -webkit-border-radius: 10px;
         -moz-border-radius: 10px;
         padding: 20px;
         color: white;
         margin-top: 20px;
+        box-shadow: 0 4px 20px rgba(30, 58, 138, 0.3);
     }
     
     @media (max-width: 1024px) {
@@ -1097,6 +1128,241 @@
     @keyframes shimmer {
         0%, 100% { box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3); }
         50% { box-shadow: 0 2px 8px rgba(245, 158, 11, 0.6), 0 0 15px rgba(245, 158, 11, 0.4); }
+    }
+    
+    /* Botão Gaming */
+    .gaming-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 50%, #4361ee 100%);
+        background-size: 200% 200%;
+        color: white;
+        border: 2px solid #4361ee;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        text-decoration: none;
+        box-shadow: 0 3px 12px rgba(67, 97, 238, 0.4), 0 0 15px rgba(58, 12, 163, 0.3);
+        transition: all 0.3s ease;
+        animation: gradientShift 3s ease infinite;
+        position: relative;
+        overflow: hidden;
+        line-height: 1;
+    }
+    
+    .gaming-button::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+        transform: scale(0);
+        transition: transform 0.6s ease;
+    }
+    
+    .gaming-button:hover::before {
+        transform: scale(1);
+    }
+    
+    .gaming-button:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 5px 20px rgba(67, 97, 238, 0.6), 0 0 25px rgba(58, 12, 163, 0.5);
+        border-color: #3a0ca3;
+    }
+    
+    .gaming-button:active {
+        transform: translateY(-1px) scale(1.02);
+    }
+    
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    
+    .gaming-button-icon {
+        font-size: 18px;
+        animation: pulse 2s ease-in-out infinite;
+        filter: brightness(0) invert(1);
+        display: inline-flex;
+        align-items: center;
+        line-height: 1;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+    }
+    
+    /* Modal de Confirmação */
+    .confirmation-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 99999;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .confirmation-modal.active {
+        display: flex !important;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .confirmation-modal-content {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        padding: 30px;
+        max-width: 450px;
+        width: 90%;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.3s ease;
+        text-align: center;
+        border: 1px solid var(--border-color);
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+        from { 
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .confirmation-modal-icon {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+    }
+    
+    .confirmation-modal-icon.warning {
+        background: #fbbf24;
+        color: white;
+    }
+    
+    .confirmation-modal-icon.danger {
+        background: #ef4444;
+        color: white;
+    }
+    
+    .confirmation-modal-icon.info {
+        background: rgba(59, 130, 246, 0.15);
+        color: #3b82f6;
+    }
+    
+    body.dark-theme .confirmation-modal-icon.warning {
+        background: #fbbf24;
+        color: white;
+    }
+    
+    body.dark-theme .confirmation-modal-icon.danger {
+        background: #ef4444;
+        color: white;
+    }
+    
+    body.dark-theme .confirmation-modal-icon.info {
+        background: rgba(59, 130, 246, 0.2);
+        color: #60a5fa;
+    }
+    
+    .confirmation-modal-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: var(--text-primary);
+    }
+    
+    .confirmation-modal-message {
+        font-size: 15px;
+        color: var(--text-secondary);
+        margin-bottom: 25px;
+        line-height: 1.5;
+    }
+    
+    .confirmation-modal-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+    }
+    
+    .confirmation-modal-btn {
+        padding: 12px 28px;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 120px;
+    }
+    
+    .confirmation-modal-btn.cancel {
+        background: var(--light-gray);
+        color: var(--text-primary);
+    }
+    
+    .confirmation-modal-btn.cancel:hover {
+        background: #d1d5db;
+    }
+    
+    body.dark-theme .confirmation-modal-btn.cancel {
+        background: #374151;
+        color: #e5e7eb;
+    }
+    
+    body.dark-theme .confirmation-modal-btn.cancel:hover {
+        background: #4b5563;
+    }
+    
+    .confirmation-modal-btn.confirm {
+        background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+        color: white;
+    }
+    
+    .confirmation-modal-btn.confirm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
+    }
+    
+    .confirmation-modal-btn.confirm.danger {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    }
+    
+    .confirmation-modal-btn.confirm.danger:hover {
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+    }
+    
+    .confirmation-modal-btn.confirm.warning {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    }
+    
+    .confirmation-modal-btn.confirm.warning:hover {
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
     }
 
     /* Form Styles */
@@ -2529,9 +2795,119 @@
 </head>
 <body>
     <div id="root"></div>
+    
+    <!-- Modal de Confirmação -->
+    <div id="confirmationModal" class="confirmation-modal">
+        <div class="confirmation-modal-content">
+            <div id="confirmationIcon" class="confirmation-modal-icon warning">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 id="confirmationTitle" class="confirmation-modal-title">Confirmar Ação</h3>
+            <p id="confirmationMessage" class="confirmation-modal-message">Você tem certeza que deseja realizar esta ação?</p>
+            <div class="confirmation-modal-buttons">
+                <button id="confirmationCancel" class="confirmation-modal-btn cancel">Cancelar</button>
+                <button id="confirmationConfirm" class="confirmation-modal-btn confirm">Confirmar</button>
+            </div>
+        </div>
+    </div>
 
     <script type="text/babel">
         const { useState, useEffect, useRef, useMemo, useCallback } = React;
+        
+        // Sistema de Modal de Confirmação
+        const ConfirmationModal = {
+            show: function(options) {
+                return new Promise((resolve) => {
+                    const modal = document.getElementById('confirmationModal');
+                    const icon = document.getElementById('confirmationIcon');
+                    const title = document.getElementById('confirmationTitle');
+                    const message = document.getElementById('confirmationMessage');
+                    const confirmBtn = document.getElementById('confirmationConfirm');
+                    const cancelBtn = document.getElementById('confirmationCancel');
+                    
+                    if (!modal) {
+                        console.error('Modal não encontrado no DOM');
+                        resolve(false);
+                        return;
+                    }
+                    
+                    // Configurar conteúdo
+                    title.textContent = options.title || 'Confirmar Ação';
+                    message.textContent = options.message || 'Você tem certeza?';
+                    
+                    // Configurar ícone - ocultar para warning
+                    icon.className = 'confirmation-modal-icon ' + (options.type || 'warning');
+                    
+                    if (options.type === 'danger') {
+                        icon.innerHTML = '✖';
+                        icon.style.display = 'flex';
+                    } else if (options.type === 'warning') {
+                        icon.style.display = 'none';
+                    } else {
+                        icon.style.display = 'flex';
+                        const iconClass = {
+                            'info': 'fa-info-circle'
+                        };
+                        icon.innerHTML = `<i class="fas ${iconClass[options.type] || 'fa-exclamation-triangle'}"></i>`;
+                    }
+                    
+                    // Configurar botão de confirmação
+                    confirmBtn.textContent = options.confirmText || 'Confirmar';
+                    confirmBtn.className = 'confirmation-modal-btn confirm ' + (options.type === 'danger' ? 'danger' : options.type === 'warning' ? 'warning' : '');
+                    
+                    cancelBtn.textContent = options.cancelText || 'Cancelar';
+                    
+                    // Event listeners
+                    const handleConfirm = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        modal.classList.remove('active');
+                        modal.style.display = 'none';
+                        cleanup();
+                        resolve(true);
+                    };
+                    
+                    const handleCancel = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        modal.classList.remove('active');
+                        modal.style.display = 'none';
+                        cleanup();
+                        resolve(false);
+                    };
+                    
+                    const handleClickOutside = (e) => {
+                        if (e.target === modal) {
+                            handleCancel(e);
+                        }
+                    };
+                    
+                    const cleanup = () => {
+                        confirmBtn.removeEventListener('click', handleConfirm);
+                        cancelBtn.removeEventListener('click', handleCancel);
+                        modal.removeEventListener('click', handleClickOutside);
+                    };
+                    
+                    // Remover listeners antigos se existirem
+                    confirmBtn.replaceWith(confirmBtn.cloneNode(true));
+                    cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+                    
+                    // Obter referências atualizadas
+                    const newConfirmBtn = document.getElementById('confirmationConfirm');
+                    const newCancelBtn = document.getElementById('confirmationCancel');
+                    
+                    newConfirmBtn.addEventListener('click', handleConfirm);
+                    newCancelBtn.addEventListener('click', handleCancel);
+                    modal.addEventListener('click', handleClickOutside);
+                    
+                    // Mostrar modal
+                    setTimeout(() => {
+                        modal.classList.add('active');
+                        modal.style.display = 'flex';
+                    }, 10);
+                });
+            }
+        };
 
         // Componentes de Gráfico
         const LineChart = ({ data, width = 400, height = 200 }) => {
@@ -3315,13 +3691,13 @@
                         trendType: 'trend-up'
                     }),
                     React.createElement(StatCard, {
-                        title: 'Equipe',
+                        title: 'Colaboradores',
                         value: dadosTempoReal.totalFuncionarios > 0 
                             ? `${dadosTempoReal.funcionariosOnline}/${dadosTempoReal.totalFuncionarios}` 
                             : '40/40',
                         label: dadosTempoReal.totalFuncionarios > 0 
-                            ? 'Colaboradores online' 
-                            : 'Colaboradores ativos',
+                            ? 'Online agora' 
+                            : 'Ativos na empresa',
                         trend: `${Object.keys(dadosTempoReal.funcionariosPorSetor).length || 9} setores`,
                         icon: 'team',
                         trendType: 'trend-up'
@@ -3715,9 +4091,32 @@
                 setMostrarFormulario(false);
             };
 
-            const handleExcluirProcesso = (id) => {
-                if (window.confirm('Tem certeza que deseja excluir este processo?')) {
+            const handleExcluirProcesso = async (id) => {
+                const confirmed = await ConfirmationModal.show({
+                    title: 'Excluir Processo',
+                    message: 'Tem certeza que deseja excluir este processo? Esta ação não pode ser desfeita.',
+                    type: 'danger',
+                    confirmText: 'Sim, excluir',
+                    cancelText: 'Cancelar'
+                });
+                
+                if (confirmed) {
                     setProcessos(prev => prev.filter(p => p.id !== id));
+                }
+            };
+
+            const handleExcluirTodosProcessosConcluidos = async () => {
+                const processosConcluidos = processos.filter(p => p.progresso >= 100);
+                const confirmed = await ConfirmationModal.show({
+                    title: 'Excluir Todos Concluídos',
+                    message: `Deseja excluir todos os ${processosConcluidos.length} processos concluídos? Esta ação não pode ser desfeita.`,
+                    type: 'danger',
+                    confirmText: 'Sim, excluir todos',
+                    cancelText: 'Cancelar'
+                });
+                
+                if (confirmed) {
+                    setProcessos(prev => prev.filter(p => p.progresso < 100));
                 }
             };
 
@@ -3732,15 +4131,26 @@
                 const interval = setInterval(() => {
                     setProcessos(prev => {
                         let processosAtualizados = prev.map(processo => {
-                            if (processo.status === 'active') {
-                                const novoProgresso = Math.min(100, processo.progresso + Math.floor(Math.random() * 3));
+                            // Atualizar processos ativos E pendentes
+                            if (processo.status === 'active' || processo.status === 'pending') {
+                                const incremento = processo.status === 'active' ? Math.floor(Math.random() * 3) : Math.floor(Math.random() * 2);
+                                const novoProgresso = Math.min(100, processo.progresso + incremento);
                                 const novasTarefas = Math.max(1, processo.tarefas + Math.floor(Math.random() * 3) - 1);
+                                
+                                // Se atingiu algum progresso, mudar de pending para active
+                                let novoStatus = processo.status;
+                                if (processo.status === 'pending' && novoProgresso > 0) {
+                                    novoStatus = 'active';
+                                }
+                                if (novoProgresso === 100) {
+                                    novoStatus = 'inactive';
+                                }
                                 
                                 return {
                                     ...processo,
                                     progresso: novoProgresso,
                                     tarefas: novasTarefas,
-                                    status: novoProgresso === 100 ? 'inactive' : processo.status
+                                    status: novoStatus
                                 };
                             }
                             return processo;
@@ -4043,11 +4453,7 @@
                             `Processos Concluídos (${processosConcluidos.length})`
                         ),
                         React.createElement('button', {
-                            onClick: () => {
-                                if (window.confirm(`Deseja excluir todos os ${processosConcluidos.length} processos concluídos? Esta ação não pode ser desfeita.`)) {
-                                    setProcessos(prev => prev.filter(p => p.progresso < 100));
-                                }
-                            },
+                            onClick: handleExcluirTodosProcessosConcluidos,
                             style: {
                                 padding: '8px 15px',
                                 backgroundColor: '#dc3545',
@@ -4066,11 +4472,7 @@
                                     React.createElement('h3', { style: { margin: 0, flex: 1 } }, processo.nome),
                                     React.createElement('div', { style: { display: 'flex', gap: '5px' } },
                                         React.createElement('button', {
-                                            onClick: () => {
-                                                if (window.confirm('Deseja excluir este processo concluído?')) {
-                                                    setProcessos(prev => prev.filter(p => p.id !== processo.id));
-                                                }
-                                            },
+                                            onClick: () => handleExcluirProcesso(processo.id),
                                             style: {
                                                 padding: '5px 10px',
                                                 backgroundColor: '#dc3545',
@@ -4282,6 +4684,63 @@
                 ));
                 setEditandoId(null);
                 setEditandoCampo(null);
+            };
+
+            const handleConcluirTarefaEmpresa = async (id) => {
+                const confirmed = await ConfirmationModal.show({
+                    title: 'Concluir Tarefa',
+                    message: 'Deseja marcar esta tarefa como concluída?',
+                    type: 'info',
+                    confirmText: 'Sim, concluir',
+                    cancelText: 'Cancelar'
+                });
+                
+                if (confirmed) {
+                    handleSalvarEdicao(id, 'status', 'completed');
+                }
+            };
+
+            const handleDesativarTarefaEmpresa = async (id) => {
+                const confirmed = await ConfirmationModal.show({
+                    title: 'Desativar Tarefa',
+                    message: 'Deseja desativar esta tarefa?',
+                    type: 'warning',
+                    confirmText: 'Sim, desativar',
+                    cancelText: 'Cancelar'
+                });
+                
+                if (confirmed) {
+                    handleSalvarEdicao(id, 'status', 'inactive');
+                }
+            };
+
+            const handleExcluirTarefaEmpresa = async (id) => {
+                const confirmed = await ConfirmationModal.show({
+                    title: 'Excluir Tarefa',
+                    message: 'Tem certeza que deseja excluir esta tarefa? Esta ação não pode ser desfeita.',
+                    type: 'danger',
+                    confirmText: 'Sim, excluir',
+                    cancelText: 'Cancelar'
+                });
+                
+                if (confirmed) {
+                    setTarefas(prev => prev.filter(t => t.id !== id));
+                }
+            };
+
+            const handleExcluirTodasConcluidasEmpresa = async () => {
+                const tarefasConcluidas = tarefas.filter(t => t.status === 'completed');
+                const confirmed = await ConfirmationModal.show({
+                    title: 'Excluir Todas Concluídas',
+                    message: `Deseja excluir todas as ${tarefasConcluidas.length} tarefas concluídas? Esta ação não pode ser desfeita.`,
+                    type: 'danger',
+                    confirmText: 'Sim, excluir todas',
+                    cancelText: 'Cancelar'
+                });
+                
+                if (confirmed) {
+                    setTarefas(prev => prev.filter(t => t.status !== 'completed'));
+                }
             };
 
             // Atualizar tarefas em tempo real e gerar novas tarefas automaticamente
@@ -4702,11 +5161,7 @@
                                 React.createElement('td', null,
                                     React.createElement('div', { style: { display: 'flex', gap: '5px' } },
                                         React.createElement('button', {
-                                            onClick: () => {
-                                                if (window.confirm('Deseja marcar esta tarefa como concluída?')) {
-                                                    handleSalvarEdicao(tarefa.id, 'status', 'completed');
-                                                }
-                                            },
+                                            onClick: () => handleConcluirTarefaEmpresa(tarefa.id),
                                             disabled: tarefa.status === 'completed',
                                             style: {
                                                 padding: '5px 10px',
@@ -4719,11 +5174,7 @@
                                             }
                                         }, tarefa.status === 'completed' ? 'Concluída' : 'Concluir'),
                                         tarefa.status !== 'completed' && React.createElement('button', {
-                                            onClick: () => {
-                                                if (window.confirm('Deseja desativar esta tarefa?')) {
-                                                    handleSalvarEdicao(tarefa.id, 'status', 'inactive');
-                                                }
-                                            },
+                                            onClick: () => handleDesativarTarefaEmpresa(tarefa.id),
                                             style: {
                                                 padding: '5px 10px',
                                                 backgroundColor: '#ff9800',
@@ -4736,11 +5187,7 @@
                                             title: 'Desativar tarefa'
                                         }, 'Desativar'),
                                         React.createElement('button', {
-                                            onClick: () => {
-                                                if (window.confirm('Tem certeza que deseja excluir esta tarefa?')) {
-                                                    setTarefas(prev => prev.filter(t => t.id !== tarefa.id));
-                                                }
-                                            },
+                                            onClick: () => handleExcluirTarefaEmpresa(tarefa.id),
                                             style: {
                                                 padding: '5px 10px',
                                                 backgroundColor: '#dc3545',
@@ -4767,11 +5214,7 @@
                             `Tarefas Concluídas (${tarefasConcluidas.length})`
                         ),
                         React.createElement('button', {
-                            onClick: () => {
-                                if (window.confirm(`Deseja excluir todas as ${tarefasConcluidas.length} tarefas concluídas? Esta ação não pode ser desfeita.`)) {
-                                    setTarefas(prev => prev.filter(t => t.status !== 'completed'));
-                                }
-                            },
+                            onClick: handleExcluirTodasConcluidasEmpresa,
                             style: {
                                 padding: '8px 15px',
                                 backgroundColor: '#dc3545',
@@ -4815,11 +5258,7 @@
                                     React.createElement('td', null, new Date(tarefa.data + 'T00:00:00').toLocaleDateString('pt-BR')),
                                     React.createElement('td', null,
                                         React.createElement('button', {
-                                            onClick: () => {
-                                                if (window.confirm('Deseja excluir esta tarefa concluída?')) {
-                                                    setTarefas(prev => prev.filter(t => t.id !== tarefa.id));
-                                                }
-                                            },
+                                            onClick: () => handleExcluirTarefaEmpresa(tarefa.id),
                                             style: {
                                                 padding: '5px 10px',
                                                 backgroundColor: '#dc3545',
@@ -4856,7 +5295,26 @@
                 { id: 10, titulo: 'Análise de riscos corporativos', prioridade: 'media', status: 'completed', data: '2025-11-25', descricao: 'Relatório de auditoria' }
             ];
 
-            const [minhasTarefas, setMinhasTarefas] = useState(minhasTarefasIniciais);
+            // Carregar tarefas do localStorage ou usar dados iniciais
+            const carregarTarefas = () => {
+                const tarefasSalvas = localStorage.getItem('minhasTarefas');
+                if (tarefasSalvas) {
+                    try {
+                        return JSON.parse(tarefasSalvas);
+                    } catch (e) {
+                        console.error('Erro ao carregar tarefas:', e);
+                        return minhasTarefasIniciais;
+                    }
+                }
+                return minhasTarefasIniciais;
+            };
+
+            const [minhasTarefas, setMinhasTarefas] = useState(carregarTarefas);
+            
+            // Salvar tarefas no localStorage sempre que mudar
+            useEffect(() => {
+                localStorage.setItem('minhasTarefas', JSON.stringify(minhasTarefas));
+            }, [minhasTarefas]);
             const [mostrarFormulario, setMostrarFormulario] = useState(false);
             const [tarefaEditando, setTarefaEditando] = useState(null);
             const [filtroStatus, setFiltroStatus] = useState('todos');
@@ -4912,9 +5370,24 @@
                 setMostrarFormulario(false);
             };
 
-            const handleExcluirTarefa = (id) => {
-                if (confirm('Tem certeza que deseja excluir esta tarefa?')) {
+            const handleExcluirTarefa = async (id) => {
+                const confirmed = await ConfirmationModal.show({
+                    title: 'Excluir Tarefa',
+                    message: 'Tem certeza que deseja excluir esta tarefa? Esta ação não pode ser desfeita.',
+                    type: 'danger',
+                    confirmText: 'Sim, excluir',
+                    cancelText: 'Cancelar'
+                });
+                
+                if (confirmed) {
                     setMinhasTarefas(prev => prev.filter(t => t.id !== id));
+                    
+                    const notification = document.createElement('div');
+                    notification.className = 'notification';
+                    notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ff9800; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000;';
+                    notification.textContent = 'Tarefa excluída com sucesso';
+                    document.body.appendChild(notification);
+                    setTimeout(() => notification.parentNode?.removeChild(notification), 3000);
                 }
             };
 
@@ -5802,7 +6275,7 @@
                 const notification = document.createElement('div');
                 notification.className = 'notification';
                 notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4bb543; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000;';
-                notification.textContent = 'Membro adicionado com sucesso';
+                notification.textContent = 'Colaborador adicionado com sucesso';
                 document.body.appendChild(notification);
                 setTimeout(() => notification.parentNode?.removeChild(notification), 3000);
             };
@@ -5830,8 +6303,16 @@
                 setTimeout(() => notification.parentNode?.removeChild(notification), 3000);
             };
 
-            const handleRemoverMembro = (id) => {
-                if (confirm('Deseja realmente remover este membro da equipe?')) {
+            const handleRemoverMembro = async (id) => {
+                const confirmed = await ConfirmationModal.show({
+                    title: 'Remover Membro',
+                    message: 'Deseja realmente remover este membro da equipe? Esta ação não pode ser desfeita.',
+                    type: 'danger',
+                    confirmText: 'Sim, remover',
+                    cancelText: 'Cancelar'
+                });
+                
+                if (confirmed) {
                     const membroRemovido = membros.find(m => m.id === id);
                     setMembros(membros.filter(m => m.id !== id));
                     
@@ -5878,12 +6359,12 @@
             return React.createElement('div', { className: 'page-content' },
                 React.createElement('div', { className: 'header' },
                     React.createElement('h2', null, 
-                        'Equipe ',
+                        'Colaboradores ',
                         React.createElement(RealTimeBadge)
                     )
                 ),
                 React.createElement('p', { className: 'page-description' }, 
-                    'Gerencie os membros da sua equipe, visualize desempenho e atribua responsabilidades.'
+                    'Gerencie os colaboradores da empresa, visualize desempenho e atribua responsabilidades.'
                 ),
 
                 // Filtro por setor
@@ -5915,13 +6396,13 @@
                                 React.createElement('option', { value: 'Qualidade' }, 'Qualidade')
                             ),
                             React.createElement('span', null, 
-                                `${membrosFiltrados.length} de ${membros.length} membros`
+                                `${membrosFiltrados.length} de ${membros.length} colaboradores`
                             )
                         ),
                         React.createElement('button', {
                             onClick: () => setMostrarFormulario(!mostrarFormulario),
                             className: 'btn btn-primary team-add-btn'
-                        }, mostrarFormulario ? '✕ Cancelar' : '+ Adicionar Membro')
+                        }, mostrarFormulario ? '✕ Cancelar' : '+ Adicionar Colaborador')
                     )
                 ),
 
@@ -5937,7 +6418,7 @@
                     }
                 },
                     React.createElement('h3', { className: 'team-form-title', style: { marginBottom: '15px', fontSize: '16px', fontWeight: '600' } }, 
-                        membroEditando ? 'Editar Membro' : 'Novo Membro da Equipe'
+                        membroEditando ? 'Editar Colaborador' : 'Novo Colaborador'
                     ),
                     React.createElement('div', { className: 'team-form-grid', style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' } },
                         React.createElement('div', { className: 'form-group' },
@@ -5952,13 +6433,48 @@
                         ),
                         React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Cargo *'),
-                            React.createElement('input', {
-                                type: 'text',
+                            React.createElement('select', {
                                 className: 'form-control',
                                 value: novoMembro.cargo,
-                                onChange: (e) => setNovoMembro({ ...novoMembro, cargo: e.target.value }),
-                                placeholder: 'Cargo/Função'
-                            })
+                                onChange: (e) => {
+                                    const cargoSelecionado = e.target.value;
+                                    // Associação cargo -> setor sugerido
+                                    const associacaoCargoSetor = {
+                                        'Desenvolvedor': 'TI',
+                                        'Designer': 'Marketing',
+                                        'Comprador': 'Financeiro',
+                                        'Controlador': 'Financeiro',
+                                        'Instrutor': 'RH',
+                                        'Auditor': 'Processos',
+                                        'Planejador': 'Processos'
+                                    };
+                                    
+                                    const setorSugerido = associacaoCargoSetor[cargoSelecionado];
+                                    if (setorSugerido) {
+                                        setNovoMembro({ ...novoMembro, cargo: cargoSelecionado, setor: setorSugerido });
+                                    } else {
+                                        setNovoMembro({ ...novoMembro, cargo: cargoSelecionado });
+                                    }
+                                }
+                            },
+                                React.createElement('option', { value: '' }, 'Selecione um cargo'),
+                                React.createElement('option', { value: 'Gerente' }, 'Gerente'),
+                                React.createElement('option', { value: 'Coordenador' }, 'Coordenador'),
+                                React.createElement('option', { value: 'Supervisor' }, 'Supervisor'),
+                                React.createElement('option', { value: 'Analista' }, 'Analista'),
+                                React.createElement('option', { value: 'Especialista' }, 'Especialista'),
+                                React.createElement('option', { value: 'Assistente' }, 'Assistente'),
+                                React.createElement('option', { value: 'Técnico' }, 'Técnico'),
+                                React.createElement('option', { value: 'Desenvolvedor' }, 'Desenvolvedor'),
+                                React.createElement('option', { value: 'Designer' }, 'Designer'),
+                                React.createElement('option', { value: 'Consultor' }, 'Consultor'),
+                                React.createElement('option', { value: 'Auditor' }, 'Auditor'),
+                                React.createElement('option', { value: 'Instrutor' }, 'Instrutor'),
+                                React.createElement('option', { value: 'Comprador' }, 'Comprador'),
+                                React.createElement('option', { value: 'Controlador' }, 'Controlador'),
+                                React.createElement('option', { value: 'Pesquisador' }, 'Pesquisador'),
+                                React.createElement('option', { value: 'Planejador' }, 'Planejador')
+                            )
                         ),
                         React.createElement('div', { className: 'form-group' },
                             React.createElement('label', { className: 'form-label' }, 'Setor *'),
@@ -6147,15 +6663,24 @@
                     'Acompanhe o ranking dos colaboradores e incentive a produtividade através do sistema de gamificação.'
                 ),
                 
-                React.createElement('div', { style: { marginBottom: '20px' } },
+                React.createElement('div', { style: { marginBottom: '20px', display: 'flex', gap: '15px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' } },
                     React.createElement('input', {
                         type: 'text',
                         className: 'form-control',
                         placeholder: 'Pesquisar colaborador ou nível...',
                         value: pesquisa,
                         onChange: (e) => setPesquisa(e.target.value),
-                        style: { width: '320px' }
-                    })
+                        style: { flex: '1 1 300px', maxWidth: '400px' }
+                    }),
+                    React.createElement('a', {
+                        href: 'https://brunasppy.itch.io/flux-mind',
+                        target: '_blank',
+                        rel: 'noopener noreferrer',
+                        className: 'gaming-button'
+                    },
+                        React.createElement('span', { className: 'gaming-button-icon' }, '🎮'),
+                        'Jogar Flux Mind'
+                    )
                 ),
                 
                 React.createElement('div', { className: 'gamification-card' },
@@ -6233,10 +6758,37 @@
 
             const [modoEdicao, setModoEdicao] = useState(false);
             const [perfilTemp, setPerfilTemp] = useState({...perfil});
-            const [mostrarConfirmacaoSair, setMostrarConfirmacaoSair] = useState(false);
 
             const handleChange = (campo, valor) => {
-                setPerfilTemp({ ...perfilTemp, [campo]: valor });
+                // Aplicar máscara de telefone
+                if (campo === 'telefone') {
+                    let value = valor.replace(/\D/g, ''); // Remove tudo que não é dígito
+                    
+                    if (value.length > 11) {
+                        value = value.slice(0, 11); // Limita a 11 dígitos
+                    }
+                    
+                    // Aplica a máscara
+                    if (value.length <= 10) {
+                        // Formato: (00) 0000-0000
+                        value = value.replace(/^(\d{2})(\d{0,4})(\d{0,4}).*/, function(match, p1, p2, p3) {
+                            let result = '';
+                            if (p1) result = `(${p1}`;
+                            if (p2) result += `) ${p2}`;
+                            if (p3) result += `-${p3}`;
+                            return result;
+                        });
+                    } else {
+                        // Formato: (00) 00000-0000
+                        value = value.replace(/^(\d{2})(\d{5})(\d{0,4}).*/, function(match, p1, p2, p3) {
+                            return `(${p1}) ${p2}${p3 ? '-' + p3 : ''}`;
+                        });
+                    }
+                    
+                    setPerfilTemp({ ...perfilTemp, [campo]: value });
+                } else {
+                    setPerfilTemp({ ...perfilTemp, [campo]: valor });
+                }
             };
 
             const salvarPerfil = () => {
@@ -6268,26 +6820,39 @@
                 setModoEdicao(true);
             };
 
-            const confirmarSaida = () => {
-                const existingNotification = document.querySelector('.notification');
-                if (existingNotification) {
-                    existingNotification.remove();
-                }
-
-                const notification = document.createElement('div');
-                notification.className = 'notification notification-error';
-                notification.textContent = 'Sessão encerrada. Retornando à página inicial.';
-
-                document.body.appendChild(notification);
-
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 2000);
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
+            const confirmarSaida = async () => {
+                const confirmed = await ConfirmationModal.show({
+                    title: 'Sair do Sistema',
+                    message: 'Tem certeza que deseja encerrar sua sessão?',
+                    type: 'warning',
+                    confirmText: 'Sim, sair',
+                    cancelText: 'Cancelar'
+                });
+                
+                if (confirmed) {
+                    // Remover flag de login
+                    localStorage.removeItem('flowpilot_logged_in');
+                    
+                    const existingNotification = document.querySelector('.notification');
+                    if (existingNotification) {
+                        existingNotification.remove();
                     }
-                }, 3000);
+
+                    const notification = document.createElement('div');
+                    notification.className = 'notification notification-error';
+                    notification.textContent = 'Sessão encerrada. Retornando à página inicial.';
+
+                    document.body.appendChild(notification);
+
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 3000);
+                }
             };
 
             return React.createElement('div', { className: 'page-content' },
@@ -6442,6 +7007,8 @@
                                     type: 'tel',
                                     value: perfilTemp.telefone,
                                     onChange: (e) => handleChange('telefone', e.target.value),
+                                    placeholder: '(00) 00000-0000',
+                                    maxLength: 15,
                                     className: 'form-control',
                                     style: {
                                         width: '100%',
@@ -6579,7 +7146,7 @@
 
                         // Botão de Sair da Conta
                         !modoEdicao && React.createElement('button', {
-                            onClick: () => setMostrarConfirmacaoSair(true),
+                            onClick: confirmarSaida,
                             style: {
                                 width: '100%',
                                 marginTop: '20px',
@@ -6596,97 +7163,6 @@
                             onMouseOver: (e) => e.target.style.background = '#c82333',
                             onMouseOut: (e) => e.target.style.background = '#dc3545'
                         }, 'Sair da Conta')
-                    )
-                ),
-
-                // Modal de confirmação de saída
-                mostrarConfirmacaoSair && React.createElement('div', {
-                    style: {
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        background: 'rgba(0, 0, 0, 0.5)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        zIndex: 10000,
-                        animation: 'fadeIn 0.2s ease'
-                    },
-                    onClick: () => setMostrarConfirmacaoSair(false)
-                },
-                    React.createElement('div', {
-                        style: {
-                            background: 'var(--bg-secondary)',
-                            borderRadius: '12px',
-                            padding: '30px',
-                            maxWidth: '400px',
-                            width: '90%',
-                            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
-                            animation: 'slideUp 0.3s ease'
-                        },
-                        onClick: (e) => e.stopPropagation()
-                    },
-                        React.createElement('h3', {
-                            style: {
-                                fontSize: '20px',
-                                fontWeight: '600',
-                                marginBottom: '15px',
-                                color: 'var(--text-primary)',
-                                textAlign: 'center'
-                            }
-                        }, 'Confirmar Saída'),
-                        React.createElement('p', {
-                            style: {
-                                fontSize: '15px',
-                                color: 'var(--text-secondary)',
-                                marginBottom: '25px',
-                                textAlign: 'center',
-                                lineHeight: '1.5'
-                            }
-                        }, 'Você tem certeza que deseja sair da sua conta?'),
-                        React.createElement('div', {
-                            style: {
-                                display: 'flex',
-                                gap: '10px'
-                            }
-                        },
-                            React.createElement('button', {
-                                onClick: () => setMostrarConfirmacaoSair(false),
-                                style: {
-                                    flex: 1,
-                                    padding: '12px',
-                                    background: '#6c757d',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    fontSize: '14px',
-                                    transition: 'background 0.3s'
-                                },
-                                onMouseOver: (e) => e.target.style.background = '#5a6268',
-                                onMouseOut: (e) => e.target.style.background = '#6c757d'
-                            }, 'Cancelar'),
-                            React.createElement('button', {
-                                onClick: confirmarSaida,
-                                style: {
-                                    flex: 1,
-                                    padding: '12px',
-                                    background: '#dc3545',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    fontSize: '14px',
-                                    transition: 'background 0.3s'
-                                },
-                                onMouseOver: (e) => e.target.style.background = '#c82333',
-                                onMouseOut: (e) => e.target.style.background = '#dc3545'
-                            }, 'Sim, Sair')
-                        )
                     )
                 )
             );
@@ -7443,7 +7919,7 @@
                 atividades: 'Atividades da Empresa',
                 tarefas: 'Minhas Atividades',
                 relatorios: 'Relatórios',
-                equipe: 'Equipe',
+                equipe: 'Colaboradores',
                 gamificacao: 'Ranking',
                 configuracoes: 'Configurações'
             };
@@ -7458,7 +7934,7 @@
                     className: `sidebar ${sidebarCollapsed ? 'collapsed' : ''} ${mobileMenuOpen ? 'mobile-open' : ''}`
                 },
                     React.createElement('div', { className: 'logo' },
-                        React.createElement('img', { src: 'assets/images/logo.svg', alt: 'FlowPilot Logo', style: { height: '50px', width: 'auto' } })
+                        React.createElement('img', { src: 'assets/images/logo.svg', alt: 'FlowPilot Logo', style: { height: '50px', width: 'auto', marginTop: '10px' } })
                     ),
                     React.createElement('ul', { className: 'nav-links' },
                         // Perfil do usuário com avatar
