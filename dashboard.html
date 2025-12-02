@@ -6830,6 +6830,10 @@
                         setPerfil({ ...perfil, avatar: novoAvatar });
                         const perfilAtualizado = { ...perfil, avatar: novoAvatar };
                         localStorage.setItem('flowpilot_perfil', JSON.stringify(perfilAtualizado));
+                        
+                        // Disparar evento para atualizar a foto na navegação lateral
+                        window.dispatchEvent(new Event('storage'));
+                        
                         const notification = document.createElement('div');
                         notification.className = 'notification';
                         notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4bb543; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000;';
@@ -7725,6 +7729,40 @@
             const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
             const [showProfileMenu, setShowProfileMenu] = useState(false);
             
+            // State para o avatar do perfil
+            const [avatarUrl, setAvatarUrl] = useState(() => {
+                const perfilSalvo = localStorage.getItem('flowpilot_perfil');
+                if (perfilSalvo) {
+                    try {
+                        const perfil = JSON.parse(perfilSalvo);
+                        return perfil.avatar || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%234361ee'/><circle cx='32' cy='24' r='12' fill='white'/><path d='M12 54c4-10 16-14 20-14s16 4 20 14' fill='white'/></svg>";
+                    } catch (e) {
+                        return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%234361ee'/><circle cx='32' cy='24' r='12' fill='white'/><path d='M12 54c4-10 16-14 20-14s16 4 20 14' fill='white'/></svg>";
+                    }
+                }
+                return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%234361ee'/><circle cx='32' cy='24' r='12' fill='white'/><path d='M12 54c4-10 16-14 20-14s16 4 20 14' fill='white'/></svg>";
+            });
+            
+            // Atualizar avatar quando o perfil mudar no localStorage
+            useEffect(() => {
+                const handleStorageChange = () => {
+                    const perfilSalvo = localStorage.getItem('flowpilot_perfil');
+                    if (perfilSalvo) {
+                        try {
+                            const perfil = JSON.parse(perfilSalvo);
+                            if (perfil.avatar) {
+                                setAvatarUrl(perfil.avatar);
+                            }
+                        } catch (e) {
+                            console.error('Erro ao atualizar avatar:', e);
+                        }
+                    }
+                };
+                
+                window.addEventListener('storage', handleStorageChange);
+                return () => window.removeEventListener('storage', handleStorageChange);
+            }, []);
+            
             // Aplicar tema ao carregar
             useEffect(() => {
                 const savedConfig = localStorage.getItem('flowpilot_config');
@@ -8042,7 +8080,7 @@
                             style: { display: 'flex', alignItems: 'center', gap: '10px' }
                         },
                             React.createElement('img', {
-                                src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%234361ee'/><circle cx='32' cy='24' r='12' fill='white'/><path d='M12 54c4-10 16-14 20-14s16 4 20 14' fill='white'/></svg>",
+                                src: avatarUrl,
                                 alt: 'Avatar',
                                 style: {
                                     width: '32px',
