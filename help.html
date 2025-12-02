@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Central de Ajuda - FlowPilot</title>
+    <link rel="icon" type="image/png" href="assets/images/icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <img src="assets/images/Mask group.svg" alt="FlowPilot Logo" style="height: 80px; width: auto;">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html#hero">Início</a></li>
+                    <li><a href="index.html#features">Funcionalidades</a></li>
+                    <li><a href="index.html#how-it-works">Como Funciona</a></li>
+                    <li><a href="index.html#faq">FAQ</a></li>
+                </ul>
+                <div class="auth-buttons">
+                    <a href="login.html" class="btn btn-outline">Entrar</a>
+                    <a href="register.html" class="btn btn-primary">Cadastre-se</a>
+                </div>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars" id="mobile-menu-toggle"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar" id="mobile-sidebar">
+        <div class="mobile-sidebar-header">
+            <a href="index.html" class="logo">
+                <img src="assets/images/flowpilot-logo.svg" alt="FlowPilot Logo" style="height: 50px; width: auto;">
+            </a>
+            <i class="fas fa-times" id="close-sidebar"></i>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="index.html#hero">Início</a></li>
+            <li><a href="index.html#features">Funcionalidades</a></li>
+            <li><a href="index.html#how-it-works">Como Funciona</a></li>
+            <li><a href="index.html#faq">FAQ</a></li>
+        </ul>
+        <div class="mobile-auth-buttons">
+            <a href="login.html" class="btn btn-outline">Entrar</a>
+            <a href="register.html" class="btn btn-primary">Cadastre-se</a>
+        </div>
+    </div>
+
+    <!-- Help Section -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Central de Ajuda</h1>
+                <p>Encontre respostas rápidas para suas dúvidas, tutoriais e guias completos para aproveitar ao máximo o FlowPilot.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-light">
+        <div class="container">
+            <div style="max-width: 900px; margin: 0 auto;">
+                <!-- Search Box -->
+                <div style="margin-bottom: 50px;">
+                    <div style="position: relative;">
+                        <input type="text" id="help-search" placeholder="Buscar por tópicos de ajuda..." 
+                               style="width: 100%; padding: 15px 50px 15px 20px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 1rem;">
+                        <i class="fas fa-search" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: #adb5bd; font-size: 1.2rem;"></i>
+                    </div>
+                </div>
+
+                <!-- Help Categories -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 50px;">
+                    <div class="feature-card" style="cursor: pointer;" onclick="scrollToSection('primeiros-passos')">
+                        <div class="feature-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3>Primeiros Passos</h3>
+                        <p>Como começar a usar o FlowPilot</p>
+                    </div>
+
+                    <div class="feature-card" style="cursor: pointer;" onclick="scrollToSection('workflows')">
+                        <div class="feature-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <h3>Workflows</h3>
+                        <p>Criação e gestão de processos</p>
+                    </div>
+
+                    <div class="feature-card" style="cursor: pointer;" onclick="scrollToSection('conta')">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-cog"></i>
+                        </div>
+                        <h3>Minha Conta</h3>
+                        <p>Configurações e segurança</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Sections -->
+                <div id="primeiros-passos" style="margin-bottom: 40px;">
+                    <h2 style="margin-bottom: 25px; color: #000d1a; padding-bottom: 15px; border-bottom: 3px solid #187dff;">
+                        <i class="fas fa-rocket" style="color: #187dff; margin-right: 10px;"></i>
+                        Primeiros Passos
+                    </h2>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Como criar minha conta no FlowPilot?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Para criar sua conta, clique em "Cadastre-se" no canto superior direito, preencha seus dados pessoais e escolha um plano. Você receberá um email de confirmação para ativar sua conta.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Quais são os requisitos do sistema?
+                        </div>
+                        <div class="faq-answer">
+                            <p>O FlowPilot funciona em qualquer navegador moderno (Chrome, Firefox, Safari, Edge). Recomendamos manter seu navegador atualizado para melhor desempenho.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="workflows" style="margin-bottom: 40px;">
+                    <h2 style="margin-bottom: 25px; color: #000d1a; padding-bottom: 15px; border-bottom: 3px solid #187dff;">
+                        <i class="fas fa-project-diagram" style="color: #187dff; margin-right: 10px;"></i>
+                        Workflows
+                    </h2>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Como criar um novo workflow?
+                        </div>
+                        <div class="faq-answer">
+                            <p>No dashboard, clique em "Novo Workflow", escolha um template ou comece do zero. Use a interface de arrastar e soltar para adicionar etapas, definir responsáveis e estabelecer prazos.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Posso duplicar workflows existentes?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Sim! Acesse a lista de workflows, clique no ícone de três pontos ao lado do workflow desejado e selecione "Duplicar". Você pode então editar a cópia conforme necessário.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Como compartilhar um workflow com minha equipe?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Abra o workflow, clique em "Compartilhar" no menu superior e adicione os membros da equipe por email ou escolha grupos existentes. Você pode definir permissões de visualização ou edição.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="conta" style="margin-bottom: 40px;">
+                    <h2 style="margin-bottom: 25px; color: #000d1a; padding-bottom: 15px; border-bottom: 3px solid #187dff;">
+                        <i class="fas fa-user-cog" style="color: #187dff; margin-right: 10px;"></i>
+                        Minha Conta
+                    </h2>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Como alterar minha senha?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Acesse "Configurações" > "Segurança" > "Alterar Senha". Digite sua senha atual e a nova senha duas vezes. Clique em "Salvar alterações".</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Como ativar a autenticação de dois fatores?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Vá em "Configurações" > "Segurança" > "Autenticação de Dois Fatores". Escaneie o QR code com seu aplicativo autenticador preferido e digite o código de 6 dígitos para confirmar.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Support -->
+                <div style="background: linear-gradient(135deg, #187dff 0%, #3cc7fe 100%); color: white; padding: 40px; border-radius: 12px; text-align: center; margin-top: 50px;">
+                    <h3 style="margin-bottom: 15px; font-size: 1.8rem;">Não encontrou o que procura?</h3>
+                    <p style="margin-bottom: 25px; font-size: 1.1rem;">Nossa equipe está pronta para ajudar você</p>
+                    <a href="contact.html" class="btn btn-light" style="display: inline-block;">Entre em Contato</a>
+                </div>
+
+                <div style="background: rgba(24, 125, 255, 0.1); padding: 20px; border-radius: 8px; margin-top: 30px; border-left: 4px solid #187dff; text-align: center;">
+                    <p style="margin: 0; color: #187dff; font-weight: 500;">
+                        ⚠️ Este é um protótipo acadêmico. Algumas funcionalidades podem estar limitadas ou simuladas.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>FlowPilot</h3>
+                    <p>Transformando a gestão de processos em uma experiência simples, visual e motivadora.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Produto</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html#features">Funcionalidades</a></li>
+                        <li><a href="index.html#how-it-works">Como Funciona</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Empresa</h3>
+                    <ul class="footer-links">
+                        <li><a href="about.html">Sobre Nós</a></li>
+                        <li><a href="contact.html">Contato</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Suporte</h3>
+                    <ul class="footer-links">
+                        <li><a href="help.html">Central de Ajuda</a></li>
+                        <li><a href="contact.html">Fale Conosco</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Políticas</h3>
+                    <ul class="footer-links">
+                        <li><a href="privacy.html">Política de Privacidade</a></li>
+                        <li><a href="terms.html">Termos de Serviço</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="copyright">
+                    &copy; 2025 FlowPilot. Todos os direitos reservados.
+                </div>
+                <div class="prototype-warning">
+                    ⚠️ Protótipo Acadêmico - Não usar com dados reais
+                </div>
+            </div>
+        </div>
+    </footer>
+        
+    <script src="scripts/main.js" defer></script>
+    <script>
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Search functionality
+        document.getElementById('help-search').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+                
+                if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = searchTerm === '' ? 'block' : 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

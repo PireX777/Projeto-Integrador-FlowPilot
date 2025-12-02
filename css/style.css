@@ -828,6 +828,46 @@ body {
             font-weight: 500;
         }
 
+        /* Contact Info Cards */
+        .contact-info-card {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .contact-info-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(24, 125, 255, 0.15);
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+        }
+
+        .contact-info-card .contact-icon {
+            font-size: 2.5rem;
+            color: #187dff;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-info-card:hover .contact-icon {
+            transform: scale(1.1);
+            color: #3cc7fe;
+        }
+
+        .contact-info-card h3 {
+            margin-bottom: 10px;
+            color: #000d1a;
+            font-size: 1.2rem;
+        }
+
+        .contact-info-card p {
+            color: #495057;
+            margin: 0;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .navbar {
