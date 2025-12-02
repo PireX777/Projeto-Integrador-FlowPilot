@@ -1,28 +1,33 @@
-// Script de verificação de autenticação e redirecionamento inicial
+// Sistema de verificação de autenticação
 (function() {
-    // Verificar se o usuário está autenticado e cadastrado
-    function checkAuth() {
-        const isLoggedIn = localStorage.getItem('flowpilot_logged_in');
-        const userData = localStorage.getItem('flowpilot_user');
-        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    'use strict';
+    
+    /**
+     * Verifica autenticação do usuário e controla acesso às páginas
+     */
+    function verificarAutenticacao() {
+        const usuarioLogado = localStorage.getItem('flowpilot_logged_in');
+        const dadosUsuario = localStorage.getItem('flowpilot_user');
+        const paginaAtual = window.location.pathname.split('/').pop() || 'index.html';
         
-        // Debug - pode remover depois
-        console.log('[AUTH-CHECK]', {
-            currentPage,
-            isLoggedIn,
-            hasUserData: !!userData
+        // Log de diagnóstico
+        console.log('[AUTH]', {
+            pagina: paginaAtual,
+            logado: usuarioLogado === 'true',
+            temDados: !!dadosUsuario
         });
         
-        // Se está tentando acessar o dashboard
-        if (currentPage === 'dashboard.html') {
-            // Verificar se está logado E tem dados
-            if (isLoggedIn === 'true' && userData) {
-                console.log('[AUTH-CHECK] ✅ Acesso permitido ao dashboard');
+        // Controle de acesso ao dashboard
+        if (paginaAtual === 'dashboard.html') {
+            const estaAutenticado = usuarioLogado === 'true' && dadosUsuario;
+            
+            if (estaAutenticado) {
+                console.log('[AUTH] ✅ Acesso autorizado');
                 return true;
             }
             
-            // Não está logado - redirecionar para cadastro IMEDIATAMENTE
-            console.log('[AUTH-CHECK] ❌ Não autenticado - redirecionando para cadastro');
+            // Usuário não autenticado - redirecionar
+            console.log('[AUTH] ❌ Acesso negado - redirecionando');
             
             // Prevenir carregamento da página
             if (document.readyState === 'loading') {
@@ -31,23 +36,23 @@
                 }, true);
             }
             
-            // Redirecionar
-            window.location.href = 'register.html';
+            // Redirecionar para cadastro
+            window.location.replace('register.html');
             
-            // Parar execução de scripts
-            throw new Error('Redirecionando para cadastro...');
+            // Interromper execução
+            throw new Error('Redirecionamento em andamento');
         }
         
         return true;
     }
     
-    // Executar verificação imediatamente
+    // Executar verificação
     try {
-        checkAuth();
-    } catch (e) {
-        // Silenciar erro de redirecionamento
-        if (!e.message.includes('Redirecionando')) {
-            console.error(e);
+        verificarAutenticacao();
+    } catch (erro) {
+        // Silenciar erros de redirecionamento
+        if (!erro.message.includes('Redirecionamento')) {
+            console.error('[AUTH] Erro:', erro);
         }
     }
 })();

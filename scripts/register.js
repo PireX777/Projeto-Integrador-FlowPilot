@@ -270,6 +270,9 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('flowpilot_user', JSON.stringify(userData));
             localStorage.setItem('flowpilot_perfil', JSON.stringify(userData));
             
+            // Salvar email para preencher automaticamente no login
+            sessionStorage.setItem('registeredEmail', email);
+            
             signupButton.classList.remove('loading');
             showNotification('Cadastro efetuado! Redirecionando para o login...', 'success');
             

@@ -49,11 +49,19 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.toggle('checked');
         });
         
-        // Carregar email salvo ao iniciar a página
-        const rememberedEmail = localStorage.getItem('rememberedEmail');
-        if (rememberedEmail && emailInput) {
-            emailInput.value = rememberedEmail;
-            rememberCheckbox.classList.add('checked');
+        // Verificar se há email do registro recente
+        const registeredEmail = sessionStorage.getItem('registeredEmail');
+        if (registeredEmail && emailInput) {
+            // Preencher com email do cadastro e NÃO marcar "lembrar de mim"
+            emailInput.value = registeredEmail;
+            sessionStorage.removeItem('registeredEmail');
+        } else {
+            // Carregar email salvo apenas se usuário marcou "lembrar de mim" anteriormente
+            const rememberedEmail = localStorage.getItem('rememberedEmail');
+            if (rememberedEmail && emailInput) {
+                emailInput.value = rememberedEmail;
+                rememberCheckbox.classList.add('checked');
+            }
         }
     }
 
@@ -235,13 +243,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const savedUser = localStorage.getItem('flowpilot_user');
             
             if (!savedUser) {
-                // Usuário não cadastrado
+                // Nenhum usuário cadastrado no sistema
                 if (loginButton) loginButton.classList.remove('loading');
-                showNotification('Você não possui cadastro. Redirecionando para a página inicial...', 'error');
+                showNotification('Nenhum cadastro encontrado. Redirecionando...', 'error');
                 
-                // Redirecionar para a página inicial após 2 segundos
+                // Redirecionar para a página de cadastro
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    window.location.href = 'register.html';
                 }, 2000);
                 return;
             }
@@ -250,8 +258,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const userData = JSON.parse(savedUser);
             
             if (userData.email !== email) {
+                // Email não corresponde ao cadastrado
                 if (loginButton) loginButton.classList.remove('loading');
-                showNotification('E-mail não encontrado. Verifique suas credenciais ou faça o cadastro.', 'error');
+                showNotification('E-mail não encontrado. Faça o cadastro primeiro.', 'error');
+                
+                // Também redirecionar para cadastro após 3 segundos
+                setTimeout(() => {
+                    window.location.href = 'register.html';
+                }, 3000);
                 return;
             }
             
@@ -286,12 +300,71 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Simulate password recovery
     function simulatePasswordRecovery(email) {
-        showNotification(`Instruções enviadas para ${email}`, 'success');
-
-        setTimeout(() => {
-            if (forgotPasswordModal) forgotPasswordModal.style.display = 'none';
-            if (recoveryForm) recoveryForm.reset();
-        }, 2000);
+        // Verificar se existe usuário cadastrado
+        const savedUser = localStorage.getItem('flowpilot_user');
+        
+        if (!savedUser) {
+            showNotification('Nenhum usuário cadastrado no sistema.', 'error');
+            setTimeout(() => {
+                if (forgotPasswordModal) forgotPasswordModal.style.display = 'none';
+                if (recoveryForm) recoveryForm.reset();
+            }, 2000);
+            return;
+        }
+        
+        const userData = JSON.parse(savedUser);
+        
+        // Verificar se o email corresponde ao cadastrado
+        if (userData.email !== email) {
+            showNotification('E-mail não encontrado no sistema.', 'error');
+            return;
+        }
+        
+        // Email encontrado - fechar modal de recuperação
+        if (forgotPasswordModal) forgotPasswordModal.style.display = 'none';
+        if (recoveryForm) recoveryForm.reset();
+        
+        // Mostrar modal com a senha
+        const passwordDisplayModal = document.getElementById('passwordDisplayModal');
+        const displayedPassword = document.getElementById('displayedPassword');
+        const closePasswordModal = document.getElementById('closePasswordModal');
+        const copyPasswordBtn = document.getElementById('copyPasswordBtn');
+        
+        if (passwordDisplayModal && displayedPassword) {
+            displayedPassword.textContent = userData.password;
+            passwordDisplayModal.style.display = 'flex';
+            
+            // Preencher o email e senha no formulário de login
+            if (emailInput) emailInput.value = email;
+            if (passwordInput) passwordInput.value = userData.password;
+            
+            // Evento para fechar modal
+            if (closePasswordModal) {
+                closePasswordModal.onclick = function() {
+                    passwordDisplayModal.style.display = 'none';
+                };
+            }
+            
+            // Evento para copiar senha
+            if (copyPasswordBtn) {
+                copyPasswordBtn.onclick = function() {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(userData.password).then(() => {
+                            showNotification('Senha copiada!', 'success');
+                        }).catch(err => {
+                            console.log('Erro ao copiar:', err);
+                        });
+                    }
+                };
+            }
+            
+            // Fechar ao clicar fora
+            window.onclick = function(event) {
+                if (event.target === passwordDisplayModal) {
+                    passwordDisplayModal.style.display = 'none';
+                }
+            };
+        }
     }
 
     // Notification system

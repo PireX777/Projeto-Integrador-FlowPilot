@@ -87,6 +87,24 @@
             </form>
         </div>
     </div>
+
+    <!-- Password Display Modal -->
+    <div class="modal" id="passwordDisplayModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Sua Senha</h3>
+                <button class="modal-close" id="closePasswordModal">&times;</button>
+            </div>
+            <p class="modal-text">Sua senha cadastrada é:</p>
+            <div style="background: #f0f0f0; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; word-break: break-all; overflow-wrap: break-word;">
+                <p id="displayedPassword" style="font-size: 20px; font-weight: bold; color: #4361ee; margin: 0; letter-spacing: 1px; line-height: 1.4;"></p>
+            </div>
+            <button type="button" class="login-button" id="copyPasswordBtn" style="margin-bottom: 10px;">
+                <i class="fas fa-copy"></i> Copiar senha
+            </button>
+            <p style="margin-top: 10px; font-size: 13px; color: #666; text-align: center; line-height: 1.4;">A senha foi preenchida no formulário de login</p>
+        </div>
+    </div>
     <script src="scripts/login.js" defer></script>
 </body>
 

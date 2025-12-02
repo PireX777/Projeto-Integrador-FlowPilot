@@ -803,12 +803,29 @@ body {
             color: white;
         }
 
-        .copyright {
-            text-align: center;
-            padding-top: 30px;
+        .footer-bottom {
             border-top: 1px solid #495057;
+            padding-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .copyright {
             color: #adb5bd;
             font-size: 0.9rem;
+        }
+
+        .prototype-warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            border: 1px solid #ffc107;
+            color: #ffc107;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
 
         /* Responsive */
@@ -1040,5 +1057,16 @@ body {
             .btn {
                 padding: 10px 20px;
                 font-size: 0.9rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .prototype-warning {
+                font-size: 0.8rem;
+                padding: 6px 12px;
             }
         }
