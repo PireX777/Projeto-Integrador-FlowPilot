@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>FlowPilot - Gestão de Processos Digitais</title>
+    <link rel="shortcut icon" href="assets/images/icon.ico" />
     <!-- Suprimir erros de extensões do navegador -->
     <script>
         window.addEventListener('error', function(e) {
@@ -6758,6 +6759,7 @@
 
             const [modoEdicao, setModoEdicao] = useState(false);
             const [perfilTemp, setPerfilTemp] = useState({...perfil});
+            const fileInputRef = useRef(null);
 
             const handleChange = (campo, valor) => {
                 // Aplicar máscara de telefone
@@ -6808,6 +6810,45 @@
                         notification.parentNode.removeChild(notification);
                     }
                 }, 3000);
+            };
+
+            const handleImageUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    if (!file.type.startsWith('image/')) {
+                        alert('Por favor, selecione apenas arquivos de imagem.');
+                        return;
+                    }
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('A imagem deve ter no máximo 5MB.');
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        const novoAvatar = reader.result;
+                        setPerfilTemp({ ...perfilTemp, avatar: novoAvatar });
+                        setPerfil({ ...perfil, avatar: novoAvatar });
+                        const perfilAtualizado = { ...perfil, avatar: novoAvatar };
+                        localStorage.setItem('flowpilot_perfil', JSON.stringify(perfilAtualizado));
+                        const notification = document.createElement('div');
+                        notification.className = 'notification';
+                        notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4bb543; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000;';
+                        notification.textContent = 'Foto atualizada com sucesso';
+                        document.body.appendChild(notification);
+                        setTimeout(() => {
+                            if (notification.parentNode) {
+                                notification.parentNode.removeChild(notification);
+                            }
+                        }, 3000);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const triggerFileInput = () => {
+                if (fileInputRef.current) {
+                    fileInputRef.current.click();
+                }
             };
 
             const cancelarEdicao = () => {
@@ -6880,18 +6921,74 @@
                                 marginBottom: '20px'
                             }
                         },
-                            React.createElement('img', {
-                                src: perfil.avatar,
-                                alt: 'Avatar',
-                                className: 'profile-avatar',
+                            // Container do avatar com botão de edição
+                            React.createElement('div', {
                                 style: {
-                                    width: '120px',
-                                    height: '120px',
-                                    borderRadius: '50%',
-                                    marginBottom: '15px',
-                                    border: '4px solid #4361ee'
+                                    position: 'relative',
+                                    display: 'inline-block',
+                                    marginBottom: '15px'
                                 }
-                            }),
+                            },
+                                React.createElement('img', {
+                                    src: perfil.avatar,
+                                    alt: 'Avatar',
+                                    className: 'profile-avatar',
+                                    style: {
+                                        width: '120px',
+                                        height: '120px',
+                                        borderRadius: '50%',
+                                        border: '4px solid #4361ee',
+                                        objectFit: 'cover'
+                                    }
+                                }),
+                                // Botão de edição da foto
+                                React.createElement('button', {
+                                    onClick: triggerFileInput,
+                                    title: 'Alterar foto do perfil',
+                                    style: {
+                                        position: 'absolute',
+                                        bottom: '0',
+                                        right: '0',
+                                        width: '36px',
+                                        height: '36px',
+                                        borderRadius: '50%',
+                                        background: '#4361ee',
+                                        border: '3px solid var(--bg-secondary)',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '14px',
+                                        transition: 'all 0.3s',
+                                        boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                                    },
+                                    onMouseOver: (e) => {
+                                        e.target.style.background = '#3a0ca3';
+                                        e.target.style.transform = 'scale(1.1)';
+                                    },
+                                    onMouseOut: (e) => {
+                                        e.target.style.background = '#4361ee';
+                                        e.target.style.transform = 'scale(1)';
+                                    }
+                                }, 
+                                    React.createElement('i', {
+                                        className: 'fas fa-camera',
+                                        style: {
+                                            color: 'white'
+                                        }
+                                    })
+                                ),
+                                // Input file escondido
+                                React.createElement('input', {
+                                    type: 'file',
+                                    ref: fileInputRef,
+                                    accept: 'image/*',
+                                    onChange: handleImageUpload,
+                                    style: {
+                                        display: 'none'
+                                    }
+                                })
+                            ),
                             React.createElement('h3', { 
                                 className: 'profile-name',
                                 style: { 

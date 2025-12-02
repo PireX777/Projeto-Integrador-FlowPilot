@@ -21,25 +21,33 @@
                 return true;
             }
             
-            // Não está logado - redirecionar para login
-            if (isLoggedIn !== 'true') {
-                console.log('[AUTH-CHECK] ❌ Não logado - redirecionando para login');
-                window.location.replace('login.html');
-                return false;
+            // Não está logado - redirecionar para cadastro IMEDIATAMENTE
+            console.log('[AUTH-CHECK] ❌ Não autenticado - redirecionando para cadastro');
+            
+            // Prevenir carregamento da página
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function(e) {
+                    e.stopImmediatePropagation();
+                }, true);
             }
             
-            // Logado mas sem dados de usuário (inconsistência)
-            if (!userData) {
-                console.log('[AUTH-CHECK] ❌ Dados de usuário ausentes - limpando sessão');
-                localStorage.removeItem('flowpilot_logged_in');
-                window.location.replace('login.html');
-                return false;
-            }
+            // Redirecionar
+            window.location.href = 'register.html';
+            
+            // Parar execução de scripts
+            throw new Error('Redirecionando para cadastro...');
         }
         
         return true;
     }
     
     // Executar verificação imediatamente
-    checkAuth();
+    try {
+        checkAuth();
+    } catch (e) {
+        // Silenciar erro de redirecionamento
+        if (!e.message.includes('Redirecionando')) {
+            console.error(e);
+        }
+    }
 })();

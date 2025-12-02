@@ -48,6 +48,13 @@ document.addEventListener('DOMContentLoaded', function() {
         rememberCheckbox.addEventListener('click', function() {
             this.classList.toggle('checked');
         });
+        
+        // Carregar email salvo ao iniciar a página
+        const rememberedEmail = localStorage.getItem('rememberedEmail');
+        if (rememberedEmail && emailInput) {
+            emailInput.value = rememberedEmail;
+            rememberCheckbox.classList.add('checked');
+        }
     }
 
     // Forgot password modal (guarded)
@@ -263,6 +270,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Store remember me preference
             if (rememberCheckbox && rememberCheckbox.classList.contains('checked')) {
                 localStorage.setItem('rememberedEmail', email);
+            } else {
+                // Se não marcou "lembrar", remove o email salvo
+                localStorage.removeItem('rememberedEmail');
             }
             
             showNotification('Login efetuado! Redirecionando para o painel.', 'success');
