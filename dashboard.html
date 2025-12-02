@@ -28,6 +28,9 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    <script src="scripts/notifications.js"></script>
     <style>
     :root {
         --primary: #4361ee;
@@ -444,6 +447,12 @@
         height: 40px;
         border-radius: 50%;
         object-fit: cover;
+    }
+    
+    .header > div {
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
     
     /* Stats Cards */
@@ -2094,6 +2103,17 @@
             width: 100px;
             height: 100px;
         }
+
+        /* Notification bell responsive */
+        .notification-dropdown {
+            width: 100vw;
+            max-width: 380px;
+            right: -10px;
+        }
+
+        .notification-bell-container {
+            margin-right: 10px;
+        }
     }
 
     @media (max-width: 480px) {
@@ -2616,6 +2636,254 @@
         display: block;
     }
 
+    /* Notification Bell System */
+    .notification-bell-container {
+        position: relative;
+        margin-right: 20px;
+    }
+
+    .notification-bell {
+        position: relative;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 10px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .notification-bell:hover {
+        background: var(--light-gray);
+        transform: scale(1.1);
+    }
+
+    .notification-bell i {
+        font-size: 24px;
+        color: var(--text-primary);
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: var(--danger);
+        color: white;
+        border-radius: 50%;
+        min-width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        animation: pulse 2s ease-in-out infinite;
+        border: 2px solid var(--bg-secondary);
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.15); }
+    }
+
+    .notification-bell.has-new {
+        animation: bellShake 0.5s ease-in-out;
+    }
+
+    @keyframes bellShake {
+        0%, 100% { transform: rotate(0deg); }
+        10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg); }
+        20%, 40%, 60%, 80% { transform: rotate(10deg); }
+    }
+
+    .notification-dropdown {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: 400px;
+        max-height: 600px;
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        z-index: 10000;
+        animation: slideDown 0.3s ease;
+        border: 1px solid var(--border-color);
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .notification-dropdown-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg-primary);
+    }
+
+    .notification-dropdown-header h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-primary);
+    }
+
+    .notification-clear-btn {
+        background: transparent;
+        border: none;
+        color: var(--primary);
+        font-size: 13px;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 6px;
+        transition: all 0.2s;
+        font-weight: 500;
+    }
+
+    .notification-clear-btn:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .notification-list {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+    .notification-item {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .notification-item:hover {
+        background: var(--bg-primary);
+        transform: translateX(-2px);
+    }
+    
+    .notification-item.reminder-item:hover {
+        background: var(--bg-primary);
+        transform: translateX(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .notification-item.unread {
+        background: rgba(67, 97, 238, 0.05);
+    }
+
+    .notification-item.unread::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: var(--primary);
+    }
+
+    .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 18px;
+    }
+
+    .notification-icon.success {
+        background: rgba(75, 181, 67, 0.1);
+        color: var(--success);
+    }
+
+    .notification-icon.info {
+        background: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+    }
+
+    .notification-icon.warning {
+        background: rgba(255, 204, 0, 0.1);
+        color: var(--warning);
+    }
+
+    .notification-icon.error {
+        background: rgba(220, 53, 69, 0.1);
+        color: var(--danger);
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 4px;
+        line-height: 1.4;
+    }
+
+    .notification-message {
+        font-size: 13px;
+        color: #4a4a4a;
+        margin-bottom: 4px;
+        line-height: 1.5;
+    }
+
+    .notification-time {
+        font-size: 12px;
+        color: #6c757d;
+        opacity: 0.9;
+    }
+
+    /* Melhorar cores no tema escuro */
+    .dark-theme .notification-title {
+        color: #f8f9fa;
+    }
+
+    .dark-theme .notification-message {
+        color: #d4d4d4;
+    }
+
+    .dark-theme .notification-time {
+        color: #adb5bd;
+    }
+
+    .notification-empty {
+        padding: 60px 20px;
+        text-align: center;
+        color: var(--text-secondary);
+    }
+
+    .notification-empty i {
+        font-size: 48px;
+        opacity: 0.3;
+        margin-bottom: 16px;
+    }
+
+    .notification-empty p {
+        margin: 0;
+        font-size: 14px;
+    }
+
     /* Notification styles */
     .notification {
         position: fixed;
@@ -2644,6 +2912,283 @@
     @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
+    }
+    
+    @keyframes highlightPulse {
+        0% { 
+            box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+            transform: scale(1);
+        }
+        50% { 
+            box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+            transform: scale(1.02);
+        }
+        100% { 
+            box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+            transform: scale(1);
+        }
+    }
+    
+    .task-highlighted {
+        animation: highlightPulse 1s ease-in-out 2;
+    }
+
+    /* Media Queries para Notificações Responsivas */
+    @media (max-width: 768px) {
+        .notification-bell-container {
+            margin-right: 10px;
+        }
+
+        .notification-bell {
+            width: 38px;
+            height: 38px;
+        }
+
+        .notification-bell i {
+            font-size: 18px;
+        }
+
+        .notification-dropdown {
+            position: fixed;
+            top: 60px !important;
+            right: 10px;
+            left: 10px;
+            width: auto;
+            max-width: calc(100vw - 20px);
+            max-height: calc(100vh - 80px);
+        }
+
+        .notification-dropdown-header {
+            padding: 15px;
+        }
+
+        .notification-dropdown-header h3 {
+            font-size: 16px;
+        }
+
+        .notification-tabs {
+            gap: 8px;
+        }
+
+        .notification-tab {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .notification-item {
+            padding: 12px;
+        }
+
+        .notification-icon {
+            width: 35px;
+            height: 35px;
+            font-size: 16px;
+        }
+
+        .notification-title {
+            font-size: 13px;
+        }
+
+        .notification-message {
+            font-size: 12px;
+        }
+
+        .notification-time {
+            font-size: 10px;
+        }
+
+        .notification-actions {
+            padding: 12px;
+            gap: 8px;
+        }
+
+        .notification-actions button {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .notification-bell {
+            width: 40px;
+            height: 40px;
+        }
+
+        .notification-bell i {
+            font-size: 20px;
+        }
+
+        .notification-badge {
+            top: -2px;
+            right: -2px;
+            min-width: 18px;
+            height: 18px;
+            font-size: 10px;
+            padding: 2px 5px;
+        }
+
+        .notification-dropdown {
+            top: 55px !important;
+            right: 5px;
+            left: 5px;
+            max-width: calc(100vw - 10px);
+            border-radius: 8px;
+        }
+
+        .notification-dropdown-header {
+            padding: 12px;
+        }
+
+        .notification-dropdown-header h3 {
+            font-size: 14px;
+        }
+
+        .notification-tabs {
+            flex-direction: row;
+            gap: 5px;
+        }
+
+        .notification-tab {
+            padding: 5px 10px;
+            font-size: 11px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .notification-item {
+            padding: 10px;
+            gap: 8px;
+        }
+
+        .notification-icon {
+            width: 32px;
+            height: 32px;
+            font-size: 14px;
+        }
+
+        .notification-content {
+            min-width: 0;
+        }
+
+        .notification-title {
+            font-size: 12px;
+        }
+
+        .notification-message {
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            font-size: 9px;
+        }
+
+        .notification-actions {
+            padding: 10px;
+            gap: 6px;
+            flex-direction: row; /* Manter lado a lado */
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .notification-actions button {
+            padding: 8px 12px;
+            font-size: 11px;
+            flex: 0 1 auto; /* Não expandir */
+            white-space: nowrap;
+        }
+
+        /* Manter ícones do header lado a lado */
+        .notification-dropdown-header {
+            padding: 12px;
+            flex-direction: row !important;
+            gap: 10px;
+            align-items: center !important;
+        }
+
+        .notification-dropdown-header h3 {
+            font-size: 15px;
+            flex: 0 1 auto;
+            min-width: auto;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        /* Garantir que os botões de ação do header fiquem lado a lado */
+        .notification-dropdown-header > div {
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 6px !important;
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+
+        .notification-clear-btn {
+            padding: 5px 6px !important;
+            font-size: 13px !important;
+            min-width: 28px !important;
+            height: 28px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 4px !important;
+        }
+
+        .notification-empty {
+            padding: 40px 15px;
+        }
+
+        .notification-empty i {
+            font-size: 36px;
+        }
+
+        .notification-empty p {
+            font-size: 12px;
+        }
+    }
+
+    /* Media Queries para Cards de Tarefas Responsivos */
+    @media (max-width: 768px) {
+        /* Ajustar botões dos cards de tarefas */
+        .page-content button {
+            font-size: 11px !important;
+            padding: 6px 10px !important;
+        }
+
+        /* Botões de ação dos cards empilhados */
+        div[style*="display: flex"][style*="gap: 8px"] > button {
+            flex: 1;
+            min-width: auto;
+        }
+    }
+
+    @media (max-width: 480px) {
+        /* Botões em coluna no mobile */
+        div[style*="display: flex"][style*="gap: 8px"]:has(> button) {
+            flex-direction: column !important;
+            width: 100%;
+        }
+
+        div[style*="display: flex"][style*="gap: 8px"] > button {
+            width: 100% !important;
+            justify-content: center;
+        }
+
+        /* Ajustar espaçamento dos cards */
+        div[style*="padding: 20px"][style*="borderRadius: 8px"] {
+            padding: 15px !important;
+        }
+
+        /* Títulos menores */
+        h3[style*="fontSize: 16px"] {
+            font-size: 14px !important;
+        }
+
+        /* Badges menores */
+        span[style*="padding: 4px 10px"] {
+            font-size: 11px !important;
+            padding: 3px 8px !important;
+        }
     }
 
     @keyframes slideUp {
@@ -2814,6 +3359,897 @@
 
     <script type="text/babel">
         const { useState, useEffect, useRef, useMemo, useCallback } = React;
+        
+        // ===================================
+        // Sistema de Notificações em Tempo Real
+        // ===================================
+        
+        // Gerenciador Global de Notificações
+        const NotificationManager = {
+            listeners: [],
+            notifications: [],
+            nextId: 1,
+
+            isEnabled() {
+                try {
+                    const config = localStorage.getItem('flowpilot_config');
+                    if (config) {
+                        const parsed = JSON.parse(config);
+                        return parsed.notificacoes !== false;
+                    }
+                    return true; // Ativado por padrão
+                } catch (e) {
+                    return true;
+                }
+            },
+
+            subscribe(callback) {
+                this.listeners.push(callback);
+                return () => {
+                    this.listeners = this.listeners.filter(cb => cb !== callback);
+                };
+            },
+
+            notify(listeners) {
+                listeners.forEach(callback => callback(this.notifications));
+            },
+
+            add(notification) {
+                // Verificar se notificações estão habilitadas
+                if (!this.isEnabled()) {
+                    console.log('Notificações desabilitadas, ignorando:', notification.title);
+                    return null;
+                }
+
+                const newNotification = {
+                    id: this.nextId++,
+                    ...notification,
+                    timestamp: new Date(),
+                    read: false
+                };
+                
+                this.notifications.unshift(newNotification);
+                
+                // Limitar a 50 notificações
+                if (this.notifications.length > 50) {
+                    this.notifications = this.notifications.slice(0, 50);
+                }
+                
+                this.notify(this.listeners);
+                
+                // Salvar no localStorage
+                this.save();
+                
+                // Auto-remover após 2 minutos e 30 segundos (150000ms)
+                setTimeout(() => {
+                    this.remove(newNotification.id);
+                }, 150000);
+                
+                return newNotification;
+            },
+
+            remove(id) {
+                const index = this.notifications.findIndex(n => n.id === id);
+                if (index !== -1) {
+                    this.notifications.splice(index, 1);
+                    this.notify(this.listeners);
+                    this.save();
+                }
+            },
+
+            markAsRead(id) {
+                const notification = this.notifications.find(n => n.id === id);
+                if (notification) {
+                    notification.read = true;
+                    this.notify(this.listeners);
+                    this.save();
+                }
+            },
+
+            markAllAsRead() {
+                this.notifications.forEach(n => n.read = true);
+                this.notify(this.listeners);
+                this.save();
+            },
+
+            clear() {
+                this.notifications = [];
+                this.notify(this.listeners);
+                this.save();
+            },
+
+            save() {
+                try {
+                    localStorage.setItem('dashboard_notifications', JSON.stringify({
+                        notifications: this.notifications,
+                        nextId: this.nextId
+                    }));
+                } catch (e) {
+                    console.error('Erro ao salvar notificações:', e);
+                }
+            },
+
+            load() {
+                try {
+                    const data = localStorage.getItem('dashboard_notifications');
+                    if (data) {
+                        const parsed = JSON.parse(data);
+                        this.notifications = parsed.notifications || [];
+                        this.nextId = parsed.nextId || 1;
+                        
+                        // Converter timestamps de string para Date
+                        this.notifications.forEach(n => {
+                            n.timestamp = new Date(n.timestamp);
+                        });
+                    }
+                } catch (e) {
+                    console.error('Erro ao carregar notificações:', e);
+                }
+            }
+        };
+
+        // Carregar notificações salvas
+        NotificationManager.load();
+
+        // Componente Sino de Notificações
+        const NotificationBell = () => {
+            const [notifications, setNotifications] = useState(() => NotificationManager.notifications || []);
+            const [isOpen, setIsOpen] = useState(false);
+            const [hasNew, setHasNew] = useState(false);
+            const [isEnabled, setIsEnabled] = useState(() => NotificationManager.isEnabled());
+            const [activeTab, setActiveTab] = useState('notifications'); // 'notifications' ou 'reminders'
+            const [reminders, setReminders] = useState([]);
+            const dropdownRef = useRef(null);
+
+            useEffect(() => {
+                const unsubscribe = NotificationManager.subscribe(setNotifications);
+                return unsubscribe;
+            }, []);
+
+            // Verificar lembretes de tarefas
+            useEffect(() => {
+                const checkReminders = () => {
+                    const now = new Date();
+                    const reminderList = [];
+
+                    // Verificar tarefas da empresa
+                    try {
+                        const tarefasEmpresa = JSON.parse(localStorage.getItem('tarefasEmpresa') || '[]');
+                        tarefasEmpresa.forEach(tarefa => {
+                            if (tarefa.status !== 'completed' && tarefa.data) {
+                                const prazo = new Date(tarefa.data + 'T23:59:59');
+                                const diffDays = Math.ceil((prazo - now) / (1000 * 60 * 60 * 24));
+                                
+                                if (diffDays < 0) {
+                                    reminderList.push({
+                                        id: `tarefa-empresa-${tarefa.id}`,
+                                        type: 'overdue',
+                                        title: tarefa.titulo,
+                                        categoria: 'Atividade da Empresa',
+                                        prazo: tarefa.data,
+                                        diasAtrasado: Math.abs(diffDays),
+                                        responsavel: tarefa.responsavel,
+                                        setor: tarefa.setor
+                                    });
+                                } else if (diffDays <= 3) {
+                                    reminderList.push({
+                                        id: `tarefa-empresa-${tarefa.id}`,
+                                        type: 'urgent',
+                                        title: tarefa.titulo,
+                                        categoria: 'Atividade da Empresa',
+                                        prazo: tarefa.data,
+                                        diasRestantes: diffDays,
+                                        responsavel: tarefa.responsavel,
+                                        setor: tarefa.setor
+                                    });
+                                }
+                            }
+                        });
+                    } catch (e) {}
+
+                    // Verificar tarefas pessoais
+                    try {
+                        const minhasTarefas = JSON.parse(localStorage.getItem('minhasTarefas') || '[]');
+                        minhasTarefas.forEach(tarefa => {
+                            if (tarefa.status !== 'completed' && tarefa.data) {
+                                const prazo = new Date(tarefa.data + 'T23:59:59');
+                                const diffDays = Math.ceil((prazo - now) / (1000 * 60 * 60 * 24));
+                                
+                                if (diffDays < 0) {
+                                    reminderList.push({
+                                        id: `tarefa-pessoal-${tarefa.id}`,
+                                        type: 'overdue',
+                                        title: tarefa.titulo,
+                                        categoria: 'Minha Tarefa',
+                                        prazo: tarefa.data,
+                                        diasAtrasado: Math.abs(diffDays),
+                                        prioridade: tarefa.prioridade
+                                    });
+                                } else if (diffDays <= 3) {
+                                    reminderList.push({
+                                        id: `tarefa-pessoal-${tarefa.id}`,
+                                        type: 'urgent',
+                                        title: tarefa.titulo,
+                                        categoria: 'Minha Tarefa',
+                                        prazo: tarefa.data,
+                                        diasRestantes: diffDays,
+                                        prioridade: tarefa.prioridade
+                                    });
+                                }
+                            }
+                        });
+                    } catch (e) {}
+
+                    setReminders(reminderList);
+                };
+
+                checkReminders();
+                const interval = setInterval(checkReminders, 60000); // Verificar a cada minuto
+                return () => clearInterval(interval);
+            }, []);
+
+            // Monitorar mudanças de configuração
+            useEffect(() => {
+                const handleConfigUpdate = () => {
+                    setIsEnabled(NotificationManager.isEnabled());
+                };
+                window.addEventListener('configUpdated', handleConfigUpdate);
+                return () => window.removeEventListener('configUpdated', handleConfigUpdate);
+            }, []);
+
+            useEffect(() => {
+                const handleClickOutside = (event) => {
+                    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                        setIsOpen(false);
+                    }
+                };
+
+                if (isOpen) {
+                    document.addEventListener('mousedown', handleClickOutside);
+                    return () => document.removeEventListener('mousedown', handleClickOutside);
+                }
+            }, [isOpen]);
+
+            // Detectar novas notificações
+            useEffect(() => {
+                if (notifications.some(n => !n.read)) {
+                    setHasNew(true);
+                    const timer = setTimeout(() => setHasNew(false), 500);
+                    return () => clearTimeout(timer);
+                }
+            }, [notifications]);
+
+            const unreadCount = notifications.filter(n => !n.read).length;
+            const totalAlerts = unreadCount + reminders.length;
+
+            const handleBellClick = () => {
+                setIsOpen(!isOpen);
+            };
+
+            const handleNotificationClick = (notification) => {
+                NotificationManager.markAsRead(notification.id);
+            };
+
+            const handleReminderClick = (reminder) => {
+                // Fechar o dropdown
+                setIsOpen(false);
+                
+                // Redirecionar para a página apropriada
+                if (reminder.categoria === 'Atividade da Empresa') {
+                    // Navegar para página de Atividades da Empresa
+                    window.dispatchEvent(new CustomEvent('navigateToPage', { 
+                        detail: { page: 'atividades' } 
+                    }));
+                } else if (reminder.categoria === 'Minha Tarefa') {
+                    // Navegar para página de Minhas Tarefas
+                    window.dispatchEvent(new CustomEvent('navigateToPage', { 
+                        detail: { page: 'tarefas' } 
+                    }));
+                }
+                
+                // Opcional: destacar a tarefa específica
+                setTimeout(() => {
+                    const taskId = reminder.id.replace('tarefa-empresa-', '').replace('tarefa-pessoal-', '');
+                    window.dispatchEvent(new CustomEvent('highlightTask', { 
+                        detail: { taskId: taskId } 
+                    }));
+                }, 300);
+            };
+
+            const handleClearAll = async () => {
+                const confirmed = await ConfirmationModal.show({
+                    title: 'Limpar Notificações',
+                    message: 'Tem certeza que deseja limpar todas as notificações? Esta ação não pode ser desfeita.',
+                    type: 'warning',
+                    confirmText: 'Sim, limpar tudo',
+                    cancelText: 'Cancelar'
+                });
+                
+                if (confirmed) {
+                    NotificationManager.clear();
+                    setIsOpen(false);
+                }
+            };
+
+            const handleMarkAllRead = () => {
+                NotificationManager.markAllAsRead();
+            };
+
+            const formatTime = (timestamp) => {
+                const now = new Date();
+                const diff = Math.floor((now - timestamp) / 1000); // segundos
+
+                if (diff < 60) return 'Agora mesmo';
+                if (diff < 3600) return `${Math.floor(diff / 60)}m atrás`;
+                if (diff < 86400) return `${Math.floor(diff / 3600)}h atrás`;
+                
+                const days = Math.floor(diff / 86400);
+                if (days === 1) return 'Ontem';
+                if (days < 7) return `${days}d atrás`;
+                
+                return timestamp.toLocaleDateString('pt-BR');
+            };
+
+            const getIcon = (type) => {
+                const icons = {
+                    success: 'fa-check-circle',
+                    info: 'fa-info-circle',
+                    warning: 'fa-exclamation-triangle',
+                    error: 'fa-times-circle'
+                };
+                return icons[type] || icons.info;
+            };
+
+            return React.createElement('div', { 
+                className: 'notification-bell-container',
+                ref: dropdownRef,
+                title: !isEnabled ? 'Notificações desativadas nas configurações' : 'Notificações'
+            },
+                React.createElement('button', {
+                    className: `notification-bell ${hasNew ? 'has-new' : ''}`,
+                    onClick: handleBellClick,
+                    title: !isEnabled ? 'Notificações desativadas' : `${totalAlerts} alertas`,
+                    style: { opacity: !isEnabled ? 0.5 : 1 }
+                },
+                    React.createElement('i', { className: !isEnabled ? 'fas fa-bell-slash' : 'fas fa-bell' }),
+                    isEnabled && totalAlerts > 0 && React.createElement('span', {
+                        className: 'notification-badge'
+                    }, totalAlerts > 99 ? '99+' : totalAlerts)
+                ),
+
+                isOpen && React.createElement('div', { className: 'notification-dropdown' },
+                    React.createElement('div', { className: 'notification-dropdown-header' },
+                        React.createElement('h3', null, 'Notificações'),
+                        React.createElement('div', { style: { display: 'flex', gap: '8px' } },
+                            activeTab === 'notifications' && notifications.length > 0 && unreadCount > 0 && React.createElement('button', {
+                                className: 'notification-clear-btn',
+                                onClick: handleMarkAllRead,
+                                title: 'Marcar todas como lidas'
+                            }, React.createElement('i', { className: 'fas fa-check-double' })),
+                            activeTab === 'notifications' && notifications.length > 0 && React.createElement('button', {
+                                className: 'notification-clear-btn',
+                                onClick: handleClearAll,
+                                title: 'Limpar todas'
+                            }, React.createElement('i', { className: 'fas fa-trash' }))
+                        )
+                    ),
+
+                    // Abas
+                    React.createElement('div', { 
+                        className: 'notification-tabs',
+                        style: {
+                            display: 'flex',
+                            borderBottom: '1px solid var(--border-color)',
+                            marginBottom: '10px'
+                        }
+                    },
+                        React.createElement('button', {
+                            className: `notification-tab ${activeTab === 'notifications' ? 'active' : ''}`,
+                            onClick: () => setActiveTab('notifications'),
+                            style: {
+                                flex: 1,
+                                padding: '10px',
+                                background: 'none',
+                                border: 'none',
+                                borderBottom: activeTab === 'notifications' ? '2px solid var(--primary)' : '2px solid transparent',
+                                color: activeTab === 'notifications' ? 'var(--primary)' : 'var(--text-secondary)',
+                                fontWeight: activeTab === 'notifications' ? 'bold' : 'normal',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
+                            }
+                        }, 
+                            React.createElement('i', { className: 'fas fa-bell', style: { marginRight: '5px' } }),
+                            `Notificações ${unreadCount > 0 ? `(${unreadCount})` : ''}`
+                        ),
+                        React.createElement('button', {
+                            className: `notification-tab ${activeTab === 'reminders' ? 'active' : ''}`,
+                            onClick: () => setActiveTab('reminders'),
+                            style: {
+                                flex: 1,
+                                padding: '10px',
+                                background: 'none',
+                                border: 'none',
+                                borderBottom: activeTab === 'reminders' ? '2px solid var(--primary)' : '2px solid transparent',
+                                color: activeTab === 'reminders' ? 'var(--primary)' : 'var(--text-secondary)',
+                                fontWeight: activeTab === 'reminders' ? 'bold' : 'normal',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
+                            }
+                        }, 
+                            React.createElement('i', { className: 'fas fa-clock', style: { marginRight: '5px' } }),
+                            `Lembretes ${reminders.length > 0 ? `(${reminders.length})` : ''}`
+                        )
+                    ),
+
+                    !isEnabled ? 
+                        React.createElement('div', { className: 'notification-empty' },
+                            React.createElement('i', { className: 'fas fa-bell-slash' }),
+                            React.createElement('p', null, 'Notificações desativadas'),
+                            React.createElement('small', { 
+                                style: { 
+                                    marginTop: '8px', 
+                                    display: 'block',
+                                    color: 'var(--text-secondary)'
+                                } 
+                            }, 'Ative nas Configurações')
+                        ) :
+                    
+                    // Conteúdo da aba Notificações
+                    activeTab === 'notifications' ? 
+                    React.createElement('div', { className: 'notification-list' },
+                        notifications.length === 0 ? 
+                            React.createElement('div', { className: 'notification-empty' },
+                                React.createElement('i', { className: 'fas fa-bell-slash' }),
+                                React.createElement('p', null, 'Nenhuma notificação')
+                            ) :
+                            notifications.map(notification =>
+                                React.createElement('div', {
+                                    key: notification.id,
+                                    className: `notification-item ${notification.read ? '' : 'unread'}`,
+                                    onClick: () => handleNotificationClick(notification)
+                                },
+                                    React.createElement('div', {
+                                        className: `notification-icon ${notification.type}`
+                                    },
+                                        React.createElement('i', { 
+                                            className: `fas ${getIcon(notification.type)}` 
+                                        })
+                                    ),
+                                    React.createElement('div', { className: 'notification-content' },
+                                        React.createElement('div', { 
+                                            className: 'notification-title' 
+                                        }, notification.title),
+                                        React.createElement('div', { 
+                                            className: 'notification-message' 
+                                        }, notification.message),
+                                        React.createElement('div', { 
+                                            className: 'notification-time' 
+                                        }, formatTime(notification.timestamp))
+                                    )
+                                )
+                            )
+                    ) :
+                    
+                    // Conteúdo da aba Lembretes
+                    React.createElement('div', { className: 'notification-list' },
+                        reminders.length === 0 ? 
+                            React.createElement('div', { className: 'notification-empty' },
+                                React.createElement('i', { className: 'fas fa-check-circle', style: { color: '#4bb543' } }),
+                                React.createElement('p', null, 'Nenhum lembrete'),
+                                React.createElement('small', { 
+                                    style: { 
+                                        marginTop: '8px', 
+                                        display: 'block',
+                                        color: 'var(--text-secondary)'
+                                    } 
+                                }, 'Todas as tarefas estão em dia!')
+                            ) :
+                            reminders.map(reminder =>
+                                React.createElement('div', {
+                                    key: reminder.id,
+                                    className: `notification-item reminder-item ${reminder.type}`,
+                                    onClick: () => handleReminderClick(reminder),
+                                    style: {
+                                        borderLeft: reminder.type === 'overdue' ? '4px solid #dc3545' : '4px solid #ffc107',
+                                        cursor: 'pointer'
+                                    }
+                                },
+                                    React.createElement('div', {
+                                        className: `notification-icon ${reminder.type === 'overdue' ? 'error' : 'warning'}`
+                                    },
+                                        React.createElement('i', { 
+                                            className: reminder.type === 'overdue' ? 'fas fa-exclamation-circle' : 'fas fa-clock'
+                                        })
+                                    ),
+                                    React.createElement('div', { className: 'notification-content' },
+                                        React.createElement('div', { 
+                                            className: 'notification-title',
+                                            style: { fontWeight: 'bold' }
+                                        }, reminder.title),
+                                        React.createElement('div', { 
+                                            style: { 
+                                                fontSize: '11px',
+                                                color: 'var(--text-secondary)',
+                                                marginTop: '2px'
+                                            }
+                                        }, reminder.categoria),
+                                        React.createElement('div', { 
+                                            className: 'notification-message',
+                                            style: { marginTop: '5px' }
+                                        }, 
+                                            reminder.type === 'overdue' ? 
+                                                `Atrasada há ${reminder.diasAtrasado} dia${reminder.diasAtrasado > 1 ? 's' : ''}` :
+                                                reminder.diasRestantes === 0 ? 'Vence hoje!' :
+                                                `Vence em ${reminder.diasRestantes} dia${reminder.diasRestantes > 1 ? 's' : ''}`
+                                        ),
+                                        React.createElement('div', { 
+                                            style: { 
+                                                fontSize: '11px',
+                                                color: 'var(--text-secondary)',
+                                                marginTop: '3px'
+                                            }
+                                        }, 
+                                            `Prazo: ${new Date(reminder.prazo).toLocaleDateString('pt-BR')}`,
+                                            reminder.responsavel && ` • ${reminder.responsavel}`,
+                                            reminder.setor && ` • ${reminder.setor}`
+                                        )
+                                    )
+                                )
+                            )
+                    )
+                )
+            );
+        };
+
+        // Sistema de Auto-Notificações (Simulação de eventos do sistema)
+        const AutoNotificationSystem = {
+            initialized: false,
+            
+            start() {
+                if (this.initialized) return;
+                this.initialized = true;
+
+                // Adicionar notificação de boas-vindas (apenas uma vez)
+                const welcomeShown = localStorage.getItem('flowpilot_welcome_shown');
+                if (!welcomeShown) {
+                    setTimeout(() => {
+                        NotificationManager.add({
+                            type: 'info',
+                            title: 'Bem-vindo ao Dashboard!',
+                            message: 'Sistema de notificações em tempo real ativado'
+                        });
+                        localStorage.setItem('flowpilot_welcome_shown', 'true');
+                    }, 2000);
+                }
+
+                // Monitorar criação de processos
+                window.addEventListener('processCreated', (e) => {
+                    NotificationManager.add({
+                        type: 'success',
+                        title: 'Novo Processo Criado',
+                        message: `Processo "${e.detail.name}" foi criado com sucesso`
+                    });
+                });
+
+                // Monitorar mudanças em processos
+                window.addEventListener('processUpdated', (e) => {
+                    NotificationManager.add({
+                        type: 'info',
+                        title: 'Processo Atualizado',
+                        message: `Processo "${e.detail.name}" foi modificado`
+                    });
+                });
+
+                // Monitorar exclusão de processos
+                window.addEventListener('processDeleted', (e) => {
+                    NotificationManager.add({
+                        type: 'warning',
+                        title: 'Processo Removido',
+                        message: `Processo "${e.detail.name}" foi excluído`
+                    });
+                });
+
+                // Monitorar novas tarefas
+                window.addEventListener('taskCreated', (e) => {
+                    NotificationManager.add({
+                        type: 'success',
+                        title: 'Nova Tarefa Criada',
+                        message: `Tarefa "${e.detail.title}" foram criadas`
+                    });
+                });
+
+                // Monitorar tarefas atualizadas
+                window.addEventListener('taskUpdated', (e) => {
+                    NotificationManager.add({
+                        type: 'info',
+                        title: 'Tarefa Atualizada',
+                        message: `Tarefa "${e.detail.title}" foi modificada`
+                    });
+                });
+
+                // Monitorar tarefas concluídas
+                window.addEventListener('taskCompleted', (e) => {
+                    NotificationManager.add({
+                        type: 'success',
+                        title: 'Tarefa Concluída! 🎉',
+                        message: `"${e.detail.title}" foi finalizada`
+                    });
+                });
+
+                // Monitorar tarefas excluídas
+                window.addEventListener('taskDeleted', (e) => {
+                    NotificationManager.add({
+                        type: 'warning',
+                        title: 'Tarefa Removida',
+                        message: `Tarefa "${e.detail.title}" foi excluída`
+                    });
+                });
+
+                // Monitorar novos membros
+                window.addEventListener('memberAdded', (e) => {
+                    NotificationManager.add({
+                        type: 'success',
+                        title: 'Novo Colaborador',
+                        message: `${e.detail.name} entrou na equipe como ${e.detail.cargo || 'colaborador'}`
+                    });
+                });
+
+                // Monitorar membros atualizados
+                window.addEventListener('memberUpdated', (e) => {
+                    NotificationManager.add({
+                        type: 'info',
+                        title: 'Colaborador Atualizado',
+                        message: `Dados de ${e.detail.name} foram atualizados`
+                    });
+                });
+
+                // Monitorar membros removidos
+                window.addEventListener('memberRemoved', (e) => {
+                    NotificationManager.add({
+                        type: 'warning',
+                        title: 'Colaborador Removido',
+                        message: `${e.detail.name} foi removido da equipe`
+                    });
+                });
+
+                // Monitorar novas atividades
+                window.addEventListener('activityCreated', (e) => {
+                    NotificationManager.add({
+                        type: 'success',
+                        title: 'Nova Atividade',
+                        message: `Atividade "${e.detail.titulo}" foi criada no setor ${e.detail.setor}`
+                    });
+                });
+
+                // Monitorar atividades atualizadas
+                window.addEventListener('activityUpdated', (e) => {
+                    NotificationManager.add({
+                        type: 'info',
+                        title: 'Atividade Atualizada',
+                        message: `Atividade "${e.detail.titulo}" foi modificada`
+                    });
+                });
+
+                // Monitorar atividades concluídas
+                window.addEventListener('activityCompleted', (e) => {
+                    NotificationManager.add({
+                        type: 'success',
+                        title: 'Atividade Concluída! ✓',
+                        message: `Atividade "${e.detail.titulo}" foi finalizada`
+                    });
+                });
+
+                // Monitorar mudanças de status
+                window.addEventListener('statusChanged', (e) => {
+                    NotificationManager.add({
+                        type: 'info',
+                        title: 'Status Alterado',
+                        message: `${e.detail.item} mudou para ${e.detail.status}`
+                    });
+                });
+
+                // Monitorar avisos do sistema
+                window.addEventListener('systemWarning', (e) => {
+                    NotificationManager.add({
+                        type: 'warning',
+                        title: e.detail.title || 'Aviso do Sistema',
+                        message: e.detail.message
+                    });
+                });
+
+                // Monitorar erros
+                window.addEventListener('systemError', (e) => {
+                    NotificationManager.add({
+                        type: 'error',
+                        title: e.detail.title || 'Erro',
+                        message: e.detail.message
+                    });
+                });
+
+                // Monitorar relatórios gerados
+                window.addEventListener('reportGenerated', (e) => {
+                    NotificationManager.add({
+                        type: 'success',
+                        title: 'Relatório Gerado',
+                        message: `Relatório ${e.detail.type} foi criado com sucesso`
+                    });
+                });
+            }
+        };
+
+        // Iniciar sistema de notificações automáticas
+        AutoNotificationSystem.start();
+        
+        // Sistema de Eventos Simulados da Empresa
+        const CompanyEventsSimulator = {
+            eventosEmpresa: [
+                {
+                    type: 'success',
+                    title: 'Meta Batida! 🎯',
+                    message: 'Equipe de Vendas superou a meta mensal em 15%',
+                    peso: 2
+                },
+                {
+                    type: 'info',
+                    title: 'Novo Cliente Cadastrado',
+                    message: 'TechSolutions Inc. foi adicionado ao portfólio',
+                    peso: 3
+                },
+                {
+                    type: 'success',
+                    title: 'Projeto Aprovado',
+                    message: 'Cliente aprovou proposta de modernização de sistemas',
+                    peso: 2
+                },
+                {
+                    type: 'warning',
+                    title: 'Reunião Agendada',
+                    message: 'Reunião de alinhamento estratégico amanhã às 14h',
+                    peso: 4
+                },
+                {
+                    type: 'info',
+                    title: 'Atualização de Sistema',
+                    message: 'Sistema de gestão será atualizado na próxima semana',
+                    peso: 3
+                },
+                {
+                    type: 'success',
+                    title: 'Novo Colaborador',
+                    message: 'Ana Silva iniciou na equipe de Marketing',
+                    peso: 3
+                },
+                {
+                    type: 'warning',
+                    title: 'Prazo se Aproximando',
+                    message: 'Entrega do projeto ABC prevista para esta semana',
+                    peso: 4
+                },
+                {
+                    type: 'info',
+                    title: 'Feedback Positivo',
+                    message: 'Cliente elogiou atendimento da equipe de Suporte',
+                    peso: 3
+                },
+                {
+                    type: 'success',
+                    title: 'Certificação Conquistada',
+                    message: 'Empresa recebeu certificação ISO 9001',
+                    peso: 1
+                },
+                {
+                    type: 'info',
+                    title: 'Treinamento Disponível',
+                    message: 'Curso de capacitação em novas tecnologias aberto',
+                    peso: 4
+                },
+                {
+                    type: 'warning',
+                    title: 'Manutenção Programada',
+                    message: 'Servidor principal em manutenção domingo às 2h',
+                    peso: 3
+                },
+                {
+                    type: 'success',
+                    title: 'Processo Otimizado',
+                    message: 'Workflow de aprovações reduziu tempo em 30%',
+                    peso: 2
+                },
+                {
+                    type: 'info',
+                    title: 'Pesquisa de Clima',
+                    message: 'Pesquisa de satisfação interna disponível até sexta',
+                    peso: 4
+                },
+                {
+                    type: 'success',
+                    title: 'Contrato Renovado',
+                    message: 'Cliente ABC renovou contrato por mais 2 anos',
+                    peso: 2
+                },
+                {
+                    type: 'warning',
+                    title: 'Auditoria Interna',
+                    message: 'Auditoria de conformidade agendada para próxima semana',
+                    peso: 3
+                },
+                {
+                    type: 'info',
+                    title: 'Evento Corporativo',
+                    message: 'Confraternização de fim de ano dia 20/12',
+                    peso: 4
+                },
+                {
+                    type: 'success',
+                    title: 'Inovação Implementada',
+                    message: 'Novo sistema de automação aumentou produtividade',
+                    peso: 2
+                },
+                {
+                    type: 'info',
+                    title: 'Política Atualizada',
+                    message: 'Novas diretrizes de trabalho remoto publicadas',
+                    peso: 3
+                },
+                {
+                    type: 'success',
+                    title: 'Reconhecimento',
+                    message: 'Equipe de TI premiada por excelência em suporte',
+                    peso: 2
+                },
+                {
+                    type: 'warning',
+                    title: 'Backup Agendado',
+                    message: 'Backup completo dos dados será realizado hoje à noite',
+                    peso: 4
+                }
+            ],
+
+            iniciar() {
+                // Enviar primeira notificação após 5 segundos
+                setTimeout(() => {
+                    this.enviarEventoAleatorio();
+                }, 5000);
+
+                // Depois enviar eventos em intervalos variados (entre 30 e 90 segundos)
+                this.agendarProximoEvento();
+            },
+
+            enviarEventoAleatorio() {
+                // Selecionar evento baseado em peso (eventos com maior peso são mais comuns)
+                const totalPeso = this.eventosEmpresa.reduce((sum, e) => sum + e.peso, 0);
+                let random = Math.random() * totalPeso;
+                
+                let eventoSelecionado = this.eventosEmpresa[0];
+                for (const evento of this.eventosEmpresa) {
+                    random -= evento.peso;
+                    if (random <= 0) {
+                        eventoSelecionado = evento;
+                        break;
+                    }
+                }
+
+                // Enviar notificação
+                NotificationManager.add({
+                    type: eventoSelecionado.type,
+                    title: eventoSelecionado.title,
+                    message: eventoSelecionado.message
+                });
+            },
+
+            agendarProximoEvento() {
+                // Intervalo aleatório entre 30 e 90 segundos
+                const intervalo = 30000 + Math.random() * 60000;
+                
+                setTimeout(() => {
+                    this.enviarEventoAleatorio();
+                    this.agendarProximoEvento();
+                }, intervalo);
+            }
+        };
+
+        // Iniciar simulador de eventos da empresa
+        CompanyEventsSimulator.iniciar();
         
         // Sistema de Modal de Confirmação
         const ConfirmationModal = {
@@ -3647,6 +5083,12 @@
                     React.createElement('h2', null, 
                         'Dashboard Geral ',
                         React.createElement(RealTimeBadge)
+                    ),
+                    React.createElement('div', { 
+                        style: { display: 'flex', alignItems: 'center', gap: '10px' } 
+                    },
+                        React.createElement(NotificationBell),
+                        React.createElement('div', { className: 'user-info' })
                     )
                 ),
 
@@ -4060,6 +5502,16 @@
                 };
 
                 setProcessos(prev => [...prev, processo]);
+                
+                // Disparar evento de notificação
+                window.dispatchEvent(new CustomEvent('processCreated', { 
+                    detail: { 
+                        name: processo.nome,
+                        responsavel: processo.responsavel,
+                        setor: processo.setor
+                    } 
+                }));
+                
                 setNovoProcesso({ nome: '', responsavel: '', requerente: '', setor: 'Vendas', status: 'pending', progresso: 0, tarefas: 0 });
                 setMostrarFormulario(false);
             };
@@ -4084,15 +5536,28 @@
                     return;
                 }
 
+                const processoAtualizado = processos.find(p => p.id === processoEditando);
                 setProcessos(prev => prev.map(p => 
                     p.id === processoEditando ? { ...p, ...novoProcesso } : p
                 ));
+                
+                // Disparar evento de notificação
+                if (processoAtualizado) {
+                    window.dispatchEvent(new CustomEvent('processUpdated', { 
+                        detail: { 
+                            name: novoProcesso.nome,
+                            responsavel: novoProcesso.responsavel
+                        } 
+                    }));
+                }
+                
                 setProcessoEditando(null);
                 setNovoProcesso({ nome: '', responsavel: '', requerente: '', setor: 'Vendas', status: 'pending', progresso: 0, tarefas: 0 });
                 setMostrarFormulario(false);
             };
 
             const handleExcluirProcesso = async (id) => {
+                const processo = processos.find(p => p.id === id);
                 const confirmed = await ConfirmationModal.show({
                     title: 'Excluir Processo',
                     message: 'Tem certeza que deseja excluir este processo? Esta ação não pode ser desfeita.',
@@ -4103,6 +5568,15 @@
                 
                 if (confirmed) {
                     setProcessos(prev => prev.filter(p => p.id !== id));
+                    
+                    // Disparar evento de notificação
+                    if (processo) {
+                        window.dispatchEvent(new CustomEvent('processDeleted', { 
+                            detail: { 
+                                name: processo.nome
+                            } 
+                        }));
+                    }
                 }
             };
 
@@ -4210,11 +5684,7 @@
                         'Processos ',
                         React.createElement(RealTimeBadge)
                     ),
-                    React.createElement('button', {
-                        onClick: () => setMostrarFormulario(true),
-                        className: 'btn btn-primary',
-                        style: { marginLeft: 'auto' }
-                    }, '+ Novo Processo')
+                    React.createElement(NotificationBell)
                 ),
                 React.createElement('p', { className: 'page-description' }, 
                     'Gerencie todos os processos da sua empresa. Crie, edite e acompanhe o andamento de cada fluxo de trabalho.'
@@ -4250,7 +5720,12 @@
                     ),
                     React.createElement('span', { style: { fontSize: '13px', color: '#6c757d' } }, 
                         `Mostrando ${processosFiltrados.length} de ${processos.length} processos`
-                    )
+                    ),
+                    React.createElement('button', {
+                        onClick: () => setMostrarFormulario(true),
+                        className: 'btn btn-primary',
+                        style: { marginLeft: 'auto', whiteSpace: 'nowrap' }
+                    }, '+ Novo Processo')
                 ),
 
                 // Formulário de criação/edição
@@ -4450,7 +5925,19 @@
                 // Seção de Processos Concluídos
                 processosConcluidos.length > 0 && React.createElement('div', { style: { marginTop: '40px' } },
                     React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' } },
-                        React.createElement('h3', { style: { fontSize: '18px', color: 'var(--text-primary)' } }, 
+                        React.createElement('h3', { 
+                            style: { 
+                                fontSize: '18px', 
+                                color: 'var(--text-primary)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px'
+                            } 
+                        }, 
+                            React.createElement('i', { 
+                                className: 'fas fa-check-circle', 
+                                style: { color: 'var(--success)', fontSize: '20px' } 
+                            }),
                             `Processos Concluídos (${processosConcluidos.length})`
                         ),
                         React.createElement('button', {
@@ -4462,15 +5949,40 @@
                                 border: 'none',
                                 borderRadius: '5px',
                                 cursor: 'pointer',
-                                fontSize: '14px'
-                            }
-                        }, 'Excluir Todos Concluídos')
+                                fontSize: '13px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '5px'
+                            },
+                            title: 'Excluir todos os processos concluídos'
+                        }, 
+                            React.createElement('i', { className: 'fas fa-trash-alt' }),
+                            'Limpar Concluídos'
+                        )
                     ),
                     React.createElement('div', { className: 'process-grid' },
                         processosConcluidos.map(processo => 
                             React.createElement('div', { key: processo.id, className: 'process-card', style: { opacity: 0.7 } },
                                 React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' } },
-                                    React.createElement('h3', { style: { margin: 0, flex: 1 } }, processo.nome),
+                                    React.createElement('div', {
+                                        style: {
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                            flex: 1
+                                        }
+                                    },
+                                        React.createElement('i', { 
+                                            className: 'fas fa-check-circle', 
+                                            style: { color: 'var(--success)', fontSize: '18px' } 
+                                        }),
+                                        React.createElement('h3', { 
+                                            style: { 
+                                                margin: 0, 
+                                                textDecoration: 'line-through' 
+                                            } 
+                                        }, processo.nome)
+                                    ),
                                     React.createElement('div', { style: { display: 'flex', gap: '5px' } },
                                         React.createElement('button', {
                                             onClick: () => handleExcluirProcesso(processo.id),
@@ -4514,6 +6026,32 @@
 
         // Componente TarefasPage
         const AtividadesEmpresaPage = () => {
+            const [tarefaDestacada, setTarefaDestacada] = useState(null);
+            
+            // Escutar evento de destaque de tarefa
+            useEffect(() => {
+                const handleHighlightTask = (event) => {
+                    const taskId = parseInt(event.detail.taskId);
+                    setTarefaDestacada(taskId);
+                    
+                    // Scroll para a tarefa
+                    setTimeout(() => {
+                        const elemento = document.querySelector(`[data-task-id="${taskId}"]`);
+                        if (elemento) {
+                            elemento.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }, 100);
+                    
+                    // Remover destaque após 3 segundos
+                    setTimeout(() => {
+                        setTarefaDestacada(null);
+                    }, 3000);
+                };
+
+                window.addEventListener('highlightTask', handleHighlightTask);
+                return () => window.removeEventListener('highlightTask', handleHighlightTask);
+            }, []);
+            
             // Dados iniciais padrão
             const tarefasIniciais = [
                 { id: 1, titulo: 'Revisar contrato com cliente', processo: 'Vendas', prioridade: 'alta', status: 'completed', data: '2025-07-15', responsavel: 'Maria Santos', requerente: 'Cliente' },
@@ -4635,6 +6173,16 @@
                 };
 
                 setTarefas(prev => [tarefa, ...prev]);
+                
+                // Disparar evento de notificação
+                window.dispatchEvent(new CustomEvent('taskCreated', { 
+                    detail: { 
+                        title: tarefa.titulo,
+                        processo: tarefa.processo,
+                        responsavel: tarefa.responsavel
+                    } 
+                }));
+                
                 setNovaTarefa({
                     titulo: '',
                     processo: '',
@@ -4680,9 +6228,21 @@
                     }
                 }
                 
+                const tarefaAtual = tarefas.find(t => t.id === id);
                 setTarefas(prev => prev.map(tarefa => 
                     tarefa.id === id ? { ...tarefa, [campo]: novoValor } : tarefa
                 ));
+                
+                // Disparar evento de notificação
+                if (tarefaAtual) {
+                    window.dispatchEvent(new CustomEvent('activityUpdated', { 
+                        detail: { 
+                            titulo: tarefaAtual.titulo,
+                            campo: campo
+                        } 
+                    }));
+                }
+                
                 setEditandoId(null);
                 setEditandoCampo(null);
             };
@@ -4697,7 +6257,18 @@
                 });
                 
                 if (confirmed) {
+                    const tarefa = tarefas.find(t => t.id === id);
                     handleSalvarEdicao(id, 'status', 'completed');
+                    
+                    // Disparar evento de notificação
+                    if (tarefa) {
+                        window.dispatchEvent(new CustomEvent('taskCompleted', { 
+                            detail: { 
+                                title: tarefa.titulo,
+                                responsavel: tarefa.responsavel
+                            } 
+                        }));
+                    }
                 }
             };
 
@@ -4716,6 +6287,7 @@
             };
 
             const handleExcluirTarefaEmpresa = async (id) => {
+                const tarefa = tarefas.find(t => t.id === id);
                 const confirmed = await ConfirmationModal.show({
                     title: 'Excluir Tarefa',
                     message: 'Tem certeza que deseja excluir esta tarefa? Esta ação não pode ser desfeita.',
@@ -4726,6 +6298,15 @@
                 
                 if (confirmed) {
                     setTarefas(prev => prev.filter(t => t.id !== id));
+                    
+                    // Disparar evento de notificação
+                    if (tarefa) {
+                        window.dispatchEvent(new CustomEvent('taskDeleted', { 
+                            detail: { 
+                                title: tarefa.titulo
+                            } 
+                        }));
+                    }
                 }
             };
 
@@ -4831,11 +6412,7 @@
                         'Atividades da Empresa ',
                         React.createElement(RealTimeBadge)
                     ),
-                    React.createElement('button', {
-                        onClick: () => setMostrarFormulario(true),
-                        className: 'btn btn-primary',
-                        style: { marginLeft: 'auto' }
-                    }, '+ Nova Atividade')
+                    React.createElement(NotificationBell)
                 ),
                 React.createElement('p', { className: 'page-description' }, 
                     'Visão geral de todas as atividades da empresa. Acompanhe o que está acontecendo em cada setor.'
@@ -4881,7 +6458,12 @@
                     ),
                     React.createElement('span', { style: { fontSize: '13px', color: '#6c757d' } }, 
                         `Mostrando ${tarefasFiltradas.length} de ${tarefas.length} tarefas`
-                    )
+                    ),
+                    React.createElement('button', {
+                        onClick: () => setMostrarFormulario(true),
+                        className: 'btn btn-primary',
+                        style: { marginLeft: 'auto', whiteSpace: 'nowrap' }
+                    }, '+ Nova Atividade')
                 ),
 
                 // Formulário de criação de tarefa
@@ -5028,7 +6610,17 @@
                         ),
                         React.createElement('tbody', null,
                             tarefasAtivas.map(tarefa =>
-                                React.createElement('tr', { key: tarefa.id },
+                                React.createElement('tr', { 
+                                    key: tarefa.id,
+                                    'data-task-id': tarefa.id,
+                                    className: tarefaDestacada === tarefa.id ? 'task-highlighted' : '',
+                                    style: tarefaDestacada === tarefa.id ? {
+                                        backgroundColor: '#fff3cd',
+                                        transform: 'scale(1.01)',
+                                        boxShadow: '0 4px 12px rgba(255, 193, 7, 0.3)',
+                                        transition: 'all 0.3s ease'
+                                    } : {}
+                                },
                                 React.createElement('td', null, tarefa.titulo),
                                 React.createElement('td', null, tarefa.requerente || '-'),
                                 React.createElement('td', null, tarefa.processo),
@@ -5211,7 +6803,19 @@
                 // Seção de Tarefas Concluídas
                 tarefasConcluidas.length > 0 && React.createElement('div', { style: { marginTop: '40px' } },
                     React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' } },
-                        React.createElement('h3', { style: { fontSize: '18px', color: 'var(--text-primary)' } }, 
+                        React.createElement('h3', { 
+                            style: { 
+                                fontSize: '18px', 
+                                color: 'var(--text-primary)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px'
+                            } 
+                        }, 
+                            React.createElement('i', { 
+                                className: 'fas fa-check-circle', 
+                                style: { color: 'var(--success)', fontSize: '20px' } 
+                            }),
                             `Tarefas Concluídas (${tarefasConcluidas.length})`
                         ),
                         React.createElement('button', {
@@ -5223,9 +6827,16 @@
                                 border: 'none',
                                 borderRadius: '5px',
                                 cursor: 'pointer',
-                                fontSize: '14px'
-                            }
-                        }, 'Excluir Todas Concluídas')
+                                fontSize: '13px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '5px'
+                            },
+                            title: 'Excluir todas as tarefas concluídas'
+                        }, 
+                            React.createElement('i', { className: 'fas fa-trash-alt' }),
+                            'Limpar Concluídas'
+                        )
                     ),
                     React.createElement('table', { className: 'data-table' },
                         React.createElement('thead', null,
@@ -5241,8 +6852,35 @@
                         ),
                         React.createElement('tbody', null,
                             tarefasConcluidas.map(tarefa => 
-                                React.createElement('tr', { key: tarefa.id, style: { opacity: 0.7 } },
-                                    React.createElement('td', null, tarefa.titulo),
+                                React.createElement('tr', { 
+                                    key: tarefa.id,
+                                    'data-task-id': tarefa.id,
+                                    className: tarefaDestacada === tarefa.id ? 'task-highlighted' : '',
+                                    style: tarefaDestacada === tarefa.id ? {
+                                        backgroundColor: '#fff3cd',
+                                        transform: 'scale(1.01)',
+                                        boxShadow: '0 4px 12px rgba(255, 193, 7, 0.3)',
+                                        transition: 'all 0.3s ease',
+                                        opacity: 0.85
+                                    } : { opacity: 0.7 }
+                                },
+                                    React.createElement('td', null, 
+                                        React.createElement('div', {
+                                            style: {
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '8px'
+                                            }
+                                        },
+                                            React.createElement('i', { 
+                                                className: 'fas fa-check-circle', 
+                                                style: { color: 'var(--success)', fontSize: '16px' } 
+                                            }),
+                                            React.createElement('span', {
+                                                style: { textDecoration: 'line-through' }
+                                            }, tarefa.titulo)
+                                        )
+                                    ),
                                     React.createElement('td', null, tarefa.requerente || '-'),
                                     React.createElement('td', null, tarefa.processo),
                                     React.createElement('td', null, 
@@ -5282,6 +6920,32 @@
 
         // Componente MinhasTarefasPage - Tarefas pessoais do chefe
         const MinhasTarefasPage = () => {
+            const [tarefaDestacada, setTarefaDestacada] = useState(null);
+            
+            // Escutar evento de destaque de tarefa
+            useEffect(() => {
+                const handleHighlightTask = (event) => {
+                    const taskId = parseInt(event.detail.taskId);
+                    setTarefaDestacada(taskId);
+                    
+                    // Scroll para a tarefa
+                    setTimeout(() => {
+                        const elemento = document.querySelector(`[data-task-id="${taskId}"]`);
+                        if (elemento) {
+                            elemento.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }, 100);
+                    
+                    // Remover destaque após 3 segundos
+                    setTimeout(() => {
+                        setTarefaDestacada(null);
+                    }, 3000);
+                };
+
+                window.addEventListener('highlightTask', handleHighlightTask);
+                return () => window.removeEventListener('highlightTask', handleHighlightTask);
+            }, []);
+            
             // Dados iniciais - Tarefas pessoais do chefe
             const minhasTarefasIniciais = [
                 { id: 1, titulo: 'Reunião com diretoria', prioridade: 'alta', status: 'pending', data: '2025-12-02', descricao: 'Apresentar resultados do trimestre' },
@@ -5316,6 +6980,189 @@
             useEffect(() => {
                 localStorage.setItem('minhasTarefas', JSON.stringify(minhasTarefas));
             }, [minhasTarefas]);
+
+            // Sistema de geração automática de tarefas
+            useEffect(() => {
+                const gerarTarefasAutomaticas = () => {
+                    const hoje = new Date();
+                    // Contar apenas tarefas ativas (não concluídas)
+                    const tarefasAtivas = minhasTarefas.filter(t => t.status !== 'completed');
+                    const tarefasExistentes = tarefasAtivas.length;
+                    
+                    // Só gerar tarefas automáticas se houver menos de 5 tarefas ativas
+                    if (tarefasExistentes < 5) {
+                        const tarefasModelo = [
+                            {
+                                titulo: 'Revisar relatório mensal',
+                                descricao: 'Verificar métricas e indicadores do mês',
+                                prioridade: 'alta',
+                                diasAdicionar: 2
+                            },
+                            {
+                                titulo: 'Atualizar documentação do projeto',
+                                descricao: 'Documentar as últimas alterações realizadas',
+                                prioridade: 'media',
+                                diasAdicionar: 5
+                            },
+                            {
+                                titulo: 'Reunião de planejamento semanal',
+                                descricao: 'Definir metas e prioridades da semana',
+                                prioridade: 'alta',
+                                diasAdicionar: 1
+                            },
+                            {
+                                titulo: 'Backup de dados',
+                                descricao: 'Realizar backup completo dos sistemas',
+                                prioridade: 'media',
+                                diasAdicionar: 7
+                            },
+                            {
+                                titulo: 'Análise de feedback de clientes',
+                                descricao: 'Revisar comentários e sugestões recebidas',
+                                prioridade: 'baixa',
+                                diasAdicionar: 10
+                            },
+                            {
+                                titulo: 'Treinamento da equipe',
+                                descricao: 'Capacitação sobre novas ferramentas',
+                                prioridade: 'media',
+                                diasAdicionar: 3
+                            },
+                            {
+                                titulo: 'Auditoria de segurança',
+                                descricao: 'Verificar conformidade com políticas de segurança',
+                                prioridade: 'alta',
+                                diasAdicionar: 4
+                            },
+                            {
+                                titulo: 'Avaliar desempenho da equipe',
+                                descricao: 'Análise individual e coletiva',
+                                prioridade: 'alta',
+                                diasAdicionar: 6
+                            },
+                            {
+                                titulo: 'Planejamento estratégico trimestral',
+                                descricao: 'Definir objetivos e metas do próximo trimestre',
+                                prioridade: 'alta',
+                                diasAdicionar: 8
+                            },
+                            {
+                                titulo: 'Revisar orçamento departamental',
+                                descricao: 'Análise de custos e investimentos',
+                                prioridade: 'media',
+                                diasAdicionar: 4
+                            }
+                        ];
+
+                        const novasTarefas = [];
+                        const numTarefas = Math.min(5 - tarefasExistentes, tarefasModelo.length);
+                        
+                        // Usar índices aleatórios para variar as tarefas
+                        const indicesUsados = new Set();
+                        while (novasTarefas.length < numTarefas && indicesUsados.size < tarefasModelo.length) {
+                            const indiceAleatorio = Math.floor(Math.random() * tarefasModelo.length);
+                            if (!indicesUsados.has(indiceAleatorio)) {
+                                indicesUsados.add(indiceAleatorio);
+                                const modelo = tarefasModelo[indiceAleatorio];
+                                const prazo = new Date(hoje);
+                                prazo.setDate(prazo.getDate() + modelo.diasAdicionar);
+                                
+                                novasTarefas.push({
+                                    id: Date.now() + novasTarefas.length,
+                                    titulo: modelo.titulo,
+                                    descricao: modelo.descricao,
+                                    prioridade: modelo.prioridade,
+                                    status: 'pending',
+                                    data: prazo.toISOString().split('T')[0]
+                                });
+                            }
+                        }
+
+                        if (novasTarefas.length > 0) {
+                            setMinhasTarefas(prev => [...prev, ...novasTarefas]);
+                            
+                            // Notificar sobre tarefas geradas
+                            window.dispatchEvent(new CustomEvent('taskCreated', { 
+                                detail: { 
+                                    title: `${novasTarefas.length} novas tarefas`,
+                                    message: 'Tarefas automáticas foram adicionadas'
+                                } 
+                            }));
+                        }
+                    }
+                };
+
+                // Gerar tarefas após 10 segundos (delay maior)
+                const timer = setTimeout(gerarTarefasAutomaticas, 10000);
+                return () => clearTimeout(timer);
+            }, [minhasTarefas]); // Monitorar mudanças nas tarefas
+
+            // Sistema de verificação de prazos e notificações automáticas
+            useEffect(() => {
+                const verificarPrazos = () => {
+                    const hoje = new Date();
+                    hoje.setHours(0, 0, 0, 0);
+                    
+                    minhasTarefas.forEach(tarefa => {
+                        if (tarefa.status !== 'completed' && tarefa.data) {
+                            const prazo = new Date(tarefa.data + 'T00:00:00');
+                            const diffDias = Math.ceil((prazo - hoje) / (1000 * 60 * 60 * 24));
+                            
+                            // Notificar tarefas que vencem hoje
+                            if (diffDias === 0 && !tarefa.notificadoHoje) {
+                                window.dispatchEvent(new CustomEvent('systemWarning', { 
+                                    detail: { 
+                                        title: 'Tarefa vence hoje!',
+                                        message: `"${tarefa.titulo}" precisa ser concluída hoje`
+                                    } 
+                                }));
+                                
+                                // Marcar como notificada
+                                setMinhasTarefas(prev => prev.map(t => 
+                                    t.id === tarefa.id ? { ...t, notificadoHoje: true } : t
+                                ));
+                            }
+                            
+                            // Notificar tarefas atrasadas (uma vez por dia)
+                            if (diffDias < 0 && !tarefa.notificadoAtrasado) {
+                                window.dispatchEvent(new CustomEvent('systemError', { 
+                                    detail: { 
+                                        title: 'Tarefa Atrasada!',
+                                        message: `"${tarefa.titulo}" está ${Math.abs(diffDias)} dia(s) atrasada`
+                                    } 
+                                }));
+                                
+                                // Marcar como notificada
+                                setMinhasTarefas(prev => prev.map(t => 
+                                    t.id === tarefa.id ? { ...t, notificadoAtrasado: true } : t
+                                ));
+                            }
+                            
+                            // Notificar tarefas urgentes (3 dias antes)
+                            if (diffDias === 3 && !tarefa.notificadoUrgente) {
+                                window.dispatchEvent(new CustomEvent('systemWarning', { 
+                                    detail: { 
+                                        title: 'Tarefa Urgente',
+                                        message: `"${tarefa.titulo}" vence em 3 dias`
+                                    } 
+                                }));
+                                
+                                // Marcar como notificada
+                                setMinhasTarefas(prev => prev.map(t => 
+                                    t.id === tarefa.id ? { ...t, notificadoUrgente: true } : t
+                                ));
+                            }
+                        }
+                    });
+                };
+
+                // Verificar prazos imediatamente e depois a cada hora
+                verificarPrazos();
+                const interval = setInterval(verificarPrazos, 60 * 60 * 1000); // A cada hora
+                
+                return () => clearInterval(interval);
+            }, [minhasTarefas]);
+
             const [mostrarFormulario, setMostrarFormulario] = useState(false);
             const [tarefaEditando, setTarefaEditando] = useState(null);
             const [filtroStatus, setFiltroStatus] = useState('todos');
@@ -5341,6 +7188,15 @@
                 };
 
                 setMinhasTarefas(prev => [...prev, tarefa]);
+                
+                // Disparar evento de notificação
+                window.dispatchEvent(new CustomEvent('taskCreated', { 
+                    detail: { 
+                        title: tarefa.titulo,
+                        prioridade: tarefa.prioridade
+                    } 
+                }));
+                
                 setNovaTarefa({ titulo: '', prioridade: 'media', status: 'pending', data: '', descricao: '' });
                 setMostrarFormulario(false);
             };
@@ -5366,12 +7222,21 @@
                 setMinhasTarefas(prev => prev.map(t =>
                     t.id === tarefaEditando ? { ...t, ...novaTarefa } : t
                 ));
+                
+                // Disparar evento de notificação
+                window.dispatchEvent(new CustomEvent('taskUpdated', { 
+                    detail: { 
+                        title: novaTarefa.titulo
+                    } 
+                }));
+                
                 setTarefaEditando(null);
                 setNovaTarefa({ titulo: '', prioridade: 'media', status: 'pending', data: '', descricao: '' });
                 setMostrarFormulario(false);
             };
 
             const handleExcluirTarefa = async (id) => {
+                const tarefa = minhasTarefas.find(t => t.id === id);
                 const confirmed = await ConfirmationModal.show({
                     title: 'Excluir Tarefa',
                     message: 'Tem certeza que deseja excluir esta tarefa? Esta ação não pode ser desfeita.',
@@ -5382,6 +7247,15 @@
                 
                 if (confirmed) {
                     setMinhasTarefas(prev => prev.filter(t => t.id !== id));
+                    
+                    // Disparar evento de notificação
+                    if (tarefa) {
+                        window.dispatchEvent(new CustomEvent('taskDeleted', { 
+                            detail: { 
+                                title: tarefa.titulo
+                            } 
+                        }));
+                    }
                     
                     const notification = document.createElement('div');
                     notification.className = 'notification';
@@ -5398,19 +7272,102 @@
                 setNovaTarefa({ titulo: '', prioridade: 'media', status: 'pending', data: '', descricao: '' });
             };
 
+            const handleConcluirTarefa = async (id) => {
+                const tarefa = minhasTarefas.find(t => t.id === id);
+                const confirmed = await ConfirmationModal.show({
+                    title: 'Concluir Tarefa',
+                    message: 'Deseja marcar esta tarefa como concluída?',
+                    type: 'info',
+                    confirmText: 'Sim, concluir',
+                    cancelText: 'Cancelar'
+                });
+                
+                if (confirmed) {
+                    setMinhasTarefas(prev => prev.map(t =>
+                        t.id === id ? { ...t, status: 'completed' } : t
+                    ));
+                    
+                    // Disparar evento de notificação
+                    if (tarefa) {
+                        window.dispatchEvent(new CustomEvent('taskCompleted', { 
+                            detail: { 
+                                title: tarefa.titulo
+                            } 
+                        }));
+                    }
+                }
+            };
+
+            const handleReabrirTarefa = async (id) => {
+                const tarefa = minhasTarefas.find(t => t.id === id);
+                const confirmed = await ConfirmationModal.show({
+                    title: 'Reabrir Tarefa',
+                    message: 'Deseja reabrir esta tarefa?',
+                    type: 'info',
+                    confirmText: 'Sim, reabrir',
+                    cancelText: 'Cancelar'
+                });
+                
+                if (confirmed) {
+                    setMinhasTarefas(prev => prev.map(t =>
+                        t.id === id ? { ...t, status: 'in-progress' } : t
+                    ));
+                    
+                    // Disparar evento de notificação
+                    if (tarefa) {
+                        window.dispatchEvent(new CustomEvent('taskUpdated', { 
+                            detail: { 
+                                title: tarefa.titulo
+                            } 
+                        }));
+                    }
+                }
+            };
+
+            const handleExcluirTodasConcluidas = async () => {
+                const tarefasConcluidas = minhasTarefas.filter(t => t.status === 'completed');
+                const confirmed = await ConfirmationModal.show({
+                    title: 'Excluir Todas Concluídas',
+                    message: `Deseja excluir todas as ${tarefasConcluidas.length} tarefas concluídas? Esta ação não pode ser desfeita.`,
+                    type: 'danger',
+                    confirmText: 'Sim, excluir todas',
+                    cancelText: 'Cancelar'
+                });
+                
+                if (confirmed) {
+                    setMinhasTarefas(prev => prev.filter(t => t.status !== 'completed'));
+                }
+            };
+
             const handleToggleStatus = (id) => {
+                const tarefa = minhasTarefas.find(t => t.id === id);
                 setMinhasTarefas(prev => prev.map(t => {
                     if (t.id === id) {
                         const novoStatus = t.status === 'completed' ? 'pending' : 
                                          t.status === 'pending' ? 'in-progress' : 'completed';
+                        
+                        // Disparar evento de notificação
+                        if (tarefa) {
+                            if (novoStatus === 'completed') {
+                                window.dispatchEvent(new CustomEvent('taskCompleted', { 
+                                    detail: { title: tarefa.titulo } 
+                                }));
+                            } else {
+                                window.dispatchEvent(new CustomEvent('taskUpdated', { 
+                                    detail: { title: tarefa.titulo } 
+                                }));
+                            }
+                        }
+                        
                         return { ...t, status: novoStatus };
                     }
                     return t;
                 }));
             };
 
-            // Filtrar tarefas
+            // Filtrar tarefas (excluir concluídas da lista principal)
             const tarefasFiltradas = minhasTarefas
+                .filter(t => t.status !== 'completed') // Excluir concluídas
                 .filter(t => filtroStatus === 'todos' || t.status === filtroStatus)
                 .filter(t => filtroPrioridade === 'todos' || t.prioridade === filtroPrioridade)
                 .filter(t =>
@@ -5432,7 +7389,8 @@
 
             const tarefasPendentes = tarefasFiltradas.filter(t => t.status === 'pending');
             const tarefasEmAndamento = tarefasFiltradas.filter(t => t.status === 'in-progress');
-            const tarefasConcluidas = tarefasFiltradas.filter(t => t.status === 'completed');
+            // Pegar tarefas concluídas diretamente de minhasTarefas (não de tarefasFiltradas)
+            const tarefasConcluidas = minhasTarefas.filter(t => t.status === 'completed');
 
             const getPrioridadeColor = (prioridade) => {
                 switch(prioridade) {
@@ -5482,11 +7440,7 @@
             return React.createElement('div', { className: 'page-content' },
                 React.createElement('div', { className: 'header' },
                     React.createElement('h2', null, 'Minhas Tarefas'),
-                    React.createElement('button', {
-                        onClick: () => setMostrarFormulario(true),
-                        className: 'btn btn-primary',
-                        style: { marginLeft: 'auto' }
-                    }, '+ Nova Tarefa')
+                    React.createElement(NotificationBell)
                 ),
                 React.createElement('p', { className: 'page-description' },
                     'Gerencie suas tarefas e responsabilidades como líder da empresa.'
@@ -5566,8 +7520,7 @@
                     },
                         React.createElement('option', { value: 'todos' }, 'Todos'),
                         React.createElement('option', { value: 'pending' }, 'Pendentes'),
-                        React.createElement('option', { value: 'in-progress' }, 'Em Andamento'),
-                        React.createElement('option', { value: 'completed' }, 'Concluídas')
+                        React.createElement('option', { value: 'in-progress' }, 'Em Andamento')
                     ),
                     React.createElement('label', { style: { fontWeight: '600', fontSize: '14px', whiteSpace: 'nowrap' } }, 'Prioridade:'),
                     React.createElement('select', {
@@ -5582,8 +7535,13 @@
                         React.createElement('option', { value: 'baixa' }, 'Baixa')
                     ),
                     React.createElement('span', { style: { fontSize: '13px', color: '#6c757d' } },
-                        `Mostrando ${tarefasFiltradas.length} de ${minhasTarefas.length} tarefas`
-                    )
+                        `Mostrando ${tarefasFiltradas.length} de ${minhasTarefas.filter(t => t.status !== 'completed').length} tarefas ativas`
+                    ),
+                    React.createElement('button', {
+                        onClick: () => setMostrarFormulario(true),
+                        className: 'btn btn-primary',
+                        style: { marginLeft: 'auto', whiteSpace: 'nowrap' }
+                    }, '+ Nova Tarefa')
                 ),
 
                 // Formulário
@@ -5694,15 +7652,18 @@
                     }, 'Nenhuma tarefa encontrada.') :
                     tarefasFiltradas.map(tarefa => React.createElement('div', {
                         key: tarefa.id,
+                        'data-task-id': tarefa.id,
+                        className: tarefaDestacada === tarefa.id ? 'task-highlighted' : '',
                         style: {
-                            background: getCardBackgroundColor(tarefa.status),
+                            background: tarefaDestacada === tarefa.id ? '#fff3cd' : getCardBackgroundColor(tarefa.status),
                             padding: '20px',
                             borderRadius: '8px',
                             marginBottom: '15px',
-                            borderLeft: `4px solid ${getCardBorderColor(tarefa.status)}`,
-                            transition: 'transform 0.2s, box-shadow 0.2s',
+                            borderLeft: tarefaDestacada === tarefa.id ? '4px solid #ffc107' : `4px solid ${getCardBorderColor(tarefa.status)}`,
+                            transition: 'all 0.3s ease',
                             cursor: 'pointer',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                            boxShadow: tarefaDestacada === tarefa.id ? '0 8px 24px rgba(255, 193, 7, 0.3)' : '0 2px 4px rgba(0,0,0,0.05)',
+                            transform: tarefaDestacada === tarefa.id ? 'scale(1.02)' : 'scale(1)'
                         },
                         onMouseEnter: (e) => {
                             e.currentTarget.style.transform = 'translateX(5px)';
@@ -5779,8 +7740,8 @@
                                     marginLeft: '15px'
                                 }
                             },
-                                React.createElement('button', {
-                                    onClick: () => handleToggleStatus(tarefa.id),
+                                tarefa.status !== 'completed' && React.createElement('button', {
+                                    onClick: () => handleConcluirTarefa(tarefa.id),
                                     style: {
                                         padding: '8px 12px',
                                         background: '#4bb543',
@@ -5789,10 +7750,34 @@
                                         borderRadius: '5px',
                                         cursor: 'pointer',
                                         fontSize: '12px',
-                                        whiteSpace: 'nowrap'
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '5px'
                                     },
-                                    title: 'Alterar status'
-                                }, '○'),
+                                    title: 'Concluir tarefa'
+                                }, 
+                                    React.createElement('i', { className: 'fas fa-check' }),
+                                    'Concluir'
+                                ),
+                                tarefa.status === 'completed' && React.createElement('button', {
+                                    onClick: () => handleReabrirTarefa(tarefa.id),
+                                    style: {
+                                        padding: '8px 12px',
+                                        background: '#ffc107',
+                                        color: '#000',
+                                        border: 'none',
+                                        borderRadius: '5px',
+                                        cursor: 'pointer',
+                                        fontSize: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '5px'
+                                    },
+                                    title: 'Reabrir tarefa'
+                                }, 
+                                    React.createElement('i', { className: 'fas fa-redo' }),
+                                    'Reabrir'
+                                ),
                                 React.createElement('button', {
                                     onClick: () => handleEditarTarefa(tarefa),
                                     style: {
@@ -5802,10 +7787,16 @@
                                         border: 'none',
                                         borderRadius: '5px',
                                         cursor: 'pointer',
-                                        fontSize: '12px'
+                                        fontSize: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '5px'
                                     },
                                     title: 'Editar'
-                                }, 'E'),
+                                }, 
+                                    React.createElement('i', { className: 'fas fa-edit' }),
+                                    'Editar'
+                                ),
                                 React.createElement('button', {
                                     onClick: () => handleExcluirTarefa(tarefa.id),
                                     style: {
@@ -5815,10 +7806,227 @@
                                         border: 'none',
                                         borderRadius: '5px',
                                         cursor: 'pointer',
-                                        fontSize: '12px'
+                                        fontSize: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '5px'
                                     },
                                     title: 'Excluir'
-                                }, 'X')
+                                }, 
+                                    React.createElement('i', { className: 'fas fa-trash' }),
+                                    'Excluir'
+                                )
+                            )
+                        )
+                    ))
+                ),
+
+                // Seção de Tarefas Concluídas
+                tarefasConcluidas.length > 0 && React.createElement('div', { style: { marginTop: '30px' } },
+                    React.createElement('div', { 
+                        style: { 
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            alignItems: 'center', 
+                            marginBottom: '15px',
+                            padding: '10px 0',
+                            borderBottom: '2px solid var(--border-color)'
+                        } 
+                    },
+                        React.createElement('h3', { 
+                            style: { 
+                                fontSize: '18px', 
+                                color: 'var(--text-primary)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px'
+                            } 
+                        }, 
+                            React.createElement('i', { className: 'fas fa-check-circle', style: { color: 'var(--success)' } }),
+                            `Tarefas Concluídas (${tarefasConcluidas.length})`
+                        ),
+                        React.createElement('button', {
+                            onClick: handleExcluirTodasConcluidas,
+                            style: {
+                                padding: '8px 15px',
+                                backgroundColor: '#dc3545',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                                fontSize: '13px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '5px'
+                            },
+                            title: 'Excluir todas as tarefas concluídas'
+                        }, 
+                            React.createElement('i', { className: 'fas fa-trash-alt' }),
+                            'Limpar Concluídas'
+                        )
+                    ),
+                    
+                    // Cards de tarefas concluídas
+                    tarefasConcluidas.map(tarefa => React.createElement('div', {
+                        key: tarefa.id,
+                        'data-task-id': tarefa.id,
+                        className: tarefaDestacada === tarefa.id ? 'task-highlighted' : '',
+                        style: {
+                            background: tarefaDestacada === tarefa.id ? '#fff3cd' : 'rgba(75, 181, 67, 0.05)',
+                            padding: '20px',
+                            borderRadius: '8px',
+                            marginBottom: '15px',
+                            borderLeft: tarefaDestacada === tarefa.id ? '4px solid #ffc107' : '4px solid var(--success)',
+                            transition: 'all 0.3s ease',
+                            cursor: 'pointer',
+                            boxShadow: tarefaDestacada === tarefa.id ? '0 8px 24px rgba(255, 193, 7, 0.3)' : '0 2px 4px rgba(0,0,0,0.05)',
+                            transform: tarefaDestacada === tarefa.id ? 'scale(1.02)' : 'scale(1)',
+                            opacity: 0.85
+                        },
+                        onMouseEnter: (e) => {
+                            if (tarefaDestacada !== tarefa.id) {
+                                e.currentTarget.style.transform = 'translateX(5px)';
+                                e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                                e.currentTarget.style.opacity = '1';
+                            }
+                        },
+                        onMouseLeave: (e) => {
+                            if (tarefaDestacada !== tarefa.id) {
+                                e.currentTarget.style.transform = 'translateX(0)';
+                                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                                e.currentTarget.style.opacity = '0.85';
+                            }
+                        }
+                    },
+                        React.createElement('div', {
+                            style: {
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'flex-start',
+                                marginBottom: '10px'
+                            }
+                        },
+                            React.createElement('div', { style: { flex: 1 } },
+                                React.createElement('div', {
+                                    style: {
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '10px',
+                                        marginBottom: '8px'
+                                    }
+                                },
+                                    React.createElement('i', { 
+                                        className: 'fas fa-check-circle', 
+                                        style: { color: 'var(--success)', fontSize: '18px' } 
+                                    }),
+                                    React.createElement('h3', {
+                                        style: {
+                                            fontSize: '16px',
+                                            fontWeight: '600',
+                                            color: 'var(--text-primary)',
+                                            textDecoration: 'line-through',
+                                            margin: 0
+                                        }
+                                    }, tarefa.titulo)
+                                ),
+                                tarefa.descricao && React.createElement('p', {
+                                    style: {
+                                        fontSize: '14px',
+                                        color: 'var(--text-secondary)',
+                                        marginBottom: '12px',
+                                        lineHeight: '1.5',
+                                        marginLeft: '28px'
+                                    }
+                                }, tarefa.descricao),
+                                React.createElement('div', {
+                                    style: {
+                                        display: 'flex',
+                                        gap: '10px',
+                                        flexWrap: 'wrap',
+                                        alignItems: 'center',
+                                        marginLeft: '28px'
+                                    }
+                                },
+                                    React.createElement('span', {
+                                        style: {
+                                            fontSize: '13px',
+                                            padding: '4px 10px',
+                                            borderRadius: '4px',
+                                            background: 'var(--success)',
+                                            color: 'white',
+                                            fontWeight: '500'
+                                        }
+                                    }, 'Concluída'),
+                                    React.createElement('span', {
+                                        style: {
+                                            fontSize: '13px',
+                                            padding: '4px 10px',
+                                            borderRadius: '4px',
+                                            background: getPrioridadeColor(tarefa.prioridade),
+                                            color: 'white',
+                                            fontWeight: '500'
+                                        }
+                                    }, tarefa.prioridade.charAt(0).toUpperCase() + tarefa.prioridade.slice(1)),
+                                    React.createElement('span', {
+                                        style: {
+                                            fontSize: '13px',
+                                            color: 'var(--text-secondary)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '5px'
+                                        }
+                                    }, 
+                                        React.createElement('i', { className: 'far fa-calendar' }),
+                                        new Date(tarefa.data).toLocaleDateString('pt-BR')
+                                    )
+                                )
+                            ),
+                            React.createElement('div', {
+                                style: {
+                                    display: 'flex',
+                                    gap: '8px',
+                                    marginLeft: '15px'
+                                }
+                            },
+                                React.createElement('button', {
+                                    onClick: () => handleReabrirTarefa(tarefa.id),
+                                    style: {
+                                        padding: '8px 12px',
+                                        background: '#ffc107',
+                                        color: '#000',
+                                        border: 'none',
+                                        borderRadius: '5px',
+                                        cursor: 'pointer',
+                                        fontSize: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '5px',
+                                        fontWeight: '500'
+                                    },
+                                    title: 'Reabrir'
+                                }, 
+                                    React.createElement('i', { className: 'fas fa-undo' }),
+                                    'Reabrir'
+                                ),
+                                React.createElement('button', {
+                                    onClick: () => handleExcluirTarefa(tarefa.id),
+                                    style: {
+                                        padding: '8px 12px',
+                                        background: '#dc3545',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '5px',
+                                        cursor: 'pointer',
+                                        fontSize: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '5px'
+                                    },
+                                    title: 'Excluir'
+                                }, 
+                                    React.createElement('i', { className: 'fas fa-trash' }),
+                                    'Excluir'
+                                )
                             )
                         )
                     ))
@@ -5983,7 +8191,8 @@
                     React.createElement('h2', null, 
                         'Relatórios ',
                         React.createElement(RealTimeBadge)
-                    )
+                    ),
+                    React.createElement(NotificationBell)
                 ),
                 React.createElement('p', { className: 'page-description' }, 
                     'Acesse relatórios detalhados sobre o desempenho dos processos, produtividade da equipe e métricas importantes.'
@@ -6264,6 +8473,16 @@
 
                 const id = Math.max(...membros.map(m => m.id), 0) + 1;
                 setMembros([...membros, { ...novoMembro, id }]);
+                
+                // Disparar evento de notificação
+                window.dispatchEvent(new CustomEvent('memberAdded', { 
+                    detail: { 
+                        name: novoMembro.nome,
+                        cargo: novoMembro.cargo,
+                        setor: novoMembro.setor
+                    } 
+                }));
+                
                 setNovoMembro({ nome: '', cargo: '', setor: 'Vendas', email: '', status: 'active', projetos: 0, online: false });
                 setMostrarFormulario(false);
                 
@@ -6289,6 +8508,15 @@
 
             const handleSalvarEdicao = () => {
                 setMembros(membros.map(m => m.id === membroEditando ? { ...novoMembro, id: membroEditando } : m));
+                
+                // Disparar evento de notificação
+                window.dispatchEvent(new CustomEvent('memberUpdated', { 
+                    detail: { 
+                        name: novoMembro.nome,
+                        cargo: novoMembro.cargo
+                    } 
+                }));
+                
                 setMembroEditando(null);
                 setNovoMembro({ nome: '', cargo: '', setor: 'Vendas', email: '', status: 'active', projetos: 0, online: false });
                 setMostrarFormulario(false);
@@ -6316,6 +8544,15 @@
                 if (confirmed) {
                     const membroRemovido = membros.find(m => m.id === id);
                     setMembros(membros.filter(m => m.id !== id));
+                    
+                    // Disparar evento de notificação
+                    if (membroRemovido) {
+                        window.dispatchEvent(new CustomEvent('memberRemoved', { 
+                            detail: { 
+                                name: membroRemovido.nome
+                            } 
+                        }));
+                    }
                     
                     // Remover do ranking e notificar outras páginas
                     setTimeout(() => {
@@ -6362,7 +8599,8 @@
                     React.createElement('h2', null, 
                         'Colaboradores ',
                         React.createElement(RealTimeBadge)
-                    )
+                    ),
+                    React.createElement(NotificationBell)
                 ),
                 React.createElement('p', { className: 'page-description' }, 
                     'Gerencie os colaboradores da empresa, visualize desempenho e atribua responsabilidades.'
@@ -6658,7 +8896,8 @@
                     React.createElement('h2', null, 
                         'Ranking dos Colaboradores ',
                         React.createElement(RealTimeBadge)
-                    )
+                    ),
+                    React.createElement(NotificationBell)
                 ),
                 React.createElement('p', { className: 'page-description' }, 
                     'Acompanhe o ranking dos colaboradores e incentive a produtividade através do sistema de gamificação.'
@@ -7321,6 +9560,9 @@
                 localStorage.setItem('flowpilot_config', JSON.stringify(config));
                 setConfigSalva(true);
                 
+                // Disparar evento para atualizar notificações
+                window.dispatchEvent(new CustomEvent('configUpdated', { detail: config }));
+                
                 // Aplicar tema
                 if (config.tema === 'escuro') {
                     document.body.classList.add('dark-theme');
@@ -7339,12 +9581,19 @@
                     }
                 }
                 
-                // Mostrar notificação apenas em desktop
-                if (window.innerWidth >= 768) {
+                // Mostrar feedback de configuração
+                if (config.notificacoes) {
+                    NotificationManager.add({
+                        type: 'success',
+                        title: 'Configurações Salvas',
+                        message: 'Suas preferências foram atualizadas com sucesso'
+                    });
+                } else {
+                    // Mostrar notificação inline apenas se notificações estão desabilitadas
                     const notification = document.createElement('div');
                     notification.className = 'notification';
                     notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4bb543; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 100000; animation: slideIn 0.3s ease;';
-                    notification.textContent = 'Configurações salvas com sucesso';
+                    notification.textContent = 'Configurações salvas - Notificações desativadas';
                     document.body.appendChild(notification);
                     setTimeout(() => {
                         if (notification.parentNode) {
@@ -7876,6 +10125,17 @@
 
                 window.addEventListener('rankingUpdated', handleRankingUpdate);
                 return () => window.removeEventListener('rankingUpdated', handleRankingUpdate);
+            }, []);
+            
+            // Escutar navegação de lembretes
+            useEffect(() => {
+                const handleNavigateToPage = (event) => {
+                    const { page } = event.detail;
+                    setCurrentPage(page);
+                };
+
+                window.addEventListener('navigateToPage', handleNavigateToPage);
+                return () => window.removeEventListener('navigateToPage', handleNavigateToPage);
             }, []);
 
             // Simular atualizações em tempo real
