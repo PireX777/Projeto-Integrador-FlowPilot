@@ -178,6 +178,13 @@
             color: inherit;
         }
 
+        /* Espaçamento superior do logo apenas em desktop */
+        @media (min-width: 768px) {
+            .signup-logo {
+                margin-top: 30px;
+            }
+        }
+
         .signup-logo-icon {
             width: 44px;
             height: 44px;

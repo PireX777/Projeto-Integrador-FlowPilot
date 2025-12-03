@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>FlowPilot - Gestão de Processos Digitais</title>
-    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.ico">
     <!-- Suprimir erros de extensões do navegador -->
     <script>
         window.addEventListener('error', function(e) {
@@ -56,7 +56,7 @@
         --text-primary: #212529;
         --text-secondary: #6c757d;
         --border-color: #e9ecef;
-        --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        --card-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     
     /* Tema Escuro */
@@ -494,9 +494,9 @@
         -webkit-border-radius: 10px;
         -moz-border-radius: 10px;
         padding: 30px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        -webkit-box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        -moz-box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        -webkit-box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        -moz-box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         transition: transform 0.3s;
         -webkit-transition: transform 0.3s;
         -moz-transition: transform 0.3s;
@@ -604,7 +604,7 @@
         background-color: var(--bg-secondary);
         border-radius: 10px;
         padding: 20px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     
     @media (max-width: 1024px) {
@@ -705,7 +705,7 @@
         background-color: var(--bg-secondary);
         border-radius: 10px;
         padding: 20px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     
     @media (max-width: 1024px) {
@@ -1532,9 +1532,9 @@
         -webkit-border-radius: 10px;
         -moz-border-radius: 10px;
         padding: 20px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        -webkit-box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        -moz-box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        -webkit-box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        -moz-box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         border-left: 4px solid var(--primary);
         transition: transform 0.3s;
         -webkit-transition: transform 0.3s;
@@ -5447,11 +5447,15 @@
             }, [processos, filtroSetor]);
 
             // Obter funcionários dinâmicos da equipe
-            const [funcionariosPorSetor, setFuncionariosPorSetor] = useState(EquipeManager.getNomesPorSetor());
-            const [responsaveisDisponiveis, setResponsaveisDisponiveis] = useState(EquipeManager.getTodosNomes());
+            const [funcionariosPorSetor, setFuncionariosPorSetor] = useState({});
+            const [responsaveisDisponiveis, setResponsaveisDisponiveis] = useState([]);
 
-            // Atualizar lista de funcionários quando a equipe mudar
+            // Atualizar lista de funcionários quando o componente montar e quando a equipe mudar
             useEffect(() => {
+                // Atualizar imediatamente ao montar
+                setFuncionariosPorSetor(EquipeManager.getNomesPorSetor());
+                setResponsaveisDisponiveis(EquipeManager.getTodosNomes());
+
                 const handleEquipeUpdate = () => {
                     setFuncionariosPorSetor(EquipeManager.getNomesPorSetor());
                     setResponsaveisDisponiveis(EquipeManager.getTodosNomes());
@@ -6108,11 +6112,15 @@
             });
 
             // Obter funcionários dinâmicos da equipe
-            const [funcionariosPorSetor, setFuncionariosPorSetor] = useState(EquipeManager.getNomesPorSetor());
-            const [responsaveisDisponiveis, setResponsaveisDisponiveis] = useState(EquipeManager.getTodosNomes());
+            const [funcionariosPorSetor, setFuncionariosPorSetor] = useState({});
+            const [responsaveisDisponiveis, setResponsaveisDisponiveis] = useState([]);
 
-            // Atualizar lista de funcionários quando a equipe mudar
+            // Atualizar lista de funcionários quando o componente montar e quando a equipe mudar
             useEffect(() => {
+                // Atualizar imediatamente ao montar
+                setFuncionariosPorSetor(EquipeManager.getNomesPorSetor());
+                setResponsaveisDisponiveis(EquipeManager.getTodosNomes());
+
                 const handleEquipeUpdate = () => {
                     setFuncionariosPorSetor(EquipeManager.getNomesPorSetor());
                     setResponsaveisDisponiveis(EquipeManager.getTodosNomes());
@@ -7640,7 +7648,7 @@
                         background: 'var(--bg-secondary)',
                         borderRadius: '8px',
                         padding: '20px',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
                     }
                 },
                     tarefasFiltradas.length === 0 ? React.createElement('div', {
@@ -7662,16 +7670,16 @@
                             borderLeft: tarefaDestacada === tarefa.id ? '4px solid #ffc107' : `4px solid ${getCardBorderColor(tarefa.status)}`,
                             transition: 'all 0.3s ease',
                             cursor: 'pointer',
-                            boxShadow: tarefaDestacada === tarefa.id ? '0 8px 24px rgba(255, 193, 7, 0.3)' : '0 2px 4px rgba(0,0,0,0.05)',
+                            boxShadow: tarefaDestacada === tarefa.id ? '0 8px 24px rgba(255, 193, 7, 0.3)' : '0 2px 4px rgba(0,0,0,0.1)',
                             transform: tarefaDestacada === tarefa.id ? 'scale(1.02)' : 'scale(1)'
                         },
                         onMouseEnter: (e) => {
                             e.currentTarget.style.transform = 'translateX(5px)';
-                            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
                         },
                         onMouseLeave: (e) => {
                             e.currentTarget.style.transform = 'translateX(0)';
-                            e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                            e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
                         }
                     },
                         React.createElement('div', {
@@ -7879,21 +7887,21 @@
                             borderLeft: tarefaDestacada === tarefa.id ? '4px solid #ffc107' : '4px solid var(--success)',
                             transition: 'all 0.3s ease',
                             cursor: 'pointer',
-                            boxShadow: tarefaDestacada === tarefa.id ? '0 8px 24px rgba(255, 193, 7, 0.3)' : '0 2px 4px rgba(0,0,0,0.05)',
+                            boxShadow: tarefaDestacada === tarefa.id ? '0 8px 24px rgba(255, 193, 7, 0.3)' : '0 2px 4px rgba(0,0,0,0.1)',
                             transform: tarefaDestacada === tarefa.id ? 'scale(1.02)' : 'scale(1)',
                             opacity: 0.85
                         },
                         onMouseEnter: (e) => {
                             if (tarefaDestacada !== tarefa.id) {
                                 e.currentTarget.style.transform = 'translateX(5px)';
-                                e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                                e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
                                 e.currentTarget.style.opacity = '1';
                             }
                         },
                         onMouseLeave: (e) => {
                             if (tarefaDestacada !== tarefa.id) {
                                 e.currentTarget.style.transform = 'translateX(0)';
-                                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
                                 e.currentTarget.style.opacity = '0.85';
                             }
                         }
@@ -9160,7 +9168,7 @@
                                 borderRadius: '10px',
                                 padding: '20px',
                                 textAlign: 'center',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                                 marginBottom: '20px'
                             }
                         },
@@ -9257,7 +9265,7 @@
                             background: 'var(--bg-secondary)',
                             borderRadius: '10px',
                             padding: '30px',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                         }
                     },
                         React.createElement('div', { 
