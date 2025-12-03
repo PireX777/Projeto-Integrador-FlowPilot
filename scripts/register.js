@@ -424,19 +424,50 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             // ==========================================
-            // PERSISTÊNCIA DOS DADOS
+            // PERSISTÊNCIA DOS DADOS (COM CHECAGEM DE E-MAIL)
             // ==========================================
-            // Salva no localStorage para acesso entre sessões
+            // Recupera usuários já cadastrados (compatível com chave antiga)
+            function getStoredUsers() {
+                const raw = localStorage.getItem('flowpilot_users');
+                if (raw) {
+                    try { return JSON.parse(raw); } catch (e) { return []; }
+                }
+                const single = localStorage.getItem('flowpilot_user');
+                if (single) {
+                    try { return [JSON.parse(single)]; } catch (e) { return []; }
+                }
+                return [];
+            }
+
+            const existingUsers = getStoredUsers();
+
+            // Checa se já existe usuário com o mesmo e-mail (case-insensitive)
+            const emailExists = existingUsers.some(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+            if (emailExists) {
+                signupButton.classList.remove('loading');
+                showFieldError(emailInput, 'Este e-mail já está cadastrado.');
+                showNotification('E-mail já cadastrado. Faça login ou recupere a senha.', 'error');
+                return;
+            }
+
+            // Adiciona novo usuário ao array e persiste
+            existingUsers.push(userData);
+            try {
+                localStorage.setItem('flowpilot_users', JSON.stringify(existingUsers));
+            } catch (e) {
+                // Falha ao salvar array (espaço/permissão) — fallback para chave única
+                localStorage.setItem('flowpilot_user', JSON.stringify(userData));
+            }
+
+            // Mantém chaves antigas para compatibilidade com outras partes da aplicação
             localStorage.setItem('flowpilot_user', JSON.stringify(userData));
             localStorage.setItem('flowpilot_perfil', JSON.stringify(userData));
-            
-            // Salva email no sessionStorage para auto-preencher login
             sessionStorage.setItem('registeredEmail', email);
-            
+
             // Remove indicador de carregamento
             signupButton.classList.remove('loading');
             showNotification('Cadastro efetuado! Redirecionando para o login...', 'success');
-            
+
             // Redireciona para página de login após 1.2 segundos
             setTimeout(() => {
                 window.location.href = 'login.html';
