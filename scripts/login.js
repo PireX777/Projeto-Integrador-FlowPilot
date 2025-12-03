@@ -1,77 +1,134 @@
+/**
+ * ============================================
+ * FLOWPILOT - Script de Autenticação (Login)
+ * ============================================
+ * 
+ * Gerencia todo o processo de login do sistema:
+ * - Validação de formulário
+ * - Autenticação de usuários
+ * - Recuperação de senha
+ * - Lembrança de credenciais
+ * - Integração com localStorage
+ * 
+ * @author Equipe FlowPilot
+ * @version 1.0
+ * @date Dezembro 2025
+ */
+
+// ==========================================
+// INICIALIZAÇÃO
+// ==========================================
 document.addEventListener('DOMContentLoaded', function() {
-    // Cache all DOM elements
-    const mobileMenu = document.querySelector('.mobile-menu');
-    const navLinks = document.querySelector('.nav-links');
-    const authButtons = document.querySelector('.auth-buttons');
-    const loginForm = document.getElementById('loginForm');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const togglePassword = document.getElementById('togglePassword');
-    const rememberCheckbox = document.getElementById('rememberCheckbox');
-    const loginButton = document.getElementById('loginButton');
-    const forgotPasswordLink = document.getElementById('forgotPassword');
-    const forgotPasswordModal = document.getElementById('forgotPasswordModal');
-    const closeModal = document.getElementById('closeModal');
-    const recoveryForm = document.getElementById('recoveryForm');
-    const signupLink = document.getElementById('signupLink');
-    const socialButtons = document.querySelectorAll('.social-button');
-    const smoothScrollLinks = document.querySelectorAll('a[href^="#"]');
+    
+    // ==========================================
+    // CACHE DE ELEMENTOS DO DOM
+    // ==========================================
+    // Armazena todas as referências dos elementos da página de login
+    
+    const mobileMenu = document.querySelector('.mobile-menu');           // Menu hambúrguer mobile
+    const navLinks = document.querySelector('.nav-links');               // Links de navegação
+    const authButtons = document.querySelector('.auth-buttons');         // Botões de autenticação
+    const loginForm = document.getElementById('loginForm');              // Formulário de login
+    const emailInput = document.getElementById('email');                 // Campo de email
+    const passwordInput = document.getElementById('password');           // Campo de senha
+    const togglePassword = document.getElementById('togglePassword');    // Botão mostrar/ocultar senha
+    const rememberCheckbox = document.getElementById('rememberCheckbox'); // Checkbox "lembrar de mim"
+    const loginButton = document.getElementById('loginButton');          // Botão de submissão
+    const forgotPasswordLink = document.getElementById('forgotPassword'); // Link recuperar senha
+    const forgotPasswordModal = document.getElementById('forgotPasswordModal'); // Modal de recuperação
+    const closeModal = document.getElementById('closeModal');            // Fechar modal
+    const recoveryForm = document.getElementById('recoveryForm');        // Form de recuperação
+    const signupLink = document.getElementById('signupLink');            // Link para cadastro
+    const socialButtons = document.querySelectorAll('.social-button');   // Botões de login social
+    const smoothScrollLinks = document.querySelectorAll('a[href^="#"]'); // Links de scroll suave
 
-    // Mobile Menu Toggle
+    // ==========================================
+    // CONFIGURAÇÕES E CONSTANTES
+    // ==========================================
+    
+    // Comprimento mínimo da senha (usado para validação)
+    const passwordMinLen = 8;
 
+    // ==========================================
+    // MENU MOBILE
+    // ==========================================
+    // Toggle do menu de navegação em dispositivos móveis
+    
     if (mobileMenu) {
         mobileMenu.addEventListener('click', function() {
+            // Alterna visibilidade dos links e botões
             if (navLinks) navLinks.classList.toggle('active');
             if (authButtons) authButtons.classList.toggle('active');
         });
     }
 
-    // Não usar atributo minlength — usamos um mínimo interno para validação/visual
-    const passwordMinLen = 8;
-
-    // Toggle password visibility (guarded)
+    // ==========================================
+    // MOSTRAR/OCULTAR SENHA
+    // ==========================================
+    // Permite ao usuário visualizar a senha digitada
+    
     if (togglePassword && passwordInput) {
         togglePassword.addEventListener('click', function() {
+            // Alterna entre type="password" e type="text"
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
 
+            // Alterna o ícone do olho
             const icon = this.querySelector('i');
             if (icon) {
-                icon.classList.toggle('fa-eye');
-                icon.classList.toggle('fa-eye-slash');
+                icon.classList.toggle('fa-eye');        // Olho aberto
+                icon.classList.toggle('fa-eye-slash');  // Olho fechado
             }
         });
     }
 
-    // Remember me checkbox (guarded)
+    // ==========================================
+    // CHECKBOX "LEMBRAR DE MIM"
+    // ==========================================
+    // Gerencia a funcionalidade de lembrar email do usuário
+    
     if (rememberCheckbox) {
+        // Toggle visual do checkbox customizado
         rememberCheckbox.addEventListener('click', function() {
             this.classList.toggle('checked');
         });
         
-        // Verificar se há email do registro recente
+        // ==========================================
+        // CARREGAMENTO AUTOMÁTICO DE EMAIL
+        // ==========================================
+        // Verifica se há email salvo para preencher automaticamente
+        
+        // Prioridade 1: Email de registro recente (sessionStorage)
+        // Usado quando usuário acabou de se cadastrar
         const registeredEmail = sessionStorage.getItem('registeredEmail');
         if (registeredEmail && emailInput) {
-            // Preencher com email do cadastro e NÃO marcar "lembrar de mim"
-            emailInput.value = registeredEmail;
-            sessionStorage.removeItem('registeredEmail');
+            emailInput.value = registeredEmail;           // Preenche o campo
+            sessionStorage.removeItem('registeredEmail'); // Remove após usar
         } else {
-            // Carregar email salvo apenas se usuário marcou "lembrar de mim" anteriormente
+            // Prioridade 2: Email salvo com "lembrar de mim" (localStorage)
+            // Usado quando usuário marcou checkbox em login anterior
             const rememberedEmail = localStorage.getItem('rememberedEmail');
             if (rememberedEmail && emailInput) {
-                emailInput.value = rememberedEmail;
-                rememberCheckbox.classList.add('checked');
+                emailInput.value = rememberedEmail;       // Preenche o campo
+                rememberCheckbox.classList.add('checked'); // Marca o checkbox
             }
         }
     }
 
-    // Forgot password modal (guarded)
+    // ==========================================
+    // MODAL DE RECUPERAÇÃO DE SENHA
+    // ==========================================
+    // Gerencia a exibição e fechamento do modal
+    
+    // Abrir modal ao clicar em "Esqueceu a senha?"
     if (forgotPasswordLink && forgotPasswordModal) {
         forgotPasswordLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            forgotPasswordModal.style.display = 'flex';
+            e.preventDefault();                          // Previne navegação
+            forgotPasswordModal.style.display = 'flex';  // Mostra modal
         });
     }
+    
+    // Fechar modal ao clicar no X
     if (closeModal && forgotPasswordModal) {
         closeModal.addEventListener('click', function() {
             forgotPasswordModal.style.display = 'none';
