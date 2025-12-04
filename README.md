@@ -96,11 +96,6 @@ Estrutura do repositório
 - `scripts/` — JavaScript do site (`login.js`, `register.js`, `notifications.js`, `auth-check.js`, `main.js`)
 - `assets/images/` — imagens e recursos estáticos
 
-Como executar localmente
------------------------
-1. Abrir `index.html` diretamente no navegador.
-2. Para servir por HTTP (recomendado):
-
 Tecnologias
 -----------
 - HTML5
