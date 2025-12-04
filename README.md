@@ -39,7 +39,7 @@ conquistas e ranking).
 
 O foco é **tornar a gestão de processos mais simples, visual e motivadora**.
 
-###Público-Alvo:
+### Público-Alvo:
   - **Pequenas e médias empresas** que desejam organizar e digitalizar seus
 processos internos.
 
