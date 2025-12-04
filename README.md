@@ -1,4 +1,4 @@
-Este projeto foi construido baseado nesse Briefing
+*Este projeto foi construído para o Senai Maracanã, como trabalho de conclusão de curso (TCC), referente ao curso de Tecnologia da informação (TI), baseado nesse Briefing.*
 
 # Briefing — Empresa de Gestão de Processos Digitais
 
@@ -17,7 +17,7 @@ equipes.**
 Agora, a marca está passando por um **reebranding**, buscando uma **nova identidade
 visual** que traduza modernidade, tecnologia e facilidade de uso.
 
-###Área de Atuação:
+### Área de Atuação:
 
 Gestão e automação de processos empresariais (Business Process Management – BPM)
 com foco digital.
@@ -39,7 +39,7 @@ conquistas e ranking).
 
 O foco é **tornar a gestão de processos mais simples, visual e motivadora**.
 
-###Público-Alvo:
+### Público-Alvo:
   - **Pequenas e médias empresas** que desejam organizar e digitalizar seus
 processos internos.
 
@@ -74,3 +74,39 @@ completo**.
 ### Agradecimentos:
 
 Gostaria de agradecer aos instrutores e amigos que me ajudaram a desenvolver este projeto. Agradeço, em primeiro lugar, aos instrutores **Matheus Hermenegildo** e **Luciano Alonso**, assim como a **Nivaldo Batista**, **Gabriel Raimundo** e **Vicente Orsino**, que cederam espaço para trabalho (Fablab) e auxiliaram na resolução de problemas da página. Agradeço também aos amigos **Davi Vasconcellos**, **Vinícius Honório (Gaúcho)** e **Gabriel da Silva (Panelinha)**, que me deram ideias de funcionalidades para adicionar ao site. Por fim, agradeço à minha equipe designada para o projeto — **Bruna Soares (Jogos)**, **Emilly Vicente (Multimídia)**, **Graziele da Silva (Multimídia)** e **Lucas de Morais (Design)** — pela ajuda no meu desenvolvimento pessoal e no desenvolvimento do projeto. **Muito obrigado a todos; Vocês são Incríveis**.
+
+# FlowPilot — Resumo do Projeto
+
+Breve descrição
+----------------
+FlowPilot é uma interface frontend estática para gestão e monitoramento de processos. Oferece páginas institucionais, autenticação de usuários e um painel principal (dashboard) com componentes interativos e visualizações de dados.
+
+Principais recursos
+-------------------
+- Autenticação: telas de `login` e `register`.
+- Dashboard com cards, gráficos, lista de atividades e notificações (`pages/dashboard.html`).
+- Páginas institucionais: `about`, `contact`, `help`, `terms`, `privacy`.
+- Layout responsivo com estilos organizados em `css/`.
+
+Estrutura do repositório
+------------------------
+- `index.html` — página inicial
+- `pages/` — páginas secundárias, incluindo `dashboard.html`
+- `css/` — folhas de estilo (`style.css`, `register.css`, `responsive.css`, etc.)
+- `scripts/` — JavaScript do site (`login.js`, `register.js`, `notifications.js`, `auth-check.js`, `main.js`)
+- `assets/images/` — imagens e recursos estáticos
+
+Como executar localmente
+-----------------------
+1. Abrir `index.html` diretamente no navegador.
+2. Para servir por HTTP (recomendado):
+
+Tecnologias
+-----------
+- HTML5
+- CSS3
+- JavaScript (ES6)
+- React
+------------------
+
+**Esse projeto é apenas um protótipo, não utilizar com dados reais**
